@@ -33,7 +33,7 @@ class LoginPage extends StatelessWidget{
                   ),),
               
               
-                  Text('AI STUDENT ASSISTANT APP'),
+                  Text('AI STUDENT ASSISTANT APP.'),
               
               
                   Text('HOME PAGE'),
