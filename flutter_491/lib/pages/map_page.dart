@@ -12,7 +12,7 @@ class MapPage extends StatelessWidget {
       appBar: Toolbar(title: 'map'),
       body: FlutterMap(
         options: MapOptions(
-          center: LatLng(51.122313, 52.121212),zoom: 10,), 
+          center: LatLng(33.7838, -118.1141),zoom: 10,), 
           
         children: [
 
