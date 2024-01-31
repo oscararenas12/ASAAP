@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget  {
         fontFamily: 'Urbanist',
         scaffoldBackgroundColor: AppColors.background,
         brightness: Brightness.dark,
+        useMaterial3: true,
       
       
       ),

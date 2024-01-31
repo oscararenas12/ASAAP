@@ -1,3 +1,4 @@
+import 'package:flutter_491/pages/chat_page.dart';
 import 'package:flutter_491/pages/edit_profile_page.dart';
 import 'package:flutter_491/pages/home_page.dart';
 import 'package:flutter_491/pages/login_page.dart';
@@ -17,6 +18,8 @@ class AppRoutes{
         edit_profile:(context) => EditProfilePage(),
         map:(context) => MapPage(),
 
+        chat:(context) => ChatPage(),
+
   };
 
 
@@ -28,4 +31,5 @@ class AppRoutes{
   static const main = '/main';
   static const edit_profile = '/edit_profile';
   static const map = '/map';
+  static const chat = '/chat';
 }

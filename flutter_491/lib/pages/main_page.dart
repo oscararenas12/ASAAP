@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_491/pages/chat_page.dart';
 import 'package:flutter_491/pages/home_page.dart';
 import 'package:flutter_491/pages/map_page.dart';
 import 'package:flutter_491/pages/news_page.dart';
@@ -69,7 +70,7 @@ class _MainPageState extends State<MainPage> {
     NewsPage(),
     MapPage(),
     HomePage(),
-    Center(child: Text('CHATBOX')),
+    ChatPage(),
     ProfilePage(),
   ];
 

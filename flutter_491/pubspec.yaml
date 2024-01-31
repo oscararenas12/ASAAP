@@ -34,10 +34,19 @@ dependencies:
   flutter_map: ^6.1.0
   latlong2: ^0.9.0
 
+# CHAT GPT dependency implementation
+  dash_chat_2: ^0.0.19
+  chat_gpt_sdk: ^3.0.0
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+
+  # CHAT GPT dependency implementation
+
+
+  
 
 dev_dependencies:
   flutter_test:
