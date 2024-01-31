@@ -1,3 +1,3 @@
-//add your chat gpt OPEN AI key
+//enter your chat gpt OPEN AI key in between " "
 
-const OPENAI_API_KEY = "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";
+const OPENAI_API_KEY = "";
