@@ -130,6 +130,7 @@ class LoginPage extends StatelessWidget{
                   width: 200,
                   child: ElevatedButton(onPressed: () {
                     print('create account clicked');
+                    Navigator.of(context).pushReplacementNamed(AppRoutes.signup);
                   },
               
                   style: ElevatedButton.styleFrom(
