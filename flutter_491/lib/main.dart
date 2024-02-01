@@ -6,9 +6,28 @@ import 'package:flutter_491/pages/login_page.dart';
 import 'package:flutter_491/pages/main_page.dart';
 import 'package:flutter_491/pages/news_page.dart';
 import 'package:flutter_491/styles/app_colors.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+
+
+
+Future<void> main() async {
   runApp(MyApp());
+  await Firebase.initializeApp(
+
+    options: FirebaseOptions(
+      apiKey: 'AIzaSyDHoJM_eZZ0qIn_PDi0omsxPFP5ngVtMvc',
+      appId: '1:176736238242:web:014c964d6f1cb5d17975fb',
+      messagingSenderId: '176736238242',
+      projectId: 'asaapp-491',
+      authDomain: 'asaapp-491.firebaseapp.com',
+      storageBucket: 'asaapp-491.appspot.com',
+      measurementId: 'G-WM0P3PT2PM',
+    ),
+  );
+
+  
 
 }
 
