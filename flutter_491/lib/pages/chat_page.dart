@@ -49,10 +49,11 @@ class _ChatPageState extends State<ChatPage> {
         typingUsers: _typingUsers,
         messageOptions: const MessageOptions(
           currentUserContainerColor: AppColors.darkblue,
+          currentUserTextColor: Colors.white,
           
 
           containerColor: Colors.white,
-          textColor: Colors.black,
+          textColor: AppColors.darkblue,
         ),
         onSend: (ChatMessage m){
           getChatResponse(m);
