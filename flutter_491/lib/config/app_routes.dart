@@ -7,6 +7,7 @@ import 'package:flutter_491/pages/map_page.dart';
 import 'package:flutter_491/pages/news_page.dart';
 import 'package:flutter_491/pages/notifications_page.dart';
 import 'package:flutter_491/pages/settings_page.dart';
+import 'package:flutter_491/pages/signup_page.dart';
 
 class AppRoutes{
 
@@ -15,6 +16,7 @@ class AppRoutes{
         home:(context) => HomePage(),
         news:(context) => NewsPage(),
         main:(context) => MainPage(),
+        signup:(context) => SignUpPage(),
 
         //home_page navigator
         edit_profile:(context) => EditProfilePage(),
@@ -37,4 +39,5 @@ class AppRoutes{
   static const chat = '/chat';
   static const Settings = '/Settings';
   static const notifications_page = '/notifications_page';
+  static const signup = '/signup';
 }
