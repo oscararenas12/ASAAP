@@ -55,12 +55,14 @@ class LoginPage extends StatelessWidget{
                   ),
             
                   TextField(
+                    style: TextStyle(color: Color.fromARGB(137, 0, 0, 0)), //set textfield color to black
                     decoration: InputDecoration(
                       hintText: 'Email',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(20))
                       
                       ), 
+                      hintStyle: TextStyle(color: Color.fromARGB(138, 135, 131, 131)), // Set the hint text color to grey
                       filled: true,
                       fillColor: Colors.white,
                       
@@ -82,12 +84,14 @@ class LoginPage extends StatelessWidget{
                   ),
               
                   TextField(
+                    style: TextStyle(color: Color.fromARGB(137, 0, 0, 0)), //set textfield color to black
                     decoration: InputDecoration(
                       hintText: 'Password',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(20))
                       
                       ), 
+                      hintStyle: TextStyle(color: Color.fromARGB(138, 135, 131, 131)), // Set the hint color to grey
                       filled: true,
                       fillColor: Colors.white,
                       
