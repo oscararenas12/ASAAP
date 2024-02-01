@@ -99,6 +99,23 @@ class ProfilePage extends StatelessWidget {
               height: 20,
               indent: 30,
               endIndent: 30,),
+              
+              TextButton(onPressed: () {
+              Navigator.of(context).pushNamed(AppRoutes.notifications_page);
+            },
+                style: TextButton.styleFrom(
+                  textStyle: AppText.header2,
+                  foregroundColor: Colors.white,
+                ),
+
+                child: Text('Notifications')),
+
+            Divider(
+              color: AppColors.darkblue,
+              thickness: 1,
+              height: 20,
+              indent: 30,
+              endIndent: 30,),
         
           
             TextButton(onPressed: () {
