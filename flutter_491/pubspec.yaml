@@ -39,7 +39,7 @@ dependencies:
 
 # CHAT GPT dependency implementation
   dash_chat_2: ^0.0.19
-  chat_gpt_sdk: ^3.0.0
+  chat_gpt_sdk: ^2.2.5
 
 
   # The following adds the Cupertino Icons font to your application.

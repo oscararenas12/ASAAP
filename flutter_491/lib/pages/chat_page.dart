@@ -28,7 +28,6 @@ class _ChatPageState extends State<ChatPage> {
 
 
 
-
 //chat page users
   final ChatUser _currentUser = ChatUser(id: '1', firstName: "erick", lastName: 'garcia');
 
@@ -53,7 +52,7 @@ class _ChatPageState extends State<ChatPage> {
           
 
           containerColor: Colors.white,
-          textColor: Colors.white,
+          textColor: Colors.black,
         ),
         onSend: (ChatMessage m){
           getChatResponse(m);
@@ -79,7 +78,7 @@ class _ChatPageState extends State<ChatPage> {
 
     final request = ChatCompleteText(
       model: GptTurbo0301ChatModel(), 
-      messages: List.from(_messagesHistory),
+      messages: _messagesHistory,
       maxToken: 200,
     );
     

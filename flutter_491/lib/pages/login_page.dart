@@ -26,17 +26,13 @@ class LoginPage extends StatelessWidget{
                   Spacer(),
 
               
-                  Text('ASAAPP', style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),),
+                  Image.asset('assets/images/image 6.png',
+                    height: 200,
+                    width: 200,
+                  ), 
+
               
-              
-                  Text('AI STUDENT ASSISTANT APP.'),
-              
-              
-                  Text('HOME PAGE'),
+            
             
                   SizedBox(
                     height: 30,
