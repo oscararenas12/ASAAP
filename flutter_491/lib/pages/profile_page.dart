@@ -102,6 +102,7 @@ class ProfilePage extends StatelessWidget {
         
           
             TextButton(onPressed: () {
+              Navigator.of(context).pushNamed(AppRoutes.Settings);
               print('settings clicked');
             }, 
             style: TextButton.styleFrom(

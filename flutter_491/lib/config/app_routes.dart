@@ -5,6 +5,7 @@ import 'package:flutter_491/pages/login_page.dart';
 import 'package:flutter_491/pages/main_page.dart';
 import 'package:flutter_491/pages/map_page.dart';
 import 'package:flutter_491/pages/news_page.dart';
+import 'package:flutter_491/pages/settings_page.dart';
 
 class AppRoutes{
 
@@ -16,6 +17,7 @@ class AppRoutes{
 
         //home_page navigator
         edit_profile:(context) => EditProfilePage(),
+        Settings:(context) => SettingsPage(),
         map:(context) => MapPage(),
 
         chat:(context) => ChatPage(),
@@ -32,4 +34,5 @@ class AppRoutes{
   static const edit_profile = '/edit_profile';
   static const map = '/map';
   static const chat = '/chat';
+  static const Settings = '/Settings';
 }
