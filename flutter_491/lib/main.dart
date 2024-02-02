@@ -8,12 +8,14 @@ import 'package:flutter_491/pages/news_page.dart';
 import 'package:flutter_491/styles/app_colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 
 
 Future<void> main() async {
-  runApp(MyApp());
+  
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
 
     options: FirebaseOptions(
@@ -27,7 +29,7 @@ Future<void> main() async {
     ),
   );
 
-  
+  runApp(MyApp());
 
 }
 
