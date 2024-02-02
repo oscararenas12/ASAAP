@@ -61,11 +61,15 @@ class _ChatPageState extends State<ChatPage> {
 
           //AI chatbox colors
           containerColor: Colors.white,
-          textColor: AppColors.darkblue,
+          textColor:AppColors.darkblue,           
+
+          
 
 
+            
           //OPTIONAL - Display AI avatar
           showOtherUsersAvatar: false,
+
 
           //OPTIONAL - add user avatar to chat 
           //showCurrentUserAvatar: true,
@@ -129,5 +133,7 @@ class _ChatPageState extends State<ChatPage> {
     });
 
   }
+  
+
 }
 

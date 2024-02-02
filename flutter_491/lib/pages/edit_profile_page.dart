@@ -68,7 +68,41 @@ class EditProfilePage extends StatelessWidget {
               ),
           
               AppTextField(hint: 'Bio'),
-          
+
+              SizedBox(
+                height: 30,
+              ),
+
+              SizedBox(
+                
+                child: ElevatedButton(onPressed: () {
+                  print('Saved changed clicked');
+                
+                },
+            
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.darkblue,
+                  foregroundColor: Colors.white,
+                  
+                ),                
+            
+                child: Text('Save Changes')),
+              ),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           
             ],
           ),
