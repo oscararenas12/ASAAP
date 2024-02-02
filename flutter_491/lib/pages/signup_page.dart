@@ -98,6 +98,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
               ),
             ),
+            
             SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: _createAccount,
