@@ -51,7 +51,7 @@ class NewsPage extends StatelessWidget{
   //list view for multiple objects
   mockUsersFromServer(){
     for (var i = 0; i < 100; i++){
-      heading.add('News Title $i');
+      heading.add('News Title $i',);
 
     }
   }
