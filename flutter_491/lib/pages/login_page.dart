@@ -3,14 +3,21 @@ import 'package:flutter_491/config/app_routes.dart';
 import 'package:flutter_491/pages/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class LoginPage extends StatelessWidget{
+
+class LoginPage extends StatefulWidget {
   final FirebaseAuth _auth;
+
   LoginPage({Key? key}) : _auth = FirebaseAuth.instance, super(key: key);
 
-   // Create TextEditingController for email and password
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  bool _isPasswordVisible = false;
 
   @override
   Widget build(BuildContext context){
@@ -94,7 +101,7 @@ class LoginPage extends StatelessWidget{
                   TextField(
                     controller: passwordController,
                     style: TextStyle(color: Color.fromARGB(137, 0, 0, 0)), //set textfield color to black
-                    obscureText: true,
+                    obscureText: !_isPasswordVisible,
                     decoration: InputDecoration(
                       hintText: 'Password',
                       border: OutlineInputBorder(
@@ -104,6 +111,15 @@ class LoginPage extends StatelessWidget{
                       hintStyle: TextStyle(color: Color.fromARGB(138, 135, 131, 131)), // Set the hint color to grey
                       filled: true,
                       fillColor: Colors.white,
+                      suffixIcon: GestureDetector(
+                      onTap: () {
+                        _togglePasswordVisibility();
+                      },
+                      child: Icon(
+                        _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                        color: Colors.grey,
+                      ),
+                    ),
                       
                       ),
                       onEditingComplete: () {
@@ -196,6 +212,14 @@ class LoginPage extends StatelessWidget{
       );
   }
 
+    void _togglePasswordVisibility() {
+      setState(() {
+        _isPasswordVisible = !_isPasswordVisible;
+      });
+    }
+
+
+
    void _signIn(BuildContext context) async {
     // Get user input from controllers
     String email = emailController.text;
@@ -203,7 +227,7 @@ class LoginPage extends StatelessWidget{
 
     try {
       // Sign in with email and password
-      await _auth.signInWithEmailAndPassword(
+      await widget._auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -233,3 +257,5 @@ class LoginPage extends StatelessWidget{
     }
   }
 }
+
+
