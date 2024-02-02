@@ -31,7 +31,7 @@ class _ChatPageState extends State<ChatPage> {
 //chat page users
   final ChatUser _currentUser = ChatUser(id: '1', firstName: "erick", lastName: 'garcia');
 
-  final ChatUser _gptUser = ChatUser(id: '2', firstName: "Chat", lastName: 'GPT');
+  final ChatUser _gptUser = ChatUser(id: '2', firstName: "AI");
 
   List<ChatMessage> _messages = <ChatMessage> [];
   List<ChatUser> _typingUsers = <ChatUser>[];
@@ -41,24 +41,51 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Toolbar(title: "chatbox"),
-      
+      appBar: Toolbar(title: "AI Assistant"),
 
       body: DashChat(
         currentUser: _currentUser, 
         typingUsers: _typingUsers,
+
+        
+
+      
+
+      
+        
         messageOptions: const MessageOptions(
+          
+          //users AI chatbox colors
           currentUserContainerColor: AppColors.darkblue,
           currentUserTextColor: Colors.white,
-          
 
+          //AI chatbox colors
           containerColor: Colors.white,
           textColor: AppColors.darkblue,
+
+
+          //OPTIONAL - Display AI avatar
+          showOtherUsersAvatar: false,
+
+          //OPTIONAL - add user avatar to chat 
+          //showCurrentUserAvatar: true,
+
+
+
+//USELESS
+//timeTextColor: Colors.orange,
+//currentUserTimeTextColor: Colors.red,
+
+
+
+          
         ),
         onSend: (ChatMessage m){
           getChatResponse(m);
 
-      }, messages: _messages),
+      }, messages: _messages,),
+
+      
 
     );
   }
@@ -90,8 +117,8 @@ class _ChatPageState extends State<ChatPage> {
           _messages.insert(
             0, ChatMessage(
               user: _gptUser, 
-              createdAt: DateTime.now(), 
-              text: element.message!.content
+              createdAt: DateTime.now(),
+              text: element.message!.content,
               ),
               );       
           });
