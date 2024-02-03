@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_491/config/app_routes.dart';
+import 'package:flutter_491/styles/app_colors.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -46,6 +47,7 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppColors.darkblue,
         title: Text('Create Account'),
           // Add a back button to the AppBar
         leading: IconButton(

@@ -8,6 +8,7 @@ import 'package:flutter_491/pages/news_page.dart';
 import 'package:flutter_491/pages/notifications_page.dart';
 import 'package:flutter_491/pages/settings_page.dart';
 import 'package:flutter_491/pages/signup_page.dart';
+import 'package:flutter_491/pages/customizeAI.dart';
 
 class AppRoutes{
 
@@ -17,10 +18,11 @@ class AppRoutes{
         news:(context) => NewsPage(),
         main:(context) => MainPage(),
         signup:(context) => SignUpPage(),
+        Settings:(context) => SettingsPage(),
+        customize_AI:(context) => CustomizeAIPage(),
 
         //home_page navigator
         edit_profile:(context) => EditProfilePage(),
-        Settings:(context) => SettingsPage(),
         map:(context) => MapPage(),
         chat:(context) => ChatPage(),
         notifications_page:(context) => NotificationPage(),
@@ -40,4 +42,5 @@ class AppRoutes{
   static const Settings = '/Settings';
   static const notifications_page = '/notifications_page';
   static const signup = '/signup';
+  static const customize_AI = '/customize_AI';
 }
