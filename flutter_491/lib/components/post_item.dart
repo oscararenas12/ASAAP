@@ -57,6 +57,7 @@ class PostItem extends StatelessWidget{
           ),
           
           Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               
               Icon(Icons.bookmark,

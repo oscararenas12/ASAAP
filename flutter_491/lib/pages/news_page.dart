@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_491/components/post_item.dart';
 import 'package:flutter_491/components/toolbar.dart';
+import 'package:flutter_491/config/app_routes.dart';
 import 'package:flutter_491/styles/app_colors.dart';
 import 'package:flutter_491/styles/app_text.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -23,8 +24,11 @@ class NewsPage extends StatelessWidget{
       actions: [
         //press notification icon
         IconButton(
-          onPressed: (){}, 
-          icon: SvgPicture.asset('assets/svg/Bell.svg')),
+          onPressed: (){
+            Navigator.of(context).pushNamed(AppRoutes.notifications_page);
+          }, 
+          icon: SvgPicture.asset('assets/svg/Bell.svg')
+          ),
 
         ],
       ),
