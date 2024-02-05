@@ -1,96 +1,97 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_491/components/toolbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// ignore: depend_on_referenced_packages
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_491/styles/app_colors.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: Toolbar(title: 'Settings'),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'General Settings',
-              style: Theme.of(context).textTheme.headline6,
-            ),
-            ListTile(
-              title: Text('Dark Mode'),
-              trailing: Switch(
-                value: _isDarkModeEnabled(),
-                onChanged: (value) {
-                  _toggleDarkMode(value);
-                },
+  _SettingsPageState createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  late SharedPreferences _prefs;
+  bool _isDarkMode = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    _prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isDarkMode = _prefs.getBool('darkMode') ?? false;
+    });
+  }
+
+  List<Widget> buildSettingsListTiles(Map<String, dynamic> settings) {
+    return settings.keys.map((String key) {
+      if (key == 'Dark Mode') {
+        return Container(
+          margin: const EdgeInsets.only(bottom: 8),
+          decoration: BoxDecoration(
+            color: AppColors.darkblue, 
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: SwitchListTile(
+            title: Text(
+              key,
+              style: TextStyle(
+                color: Colors.white,
               ),
             ),
-            Divider(),
-            ListTile(
-              title: Text('Notifications'),
-              onTap: () {
-                // Navigate to the notification settings page
-                // You can implement this based on your app's structure
-              },
+            value: _isDarkMode,
+            activeColor: Colors.lightBlue,
+            inactiveThumbColor: Colors.grey,
+            onChanged: (bool value) {
+              _toggleDarkMode(value);
+            },
+          ),
+        );
+      } else {
+        return Container(
+          margin: const EdgeInsets.only(bottom: 8),
+          decoration: BoxDecoration(
+            color: AppColors.darkblue,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: ListTile(
+            title: Text(
+              key,
+              style: TextStyle(
+                color: Colors.white,
+              ),
             ),
-            Divider(),
-            Text(
-              'Account Settings',
-              style: Theme.of(context).textTheme.headline6,
-            ),
-            ListTile(
-              title: Text('Change Password'),
-              onTap: () {
-                // Navigate to the change password page
-                // You can implement this based on your app's structure
-              },
-            ),
-            Divider(),
-            ListTile(
-              title: Text('Logout'),
-              onTap: () {
-                // Implement logout functionality
-                // You can clear user data or navigate to the login page
-              },
-            ),
-            Divider(),
-            Text(
-              'Other Settings',
-              style: Theme.of(context).textTheme.headline6,
-            ),
-            ListTile(
-              title: Text('Privacy Policy'),
-              onTap: () {
-                _launchURL('https://example.com/privacy-policy');
-              },
-            ),
-            Divider(),
-            ListTile(
-              title: Text('Terms of Service'),
-              onTap: () {
-                _launchURL('https://example.com/terms-of-service');
-              },
-            ),
-          ],
-        ),
-      ),
-    );
+            onTap: () {
+              _handleSettingsTap(key);
+            },
+          ),
+        );
+      }
+    }).toList();
   }
 
-  bool _isDarkModeEnabled() {
-    // Replace this with your actual dark mode logic using SharedPreferences
-    // For example, you can store a boolean value in SharedPreferences
-    return true; // Placeholder value
-  }
-
-  Future<void> _toggleDarkMode(bool value) async {
-    // Replace this with your actual logic to toggle dark mode using SharedPreferences
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('darkMode', value);
+  void _handleSettingsTap(String key) {
+    switch (key) {
+      case 'Account Settings':
+        // Implement logic for Account Settings
+        break;
+      case 'Change Password':
+        // Implement logic for Change Password
+        break;
+      case 'Other Settings':
+        // Implement logic for Other Settings
+        break;
+      case 'Privacy Policy':
+        _launchURL('https://example.com/privacy-policy');
+        break;
+      case 'Terms of Service':
+        _launchURL('https://example.com/terms-of-service');
+        break;
+    }
   }
 
   Future<void> _launchURL(String url) async {
@@ -99,5 +100,64 @@ class SettingsPage extends StatelessWidget {
     } else {
       throw 'Could not launch $url';
     }
+  }
+
+  Future<void> _toggleDarkMode(bool value) async {
+    setState(() {
+      _isDarkMode = value;
+    });
+
+    await _prefs.setBool('darkMode', value);
+
+    // You can customize this logic based on how you manage themes in your app
+    if (value) {
+      // Enable Dark Mode
+      MyApp.setDarkMode();
+    } else {
+      // Enable Light Mode
+      MyApp.setLightMode();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Settings'),
+      ),
+      body: _prefs == null
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: buildSettingsListTiles({
+                  'Dark Mode': _isDarkMode,
+                  'Account Settings': null,
+                  'Change Password': null,
+                  'Other Settings': null,
+                  'Privacy Policy': null,
+                  'Terms of Service': null,
+                }),
+              ),
+            ),
+    );
+  }
+}
+
+class MyApp extends StatelessWidget {
+  static void setDarkMode() {
+    // Implement logic to set dark mode theme
+  }
+
+  static void setLightMode() {
+    // Implement logic to set light mode theme
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      // Your app configuration here
+    );
   }
 }

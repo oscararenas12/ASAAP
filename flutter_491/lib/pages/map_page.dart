@@ -18,6 +18,7 @@ class MapPage extends StatelessWidget {
           
         children: [
 
+
         //from flutter_map documentation
           TileLayer(
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
