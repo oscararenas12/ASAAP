@@ -36,7 +36,6 @@ dependencies:
   table_calendar: ^3.0.9
   intl: ^0.18.1
   shared_preferences: ^2.0.10
-  url_launcher: ^6.2.4
 
 # CHAT GPT dependency implementation
   dash_chat_2: ^0.0.19

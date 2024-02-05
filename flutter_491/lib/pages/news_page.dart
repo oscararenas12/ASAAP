@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_491/components/post_item.dart';
 import 'package:flutter_491/components/toolbar.dart';
-import 'package:flutter_491/config/app_routes.dart';
 import 'package:flutter_491/styles/app_colors.dart';
 import 'package:flutter_491/styles/app_text.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -24,11 +23,8 @@ class NewsPage extends StatelessWidget{
       actions: [
         //press notification icon
         IconButton(
-          onPressed: (){
-            Navigator.of(context).pushNamed(AppRoutes.notifications_page);
-          }, 
-          icon: SvgPicture.asset('assets/svg/Bell.svg')
-          ),
+          onPressed: (){}, 
+          icon: SvgPicture.asset('assets/svg/Bell.svg')),
 
         ],
       ),
@@ -55,7 +51,7 @@ class NewsPage extends StatelessWidget{
   //list view for multiple objects
   mockUsersFromServer(){
     for (var i = 0; i < 100; i++){
-      heading.add('News Title $i',);
+      heading.add('News Title $i');
 
     }
   }
