@@ -9,6 +9,7 @@ import 'package:flutter_491/pages/notifications_page.dart';
 import 'package:flutter_491/pages/settings_page.dart';
 import 'package:flutter_491/pages/signup_page.dart';
 import 'package:flutter_491/pages/customizeAI.dart';
+import 'package:flutter_491/pages/storage_page.dart';
 
 class AppRoutes{
 
@@ -20,6 +21,7 @@ class AppRoutes{
         signup:(context) => SignUpPage(),
         Settings:(context) => SettingsPage(),
         customize_AI:(context) => CustomizeAIPage(),
+        storage_page:(context) => StoragePage(),
 
         //home_page navigator
         edit_profile:(context) => EditProfilePage(),
@@ -43,4 +45,5 @@ class AppRoutes{
   static const notifications_page = '/notifications_page';
   static const signup = '/signup';
   static const customize_AI = '/customize_AI';
+  static const storage_page = '/storage_page';
 }
