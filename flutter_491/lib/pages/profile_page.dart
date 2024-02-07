@@ -6,10 +6,42 @@ import 'package:flutter_491/styles/app_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_491/components/toolbar.dart';
 import 'package:fluttermoji/fluttermojiCircleAvatar.dart';
+import 'package:flutter_491/config/user_data.dart';
 
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+   @override
+  _ProfilePageState createState() => _ProfilePageState();
+  
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  String _firstName = '';
+  String _lastName = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserDetails();
+  }
+
+  Future<void> _loadUserDetails() async {
+    Map<String, String> userDetails = await UserData.getUserDetails(); // Call getUserDetails from UserData
+    String firstName = userDetails['firstName'] ?? '';
+    String lastName = userDetails['lastName'] ?? '';
+
+    setState(() {
+      _firstName = userDetails['firstName'] ?? '';
+      _lastName = userDetails['lastName'] ?? '';
+    });
+
+        //capitalize first letter of first and last name
+    _firstName = firstName.isNotEmpty ? firstName[0].toUpperCase() + firstName.substring(1) : '';
+    _lastName = lastName.isNotEmpty ? lastName[0].toUpperCase() + lastName.substring(1) : '';
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +62,8 @@ class ProfilePage extends StatelessWidget {
           SizedBox(
             height: 15,
           ),
-
-            Text('Student Name', style: AppText.header1,
+            
+            Text('$_firstName $_lastName', style: AppText.header1,
             textAlign: TextAlign.center
             ),
 
@@ -349,3 +381,4 @@ class ProfilePage extends StatelessWidget {
     //);
   }
 }
+
