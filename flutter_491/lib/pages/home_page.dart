@@ -15,8 +15,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
-    DateTime firstDay = DateTime(now.year, now.month, now.day - now.weekday);
-    DateTime lastDay = firstDay.add(Duration(days: 6));
+    DateTime firstDay = DateTime(now.year, now.month, 1);
+    DateTime lastDay = DateTime(now.year, now.month + 1, 0);
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -228,7 +228,7 @@ class CalendarWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-            height: 600, // Adjust the height as needed
+            height: 500, // Adjust the height as needed
             child: TableCalendar(
               focusedDay: now,
               firstDay: firstDay,
