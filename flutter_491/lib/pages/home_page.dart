@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_491/config/app_routes.dart';
+import 'package:flutter_491/pages/storage_page.dart';
 import 'package:flutter_491/styles/app_colors.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
@@ -166,6 +167,7 @@ class HomePage extends StatelessWidget {
                         GestureDetector(
                           onTap: () {
                             // Handle Storage Icon Click
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => StoragePage()));
                             print('Storage icon clicked');
                           },
                           child: Column(
