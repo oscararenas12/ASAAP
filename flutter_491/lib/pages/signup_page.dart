@@ -21,27 +21,27 @@ class _SignUpPageState extends State<SignUpPage> {
 
 
   Future<void> _createAccount() async {
-  try {
-    UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-      email: _emailController.text.trim(),
-      password: _passwordController.text.trim(),
-    );
+    try {
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
 
-    // Save additional user information to Firestore
-    await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
-      'firstName': _firstNameController.text.trim(),
-      'lastName': _lastNameController.text.trim(),
-      'number': _numberController.text.trim(),
-      // Add other fields as needed
-    });
+      // Save additional user information to Firestore
+      await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
+        'firstName': _firstNameController.text.trim(),
+        'lastName': _lastNameController.text.trim(),
+        'number': _numberController.text.trim(),
+        // Add other fields as needed
+      });
 
-    print("Account created: ${userCredential.user!.email}");
-    Navigator.of(context).pushNamed(AppRoutes.login);
-  } on FirebaseAuthException catch (e) {
-    print("Failed to create account: ${e.message}");
-    // Handle errors based on the FirebaseAuthException code.
+      print("Account created: ${userCredential.user!.email}");
+      Navigator.of(context).pushNamed(AppRoutes.login);
+    } on FirebaseAuthException catch (e) {
+      print("Failed to create account: ${e.message}");
+      // Handle errors based on the FirebaseAuthException code.
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
