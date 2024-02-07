@@ -5,6 +5,8 @@ class AppColors{
   static const font = Colors.white;
   static const darkblue =Color(0xff0D4393);
   static const lighterBlue = Color.fromARGB(255, 84, 122, 163);
+  static const black = Color.fromARGB(255, 2, 0, 34);
+
 
 
 
