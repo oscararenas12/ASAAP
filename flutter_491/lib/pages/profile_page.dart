@@ -65,7 +65,7 @@ class ProfilePage extends StatelessWidget {
               indent: 30,
               endIndent: 30,),
         
-          
+        
             TextButton(onPressed: () {
               Navigator.of(context).pushNamed(AppRoutes.customize_AI);
               print('customize AI clicked');
