@@ -25,11 +25,10 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
 
         body: SingleChildScrollView(  //gets rid of overflow for scrolling
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height,
-            child: Padding(
-              padding:EdgeInsets.all(24),
-              child: Column(
+          child: Padding(
+            padding: EdgeInsets.all(24),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
               
                //use Spacer(), for spacing for all movile devices
@@ -37,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
                 //SizedBox(
                     //height: 50,
                   //),
-                  Spacer(),
+                  SizedBox(height: 30),
 
               
                   Image.asset('assets/images/image 6.png',
@@ -197,14 +196,13 @@ class _LoginPageState extends State<LoginPage> {
                 //-----------------------------------------------
 
               
-              Spacer(),
+              SizedBox(height: 30),
               
                 ],
               
               ),
             ),
           ),
-        )
       );
   }
 
