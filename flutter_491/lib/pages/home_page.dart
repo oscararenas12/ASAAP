@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_491/config/app_routes.dart';
+import 'package:flutter_491/pages/storage_page.dart';
 import 'package:flutter_491/styles/app_colors.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
@@ -15,8 +16,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
-    DateTime firstDay = DateTime(now.year, now.month, now.day - now.weekday);
-    DateTime lastDay = firstDay.add(Duration(days: 6));
+    DateTime firstDay = DateTime(now.year, now.month, 1);
+    DateTime lastDay = DateTime(now.year, now.month + 1, 0);
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -166,6 +167,7 @@ class HomePage extends StatelessWidget {
                         GestureDetector(
                           onTap: () {
                             // Handle Storage Icon Click
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => StoragePage()));
                             print('Storage icon clicked');
                           },
                           child: Column(
@@ -228,7 +230,7 @@ class CalendarWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-            height: 600, // Adjust the height as needed
+            height: 500, // Adjust the height as needed
             child: TableCalendar(
               focusedDay: now,
               firstDay: firstDay,

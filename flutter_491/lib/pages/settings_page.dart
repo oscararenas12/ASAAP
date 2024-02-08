@@ -1,4 +1,6 @@
+
 import 'package:flutter/material.dart';
+import 'package:flutter_491/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_491/styles/app_colors.dart';
@@ -33,7 +35,7 @@ class _SettingsPageState extends State<SettingsPage> {
         return Container(
           margin: const EdgeInsets.only(bottom: 8),
           decoration: BoxDecoration(
-            color: AppColors.darkblue, 
+            color: AppColors.darkblue,
             borderRadius: BorderRadius.circular(20),
           ),
           child: SwitchListTile(
@@ -109,12 +111,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
     await _prefs.setBool('darkMode', value);
 
-    // You can customize this logic based on how you manage themes in your app
     if (value) {
-      // Enable Dark Mode
       MyApp.setDarkMode();
     } else {
-      // Enable Light Mode
       MyApp.setLightMode();
     }
   }
@@ -141,23 +140,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 }),
               ),
             ),
-    );
-  }
-}
-
-class MyApp extends StatelessWidget {
-  static void setDarkMode() {
-    // Implement logic to set dark mode theme
-  }
-
-  static void setLightMode() {
-    // Implement logic to set light mode theme
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      // Your app configuration here
     );
   }
 }

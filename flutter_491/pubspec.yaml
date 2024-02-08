@@ -37,6 +37,9 @@ dependencies:
   intl: ^0.18.1
   shared_preferences: ^2.0.10
   url_launcher: ^6.2.4
+  provider: ^5.0.0
+
+  fluttermoji: ^1.0.2
 
 # CHAT GPT dependency implementation
   dash_chat_2: ^0.0.19
