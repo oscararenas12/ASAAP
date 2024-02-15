@@ -35,8 +35,8 @@ class _FullScreenCalendarPageState extends State<FullScreenCalendarPage> {
             decoration: BoxDecoration(
               color: isSelectedDay
                   ? Colors.blue[100]
-                  : (isToday ? Colors.blue : Colors.transparent),
-              border: Border.all(color: Colors.grey),
+                  : (isToday ? Colors.blue : Colors.white),
+              border: Border.all(color: Colors.white),
             ),
             child: Align(
               alignment: Alignment.topCenter,
