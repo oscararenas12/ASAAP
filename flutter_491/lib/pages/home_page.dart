@@ -1,9 +1,12 @@
+import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_491/config/app_routes.dart';
 import 'package:flutter_491/pages/storage_page.dart';
 import 'package:flutter_491/styles/app_colors.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
+
+import 'calendar_page.dart';
 
 enum HomeMenu {
   edit,
@@ -74,10 +77,7 @@ class HomePage extends StatelessWidget {
             lastDay: lastDay,
             focusedDay: now,
             calendarFormat: CalendarFormat.week,
-            headerStyle: HeaderStyle(
-              formatButtonVisible: false,
-            ),
-            calendarStyle: CalendarStyle(
+            calendarStyle: const CalendarStyle(
               todayDecoration: BoxDecoration(
                 color: AppColors.darkblue,
                 shape: BoxShape.circle,
@@ -180,18 +180,30 @@ class HomePage extends StatelessWidget {
                         ),
 
                         // Calendar Icon
+                        // Calendar Icon
                         GestureDetector(
                           onTap: () {
-                            // Handle Calendar Icon Click
                             print('Calendar icon clicked');
-
-                            // Show the calendar as a modal bottom sheet
-                            showModalBottomSheet(
+                            showDialog(
                               context: context,
-                              builder: (context) {
-                                return Container(
-                                  height: 300, // Adjust the height as needed
-                                  child: CalendarWidget(), // Replace CalendarWidget with your calendar implementation
+                              builder: (BuildContext context) {
+                                return Dialog(
+                                  insetPadding: EdgeInsets.all(10), // Add some padding to the Dialog
+                                  backgroundColor: Colors.transparent, // Ensures no white background for rounded corners
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25), // Curved edges for the Dialog
+                                  ),
+                                  child: AnimatedContainer(
+                                    duration: Duration(milliseconds: 500),
+                                    curve: Curves.easeOut,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(25), // Curved edges for the AnimatedContainer
+                                    ),
+                                    width: MediaQuery.of(context).size.width * 0.85,
+                                    height: MediaQuery.of(context).size.height * 0.9,
+                                    child: FullScreenCalendarPage(), // Your FullScreenCalendarPage widget
+                                  ),
                                 );
                               },
                             );
@@ -203,7 +215,7 @@ class HomePage extends StatelessWidget {
                               Text('Calendar'),
                             ],
                           ),
-                        ),
+                        )
                       ],
                     ),
                   ],
@@ -218,42 +230,42 @@ class HomePage extends StatelessWidget {
 }
 
 // Placeholder for the CalendarWidget, replace it with your actual calendar implementation
-class CalendarWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    DateTime now = DateTime.now();
-    DateTime firstDay = DateTime(now.year, now.month, 1);
-    DateTime lastDay = DateTime(now.year, now.month + 1, 0);
-
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(
-            height: 500, // Adjust the height as needed
-            child: TableCalendar(
-              focusedDay: now,
-              firstDay: firstDay,
-              lastDay: lastDay,
-              startingDayOfWeek: StartingDayOfWeek.monday,
-              calendarFormat: CalendarFormat.month,
-              headerStyle: HeaderStyle(
-                formatButtonVisible: false,
-              ),
-              calendarStyle: CalendarStyle(
-                todayDecoration: BoxDecoration(
-                  color: Colors.blue,
-                  shape: BoxShape.circle,
-                ),
-                selectedDecoration: BoxDecoration(
-                  color: Colors.green,
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+// class CalendarWidget extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     DateTime now = DateTime.now();
+//     DateTime firstDay = DateTime(now.year, now.month, 1);
+//     DateTime lastDay = DateTime(now.year, now.month + 1, 0);
+//
+//     return SingleChildScrollView(
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.center,
+//         children: [
+//           SizedBox(
+//             height: 500, // Adjust the height as needed
+//             child: TableCalendar(
+//               focusedDay: now,
+//               firstDay: firstDay,
+//               lastDay: lastDay,
+//               startingDayOfWeek: StartingDayOfWeek.monday,
+//               calendarFormat: CalendarFormat.month,
+//               headerStyle: HeaderStyle(
+//                 formatButtonVisible: false,
+//               ),
+//               calendarStyle: CalendarStyle(
+//                 todayDecoration: BoxDecoration(
+//                   color: Colors.blue,
+//                   shape: BoxShape.circle,
+//                 ),
+//                 selectedDecoration: BoxDecoration(
+//                   color: Colors.green,
+//                   shape: BoxShape.circle,
+//                 ),
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }

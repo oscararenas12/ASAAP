@@ -52,6 +52,7 @@ dependencies:
   firebase_core: ^2.25.2
   firebase_auth: ^4.17.2
   cloud_firestore: ^4.15.2
+  calendar_view: ^1.0.4
   
 
   # CHAT GPT dependency implementation
