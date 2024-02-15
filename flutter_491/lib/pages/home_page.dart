@@ -188,15 +188,20 @@ class HomePage extends StatelessWidget {
                               context: context,
                               builder: (BuildContext context) {
                                 return Dialog(
+                                  insetPadding: EdgeInsets.all(10), // Add some padding to the Dialog
                                   backgroundColor: Colors.transparent, // Ensures no white background for rounded corners
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25), // Curved edges for the Dialog
+                                  ),
                                   child: AnimatedContainer(
-                                    duration: Duration(milliseconds: 500), // Duration of the animation
-                                    curve: Curves.easeOut, // Type of animation curve
+                                    duration: Duration(milliseconds: 500),
+                                    curve: Curves.easeOut,
                                     decoration: BoxDecoration(
-                                      color: Colors.white, // Background color of the container
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(25), // Curved edges for the AnimatedContainer
                                     ),
-                                    width: MediaQuery.of(context).size.width * 0.9, // Width is 80% of screen width
-                                    height: MediaQuery.of(context).size.width * 1.4, // Height is the same as width for square shape
+                                    width: MediaQuery.of(context).size.width * 0.85,
+                                    height: MediaQuery.of(context).size.height * 0.9,
                                     child: FullScreenCalendarPage(), // Your FullScreenCalendarPage widget
                                   ),
                                 );
@@ -210,7 +215,7 @@ class HomePage extends StatelessWidget {
                               Text('Calendar'),
                             ],
                           ),
-                        ),
+                        )
                       ],
                     ),
                   ],
