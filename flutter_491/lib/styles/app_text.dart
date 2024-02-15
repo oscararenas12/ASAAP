@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 class AppText{
 
   static const header1 = TextStyle(
+    color: Color.fromARGB(255, 255, 255, 255),
     fontSize: 24,
-    fontWeight: FontWeight.w900,
+    fontWeight: FontWeight.w600,
 
   );
 

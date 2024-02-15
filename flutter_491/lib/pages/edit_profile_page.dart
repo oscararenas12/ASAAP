@@ -4,16 +4,50 @@ import 'package:flutter_491/components/post_item.dart';
 import 'package:flutter_491/components/toolbar.dart';
 import 'package:flutter_491/components/user_avatar.dart';
 import 'package:flutter_491/config/app_routes.dart';
+import 'package:flutter_491/config/user_data.dart';
 import 'package:flutter_491/styles/app_colors.dart';
+import 'package:flutter_491/styles/app_text.dart';
 import 'package:fluttermoji/fluttermojiCircleAvatar.dart';
 
-class EditProfilePage extends StatelessWidget {
+class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
+
+    @override
+  _EditProfilePageState createState() => _EditProfilePageState();
+}
+
+class _EditProfilePageState extends State<EditProfilePage> {
+  // Placeholder values for AI customization
+  String _firstName = 'First Name';
+  String _lastName = 'Last Name';
+  String _bio = 'Edit your BIO';
+
+  // Placeholder image for AI appearance
+  String _aiAppearanceImage = 'assets/images/AIpic.png';
+
+  // Reset AI customization to default values
+ Future<void> _loadUserDetails() async {
+    Map<String, String> userDetails = await UserData.getUserDetails(); // Call getUserDetails from UserData
+    String firstName = userDetails['firstName'] ?? '';
+    String lastName = userDetails['lastName'] ?? '';
+
+    setState(() {
+      _firstName = userDetails['firstName'] ?? '';
+      _lastName = userDetails['lastName'] ?? '';
+    });
+
+ }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Toolbar(title: 'Edit Profile'),
+      appBar: AppBar(
+        backgroundColor: AppColors.darkblue,
+        title: Text(
+          'Edit Profile',
+          style: AppText.header1,
+        ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -48,7 +82,7 @@ class EditProfilePage extends StatelessWidget {
                       child: IconButton(
                         onPressed: () => Navigator.push(context, new MaterialPageRoute(builder: (context) => UserAvatar())),
                         icon: Icon(Icons.edit,
-                        size: 28,),
+                        size: 28,color: const Color.fromARGB(255, 255, 255, 255),),
                       ),
                     ),
                   ),
@@ -62,9 +96,21 @@ class EditProfilePage extends StatelessWidget {
                 height: 40,
               ),
         
-              AppTextField(hint: 'First Name',
-              
+              TextField(
+              onChanged: (value) {
+                setState(() {
+                  _firstName= value;
+                });
+              },
+              decoration: InputDecoration(
+                hintText: _firstName,
+                filled: true,
+                fillColor: AppColors.darkblue,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
               ),
+            ),
         
               SizedBox(
                 height: 16,
