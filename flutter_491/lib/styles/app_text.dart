@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class AppText{
 
   static const header1 = TextStyle(
+    color: Colors.white,
     fontSize: 24,
     fontWeight: FontWeight.w900,
 

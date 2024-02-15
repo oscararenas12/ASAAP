@@ -62,6 +62,7 @@ class PostItem extends StatelessWidget{
               
               Icon(Icons.bookmark,
                   size: 22,
+                  color: Colors.white,
                 ),
 
                 SizedBox(
@@ -70,6 +71,7 @@ class PostItem extends StatelessWidget{
 
               Icon(Icons.share,
                   size: 22,
+                  color: Colors.white,
                 ),
 
             PopupMenuButton<NewsMenu>(
@@ -85,7 +87,9 @@ class PostItem extends StatelessWidget{
                 default:
               }
             },
-            icon: Icon(Icons.more_vert_rounded,),
+            icon: Icon(Icons.more_vert_rounded,
+            color: Colors.white,
+            ),
             itemBuilder: (context) {
               return [
                 PopupMenuItem(
