@@ -3,8 +3,9 @@ import 'package:flutter_491/config/app_routes.dart';
 import 'package:flutter_491/pages/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
+//Kayla's Contribution
 class LoginPage extends StatefulWidget {
+
   final FirebaseAuth _auth;
 
   LoginPage({Key? key}) : _auth = FirebaseAuth.instance, super(key: key);
@@ -13,6 +14,7 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
+//Kayla's Contribution
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -22,6 +24,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context){
 
+//Erick's Contribution
     return Scaffold(
 
         body: SingleChildScrollView(  //gets rid of overflow for scrolling
@@ -43,9 +46,6 @@ class _LoginPageState extends State<LoginPage> {
                     height: 200,
                     width: 200,
                   ), 
-
-              
-            
             
                   SizedBox(
                     height: 30,
@@ -106,6 +106,8 @@ class _LoginPageState extends State<LoginPage> {
                       hintStyle: TextStyle(color: Color.fromARGB(138, 135, 131, 131)), // Set the hint color to grey
                       filled: true,
                       fillColor: Colors.white,
+
+                //Kayla's Contribution
                       suffixIcon: GestureDetector(
                       onTap: () {
                         _togglePasswordVisibility();
@@ -117,6 +119,8 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                       
                       ),
+
+                  //Erick's Contribution
                       onEditingComplete: () {
                       // Call the signIn function when pressing "Enter" in the password field
                       _signIn(context);
@@ -164,9 +168,7 @@ class _LoginPageState extends State<LoginPage> {
               
                   child: Text('Create Account')),
                 ),
-              
-              
-              
+
                   //Forgot password 
                   TextButton(onPressed: () {
                     print('Forgot clicked');
@@ -193,9 +195,7 @@ class _LoginPageState extends State<LoginPage> {
                   height: 25,
                   
                   )),
-                //-----------------------------------------------
-
-              
+                //----------------------------------------------- 
               SizedBox(height: 30),
               
                 ],
@@ -206,6 +206,9 @@ class _LoginPageState extends State<LoginPage> {
       );
   }
 
+
+
+//Kayla's Contribution
     void _togglePasswordVisibility() {
       setState(() {
         _isPasswordVisible = !_isPasswordVisible;
@@ -213,8 +216,9 @@ class _LoginPageState extends State<LoginPage> {
     }
 
 
+//Kayla's Contribution
 
-   void _signIn(BuildContext context) async {
+  void _signIn(BuildContext context) async {
     // Get user input from controllers
     String email = emailController.text;
     String password = passwordController.text;
