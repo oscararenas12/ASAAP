@@ -25,7 +25,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   // Placeholder image for AI appearance
   String _aiAppearanceImage = 'assets/images/AIpic.png';
 
-  // Reset AI customization to default values
  Future<void> _loadUserDetails() async {
     Map<String, String> userDetails = await UserData.getUserDetails(); // Call getUserDetails from UserData
     String firstName = userDetails['firstName'] ?? '';
