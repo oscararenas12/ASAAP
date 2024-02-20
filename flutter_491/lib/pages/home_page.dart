@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_491/config/app_routes.dart';
 import 'package:flutter_491/pages/storage_page.dart';
 import 'package:flutter_491/styles/app_colors.dart';
+import 'package:flutter_491/styles/app_text.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 
@@ -26,7 +27,8 @@ class HomePage extends StatelessWidget {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: AppColors.darkblue,
-        title: Text('Welcome Shark'),
+        title: Text('Welcome Shark', style: AppText.header1),
+
         actions: [
           PopupMenuButton<HomeMenu>(
             onSelected: (value) {

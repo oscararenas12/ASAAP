@@ -22,13 +22,16 @@ class _SettingsPageState extends State<SettingsPage> {
     _loadSettings();
   }
 
+
   Future<void> _loadSettings() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-      _isDarkMode = _prefs.getBool('darkMode') ?? false;
+      _isDarkMode = _prefs.getBool('darkMode') ?? false; // Jessica 
+
     });
   }
 
+// Jessica 
   List<Widget> buildSettingsListTiles(Map<String, dynamic> settings) {
     return settings.keys.map((String key) {
       if (key == 'Dark Mode') {
@@ -104,6 +107,7 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
+// Jessica 
   Future<void> _toggleDarkMode(bool value) async {
     setState(() {
       _isDarkMode = value;
@@ -131,7 +135,7 @@ class _SettingsPageState extends State<SettingsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: buildSettingsListTiles({
-                  'Dark Mode': _isDarkMode,
+                  'Dark Mode': _isDarkMode, //Jessica Banuelos
                   'Account Settings': null,
                   'Change Password': null,
                   'Other Settings': null,

@@ -11,7 +11,7 @@ class MapPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Toolbar(title: 'map'),
+      appBar: Toolbar(title: 'Campus Map'),
       body: FlutterMap(
         options: MapOptions(
           center: LatLng(33.7838, -118.1141),zoom: 16,), 
