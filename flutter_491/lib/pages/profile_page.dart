@@ -36,7 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       _firstName = userDetails['firstName'] ?? '';
       _lastName = userDetails['lastName'] ?? '';
-      _bio = bio{}
+  
     });
 
         //capitalize first letter of first and last name
