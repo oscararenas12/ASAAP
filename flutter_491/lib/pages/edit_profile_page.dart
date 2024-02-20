@@ -17,13 +17,15 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  // Placeholder values for AI customization
-  String _firstName = 'First Name';
-  String _lastName = 'Last Name';
+  String _firstName = '';
+  String _lastName = '';
   String _bio = 'Edit your BIO';
 
-  // Placeholder image for AI appearance
-  String _aiAppearanceImage = 'assets/images/AIpic.png';
+  @override
+  void initState() {
+    super.initState();
+    _loadUserDetails();
+  }
 
  Future<void> _loadUserDetails() async {
     Map<String, String> userDetails = await UserData.getUserDetails(); // Call getUserDetails from UserData
@@ -35,7 +37,25 @@ class _EditProfilePageState extends State<EditProfilePage> {
       _lastName = userDetails['lastName'] ?? '';
     });
 
+    //capitalize first letter of first and last name
+    _firstName = firstName.isNotEmpty ? firstName[0].toUpperCase() + firstName.substring(1) : '';
+    _lastName = lastName.isNotEmpty ? lastName[0].toUpperCase() + lastName.substring(1) : '';
  }
+
+    Future<void> _saveChanges() async {
+      try {
+        await UserData.updateUserDetails(_firstName, _lastName, _bio);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Changes saved successfully')),
+        );
+      } catch (e) {
+        print('Error saving changes: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save changes')),
+        );
+      }
+    }
+
 
   @override
   Widget build(BuildContext context) {
@@ -95,73 +115,113 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 height: 40,
               ),
         
-              TextField(
-              onChanged: (value) {
-                setState(() {
-                  _firstName= value;
-                });
-              },
-              decoration: InputDecoration(
-                hintText: _firstName,
-                filled: true,
-                fillColor: AppColors.darkblue,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
+ // First Name TextField with Heading
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'First Name',
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        _firstName = value;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText: _firstName,
+                      hintStyle: TextStyle(color: Colors.white),
+                      filled: true,
+                      fillColor: AppColors.darkblue,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-        
-              SizedBox(
-                height: 16,
+
+              SizedBox(height: 16),
+
+              // Last Name TextField with Heading
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Last Name',
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        _lastName = value;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText: _lastName,
+                      hintStyle: TextStyle(color: Colors.white),
+                      filled: true,
+                      fillColor: AppColors.darkblue,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-        
-              AppTextField(hint: 'Last Name'),
-              SizedBox(
-                height: 16,
-              ),
-          
-              AppTextField(hint: 'Bio'),
+
+              SizedBox(height: 16),
+
+              // Bio TextField with Heading
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Bio',
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        _bio = value;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText: _bio,
+                      hintStyle: TextStyle(color: Colors.white),
+                      filled: true,
+                      fillColor: AppColors.darkblue,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                  ),
+                ],
+              ), 
 
               SizedBox(
                 height: 30,
               ),
 
+              SizedBox(height: 30),
               SizedBox(
-                
-                child: ElevatedButton(onPressed: () {
-                  print('Saved changed clicked');
-                
-                },
-            
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.darkblue,
-                  foregroundColor: Colors.white,
-                  
-                ),                
-            
-                child: Text('Save Changes')),
+                child: ElevatedButton(
+                  onPressed: _saveChanges,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.darkblue,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: Text('Save Changes'),
+                 ),
               ),
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          
             ],
           ),
         ),
       ),
-
     );
   }
 }

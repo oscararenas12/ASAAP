@@ -31,10 +31,12 @@ class _ProfilePageState extends State<ProfilePage> {
     Map<String, String> userDetails = await UserData.getUserDetails(); // Call getUserDetails from UserData
     String firstName = userDetails['firstName'] ?? '';
     String lastName = userDetails['lastName'] ?? '';
+    String bio = userDetails['bio'] ?? '';
 
     setState(() {
       _firstName = userDetails['firstName'] ?? '';
       _lastName = userDetails['lastName'] ?? '';
+      _bio = bio{}
     });
 
         //capitalize first letter of first and last name
