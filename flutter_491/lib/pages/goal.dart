@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:confetti/confetti.dart';
 import 'package:flutter_491/styles/app_colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,11 +11,13 @@ class GoalPage extends StatefulWidget {
 class _GoalPageState extends State<GoalPage> {
   List<String> goals = [];
   late SharedPreferences _prefs;
+  late ConfettiController _confettiController;
 
   @override
   void initState() {
     super.initState();
     _loadGoals();
+    _confettiController = ConfettiController();
   }
 
   Future<void> _loadGoals() async {
@@ -51,6 +54,9 @@ class _GoalPageState extends State<GoalPage> {
   }
 
   Widget _buildGoalContainer(String goal) {
+
+    final confettiController = ConfettiController();
+
     return Container(
       margin: const EdgeInsets.all(8.0),
       padding: const EdgeInsets.all(16.0),
@@ -75,9 +81,20 @@ class _GoalPageState extends State<GoalPage> {
           IconButton(
             icon: Icon(Icons.check),
             onPressed: () {
-              _showCompletionDialog(goal);
+              _showCompletionDialog(goal,confettiController);
+              confettiController.play();
             },
           ),
+              ConfettiWidget(
+              confettiController: confettiController,
+              blastDirectionality: BlastDirectionality.explosive,
+              shouldLoop: true,
+              colors: [Colors.orange, Colors.blue, Colors.green, Colors.red],
+              numberOfParticles: 10,
+              emissionFrequency: 0.3,
+              minBlastForce: 10,
+              maxBlastForce: 100,
+            ),
         ],
       ),
     );
@@ -123,41 +140,59 @@ class _GoalPageState extends State<GoalPage> {
     );
   }
 
-  void _showCompletionDialog(String goal) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Congratulations on Achieving Your Goal !!!'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              
-              SizedBox(height: 16.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text('Not yet'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      _completeGoal(goal);
-                      Navigator.pop(context);
-                      _showFireworks();
-                    },
-                    child: Text('Thank you'),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
+void _showCompletionDialog(String goal,ConfettiController confettiController) {
+  //final confettiController = ConfettiController();
+
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text('Congratulations on Achieving Your Goal !!!'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    confettiController.stop();
+                    Navigator.pop(context);
+                  },
+                  child: Text('Not yet'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    _completeGoal(goal);
+                    Navigator.pop(context);
+                    //confettiController.play();
+                  },
+                  child: Text('Thank you'),
+                ),
+              ],
+            ),
+            // ConfettiWidget(
+            //   confettiController: confettiController,
+            //   blastDirectionality: BlastDirectionality.explosive,
+            //   shouldLoop: true,
+            //   colors: [Colors.amber, Colors.blue, Colors.green],
+            //   numberOfParticles: 20,
+            //   emissionFrequency: 0.5,
+            //   minBlastForce: 10,
+            //   maxBlastForce: 100,
+            // ),
+          ],
+        ),
+      );
+    },
+  );
+  }
+
+  @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
   }
 
   void _completeGoal(String goal) {
@@ -167,8 +202,11 @@ class _GoalPageState extends State<GoalPage> {
     });
   }
 
-  void _showFireworks() {
-    // Implement fireworks animation or any congratulatory effect
-    // This can be achieved using packages like "flame" or custom animation
+    void _notcompleteGoal(String goal) {
+    setState(() {
+      //goals.remove(goal);
+      _saveGoals();
+    });
   }
+
 }
