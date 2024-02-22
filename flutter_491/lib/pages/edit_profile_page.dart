@@ -130,6 +130,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         _firstName = value;
                       });
                     },
+                    style: TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       hintText: _firstName,
                       hintStyle: TextStyle(color: Colors.white),
