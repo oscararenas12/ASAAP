@@ -1,8 +1,11 @@
 import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_491/config/app_routes.dart';
+import 'package:flutter_491/pages/agenda.dart';
+import 'package:flutter_491/pages/goal.dart';
 import 'package:flutter_491/pages/storage_page.dart';
 import 'package:flutter_491/styles/app_colors.dart';
+import 'package:flutter_491/styles/app_text.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 
@@ -26,7 +29,8 @@ class HomePage extends StatelessWidget {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: AppColors.darkblue,
-        title: Text('Welcome Shark'),
+        title: Text('Welcome Shark', style: AppText.header1),
+
         actions: [
           PopupMenuButton<HomeMenu>(
             onSelected: (value) {
@@ -129,6 +133,7 @@ class HomePage extends StatelessWidget {
                         GestureDetector(
                           onTap: () {
                             // Handle Agenda Icon Click
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => AgendaPage()));
                             print('Agenda icon clicked');
                           },
                           child: Column(
@@ -144,6 +149,7 @@ class HomePage extends StatelessWidget {
                         GestureDetector(
                           onTap: () {
                             // Handle Goal Icon Click
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => GoalPage()));
                             print('Goal icon clicked');
                           },
                           child: Column(

@@ -42,10 +42,21 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
+        textTheme: TextTheme(
+          headlineLarge: TextStyle(),
+          bodyMedium: TextStyle(),
+        ).apply(
+          bodyColor: Colors.white, 
+          displayColor: Colors.white, 
+          
+        ),
+
+
         fontFamily: 'Urbanist',
         brightness: isDarkMode ? Brightness.dark : Brightness.light,
         scaffoldBackgroundColor: isDarkMode ? AppColors.black : AppColors.background,
         useMaterial3: true,
+
       ),
       initialRoute: AppRoutes.login,
       routes: AppRoutes.pages,

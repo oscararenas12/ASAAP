@@ -71,21 +71,25 @@ class _SignUpPageState extends State<SignUpPage> {
             TextField(
               controller: _lastNameController,
               decoration: InputDecoration(labelText: 'Last Name', labelStyle: TextStyle(color: Colors.white)),
+              style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
             ),
             SizedBox(height: 16.0),
             TextField(
               controller: _numberController,
               decoration: InputDecoration(labelText: 'Number', labelStyle: TextStyle(color: Colors.white)),
+              style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
             ),
             SizedBox(height: 16.0),
             TextField(
               controller: _emailController,
               decoration: InputDecoration(labelText: 'Email', labelStyle: TextStyle(color: Colors.white)),
+              style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
             ),
             SizedBox(height: 16.0),
             TextField(
               controller: _passwordController,
               obscureText: !_isPasswordVisible,
+              style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
               decoration: InputDecoration(labelText: 'Password', labelStyle: TextStyle(color: Colors.white),
                 suffixIcon: GestureDetector(
                     onTap: () {
