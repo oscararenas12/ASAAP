@@ -180,7 +180,6 @@ class HomePage extends StatelessWidget {
                         ),
 
                         // Calendar Icon
-                        // Calendar Icon
                         GestureDetector(
                           onTap: () {
                             print('Calendar icon clicked');
