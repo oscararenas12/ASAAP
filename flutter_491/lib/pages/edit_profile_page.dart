@@ -19,7 +19,7 @@ class EditProfilePage extends StatefulWidget {
 class _EditProfilePageState extends State<EditProfilePage> {
   String _firstName = '';
   String _lastName = '';
-  String _bio = 'Edit your BIO';
+  String _bio = '';
 
   @override
   void initState() {
@@ -31,10 +31,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
     Map<String, String> userDetails = await UserData.getUserDetails(); // Call getUserDetails from UserData
     String firstName = userDetails['firstName'] ?? '';
     String lastName = userDetails['lastName'] ?? '';
+    String bio = userDetails['bio'] ?? '';
 
     setState(() {
       _firstName = userDetails['firstName'] ?? '';
       _lastName = userDetails['lastName'] ?? '';
+      _bio = userDetails['bio'] ?? '';
     });
 
     //capitalize first letter of first and last name
@@ -56,6 +58,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
       }
     }
 
+  void _restartPage() {
+    Navigator.of(context).pushNamed(AppRoutes.profile);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -210,8 +215,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
               SizedBox(height: 30),
               SizedBox(
-                child: ElevatedButton(
-                  onPressed: _saveChanges,
+                child:  ElevatedButton(
+                onPressed: () {
+                  _saveChanges();
+                  _restartPage();
+                },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.darkblue,
                     foregroundColor: Colors.white,

@@ -12,6 +12,7 @@ import 'package:flutter_491/pages/settings_page.dart';
 import 'package:flutter_491/pages/signup_page.dart';
 import 'package:flutter_491/pages/customizeAI.dart';
 import 'package:flutter_491/pages/storage_page.dart';
+import 'package:flutter_491/pages/profile_page.dart';
 
 class AppRoutes{
 
@@ -26,6 +27,7 @@ class AppRoutes{
         storage_page:(context) => StoragePage(),
         agenda:(context) => AgendaPage(),
         goal:(context) => GoalPage(),
+        profile:(context) => ProfilePage(),
 
         //home_page navigator
         edit_profile:(context) => EditProfilePage(),
@@ -52,4 +54,5 @@ class AppRoutes{
   static const storage_page = '/storage_page';
   static const agenda = '/agenda';
   static const goal = '/goal';
+  static const profile = '/profile';
 }
