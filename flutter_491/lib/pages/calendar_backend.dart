@@ -1,29 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Dart date formatting
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-
-
-/// *********************** SCHEDULED ITEM ABSTRACT CLASS *************************
-abstract class ScheduleItem {
-  String id;
-  String title;
-  String? description; // '?' denotes that description is not required
-  DateTime dueDate;
-  String category;
-
-  
-  ScheduleItem({
-    required this.id,
-    required this.title,
-    required this.description,
-    required this.dueDate,
-    required this.category,
-  });
-}
-
-enum PriorityLevel { low, medium, high, urgent }
-enum Status { notStarted, inProgress, complete }
-enum RecurrenceType { none, daily, weekly, monthly }
 
 class Recurrence {
   final RecurrenceType type;
@@ -32,6 +10,36 @@ class Recurrence {
 
   Recurrence({required this.type, this.interval = 1, this.endDate});
 }
+
+/// *********************** SCHEDULED ITEM ABSTRACT CLASS *************************
+abstract class ScheduleItem {
+  String id;
+  String title;
+  String? description; // '?' denotes that description is not required
+  DateTime dueDate;
+  String category;
+  Recurrence recurrence;
+  String type;
+
+  Type getType();
+
+  
+  ScheduleItem({
+    required this.id,
+    required this.title,
+    this.description,
+    required this.dueDate,
+    required this.category,
+    required this.recurrence,
+    required this.type
+  });
+}
+
+enum PriorityLevel { low, medium, high, urgent }
+enum Status { notStarted, inProgress, complete }
+enum RecurrenceType { none, daily, weekly, monthly }
+enum Type{ Event, Task}
+
 
 class Categories {
   static const String work = 'Work';
@@ -46,23 +54,27 @@ class Categories {
 class Task extends ScheduleItem {
   PriorityLevel priority;
   Status currentStatus;
-  Recurrence recurrence;
+  Type type;
+
+   @override
+  Type getType() => Type.Task; 
 
   Task({
     required String id,
     required String title,
-    required String description,
+    String? description, // Make optional in constructor
     required DateTime dueDate,
     required String category,
+    required Recurrence recurrence, // Add this line
     required this.priority,
     this.currentStatus = Status.notStarted,
-    required this.recurrence,
   }) : super(
           id: id,
           title: title,
           description: description,
           dueDate: dueDate,
-          category: category
+          category: category,
+          recurrence: recurrence, // Pass recurrence to superclass
         );
 
  //FIREBASE TASK INFO
@@ -88,23 +100,25 @@ class Task extends ScheduleItem {
 class Event extends ScheduleItem {
   DateTime endTime;
   String? location;
-  Recurrence recurrence;
+  @override
+  Type getType() => Type.Event;
 
   Event({
     required String id,
     required String title,
-    required String description,
+    String? description, // Make optional in constructor
     required DateTime dueDate,
     required this.endTime,
-    this.location,
     required String category,
-    required this.recurrence,
+    required Recurrence recurrence, // Add this line
+    this.location,
   }) : super(
           id: id,
           title: title,
           description: description,
           dueDate: dueDate,
           category: category,
+          recurrence: recurrence, // Pass recurrence to superclass
         );
 
   // FIREBASE EVENT INFO
@@ -113,7 +127,7 @@ class Event extends ScheduleItem {
     'id': id,
     'title': title,
     'description': description ?? "",
-    'startTime': Timestamp.fromDate(dueDate), // Assuming startTime maps to dueDate in your model
+    'startTime': Timestamp.fromDate(dueDate), 
     'endTime': Timestamp.fromDate(endTime),
     'category': category,
     'location': location ?? "",
@@ -144,7 +158,7 @@ class Reminder {
       final daysLeft = item.dueDate.difference(DateTime.now()).inDays;
       return "Task reminder: ${item.title} - $daysLeft days left until due";
     } else if (item is Event) {
-      final dateFormat = DateFormat('yyyy-MM-dd HH:mm'); // Customize the format as needed
+      final dateFormat = DateFormat('yyyy-MM-dd HH:mm'); 
       final eventDateTime = dateFormat.format(item.dueDate);
       return "Event reminder: ${item.title} on $eventDateTime";
     } else {
@@ -167,7 +181,7 @@ class Reminder {
 
 /// ************************ CALENDAR CLASS ***********************************
 
-class Calendar() {
+class Calendar {
   
   Map<String, List<ScheduleItem>> scheduleItemsByDate = {};
   Map<String, List<Reminder>> remindersByItemId = {}; // Map item ID to its reminders
@@ -177,26 +191,34 @@ class Calendar() {
 
     
 
-  void addScheduleItem(ScheduleItem item) {
+  void addScheduleItem(ScheduleItem item, String userId, String calendarId) {
     final dateKey = _dateKey(item.dueDate);
     scheduleItemsByDate.putIfAbsent(dateKey, () => []).add(item);
 
       // Add Scheduled Items to Firebase Database
       if (item is Task){
-        addTaskToFirestore(item,userId,calendarId);
+        addTaskToFirebase(item,userId,calendarId);
       }
       else if (item is Event){
-        addEventToFirestore(item,userId,calendarId);
+        addEventToFirebase(item,userId,calendarId);
       }
     }
   
 
   void addReminderToItem(String itemId, Reminder reminder) {
-    try{if (!remindersByItemId.containsKey(itemId)) {
-      remindersByItemId[itemId] = [];
+    try{
+      if (!remindersByItemId.containsKey(itemId)) {
+        remindersByItemId[itemId] = [];
+        remindersByItemId[itemId]?.add(reminder);
+        if(reminder.item is Task){
+          addReminderToFirebase(userId,calendarId, itemId, Task, reminder);
+        }
+        else if (reminder.item is Event){
+           addReminderToFirebase(userId,calendarId, itemId, Event, reminder);
+
+        }
     }
-    remindersByItemId[itemId]?.add(reminder);
-    addReminderToFirestore(userId,calendarId, itemId,itemType, reminder);
+
     }
      catch (e) {
     print("An error occurred: $e");
@@ -251,7 +273,7 @@ Future<void> addTaskToFirebase(Task task, String userId, String calendarId) asyn
   }
 }
 // Add Reminder to Firebase
-Future<void> addReminderToFirestore({
+Future<void> addReminderToFirebase({
   required String userId,
   required String calendarId,
   required String itemId,
@@ -277,11 +299,11 @@ Future<void> addReminderToFirestore({
 }
 
 // Add Event to Firebase
-Future<void> addEventToFirestore({
+Future<void> addEventToFirebase({
   required Event event,
   required String userId,
-  required String calendarId,
-}) async {
+  required String calendarId
+  }) async {
   try {
     await FirebaseFirestore.instance
         .collection('users')
