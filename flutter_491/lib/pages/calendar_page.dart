@@ -10,6 +10,7 @@ class _FullScreenCalendarPageState extends State<FullScreenCalendarPage> {
   late EventController _eventController;
   DateTime? _selectedDay; // Variable to track the selected day
   DateTime? _focusedDay; // Variable to track the current focused month for the header
+  bool _isButtonsVisible = false; // Variable to track the visibility of the buttons
 
   @override
   void initState() {
@@ -67,6 +68,10 @@ class _FullScreenCalendarPageState extends State<FullScreenCalendarPage> {
   }
 
   void _showAddEventDialog(BuildContext context, String eventType) {
+    TimeOfDay? startTime; // Variable to store the start time
+    TimeOfDay? endTime; // Variable to store the end time
+    String? recurrence = 'Once'; // Default to 'Once'
+
     showDialog(
       context: context,
       builder: (context) {
@@ -83,12 +88,87 @@ class _FullScreenCalendarPageState extends State<FullScreenCalendarPage> {
                   TextField(
                     decoration: InputDecoration(labelText: 'Description'),
                   ),
-                  // Add more fields if needed
+                  if (eventType == 'Event') // Recurrence option for events
+                    Column(
+                      children: [
+                        ListTile(
+                          title: Text(startTime != null
+                              ? 'Start Time: ${startTime?.format(context)}'
+                              : 'Choose Start Time'),
+                          trailing: Icon(Icons.access_time),
+                          onTap: () async {
+                            final TimeOfDay? pickedStartTime = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.now(),
+                            );
+                            if (pickedStartTime != null && pickedStartTime != startTime) {
+                              setState(() {
+                                startTime = pickedStartTime;
+                              });
+                            }
+                          },
+                        ),
+                        ListTile(
+                          title: Text(endTime != null
+                              ? 'End Time: ${endTime?.format(context)}'
+                              : 'Choose End Time'),
+                          trailing: Icon(Icons.access_time),
+                          onTap: () async {
+                            final TimeOfDay? pickedEndTime = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.now(),
+                            );
+                            if (pickedEndTime != null && pickedEndTime != endTime) {
+                              setState(() {
+                                endTime = pickedEndTime;
+                              });
+                            }
+                          },
+                        ),
+                        DropdownButtonFormField<String>(
+                          value: recurrence,
+                          decoration: InputDecoration(labelText: 'Recurrence'),
+                          items: ['Once', 'Daily', 'Weekly', 'Monthly']
+                              .map((String value) => DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          ))
+                              .toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              recurrence = newValue;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  if (eventType == 'Task') // Recurrence option for tasks
+                    DropdownButtonFormField<String>(
+                      value: recurrence,
+                      decoration: InputDecoration(labelText: 'Recurrence'),
+                      items: ['Once', 'Daily', 'Weekly', 'Monthly']
+                          .map((String value) => DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      ))
+                          .toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          recurrence = newValue;
+                        });
+                      },
+                    ),
                 ],
               );
             },
           ),
           actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog without saving
+              },
+              child: Text('Cancel'),
+            ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
@@ -102,52 +182,6 @@ class _FullScreenCalendarPageState extends State<FullScreenCalendarPage> {
     );
   }
 
-  // Updated to show a popup menu
-  // This new method shows a pop-up menu to choose between adding an Event or a Task
-  void _showAddMenu(BuildContext context) async {
-    final RenderBox fabRenderBox = context.findRenderObject() as RenderBox;
-    final fabPosition = fabRenderBox.localToGlobal(Offset.zero);
-
-    // Here you can adjust these offsets
-    final double offsetX = -410.0; // horizontal offset from the FAB
-    final double offsetY = -1220.0; // vertical offset from the FAB
-
-    final left = fabPosition.dx - offsetX; // move left from the FAB's right edge
-    final top = fabPosition.dy - fabRenderBox.size.height - offsetY; // move up from the FAB's bottom edge
-    final right = left + fabRenderBox.size.width + offsetX * 2; // maintain the width of the popup menu
-    final bottom = top + fabRenderBox.size.height + offsetY; // maintain the height
-
-    await showMenu(
-      context: context,
-      position: RelativeRect.fromLTRB(left, top, right, bottom),
-      items: <PopupMenuEntry>[
-        PopupMenuItem(
-          value: 'event',
-          child: Icon(Icons.calendar_today), // Calendar symbol for events
-          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0), // Adjust padding as needed
-        ),
-        PopupMenuItem(
-          value: 'task',
-          child: Icon(Icons.check), // Check mark for tasks
-          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0), // Adjust padding as needed
-        ),
-      ],
-      constraints: BoxConstraints(
-        minWidth: 0, // Minimum width of the menu box
-        maxWidth: 100, // Maximum width of the menu box, ensure it is equal to minWidth for a fixed width
-        minHeight: 0, // Minimum height of the menu box
-        maxHeight: 100, // Maximum height of the menu box, ensure it is equal to minHeight for a fixed height
-      ),
-    ).then((value) {
-      if (value != null) {
-        if (value == 'event') {
-          _showAddEventDialog(context, 'Event');
-        } else if (value == 'task') {
-          _showAddEventDialog(context, 'Task');
-        }
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -155,19 +189,57 @@ class _FullScreenCalendarPageState extends State<FullScreenCalendarPage> {
       controller: _eventController,
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            _showAddMenu(context); // Call the _showAddMenu method here
-          },
-          child: Icon(Icons.add),
+        floatingActionButton: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Visibility(
+              visible: _isButtonsVisible,
+              child: Container(
+                width: 35, // Custom width for the button
+                height: 35, // Custom height for the button
+                child: FloatingActionButton(
+                  onPressed: () {
+                    _showAddEventDialog(context, 'Event');
+                  },
+                  child: Icon(Icons.calendar_today),
+                  heroTag: 'eventButton',
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            Visibility(
+              visible: _isButtonsVisible,
+              child: Container(
+                width: 35, // Custom width for the button
+                height: 35, // Custom height for the button
+                child: FloatingActionButton(
+                  onPressed: () {
+                    _showAddEventDialog(context, 'Task');
+                  },
+                  child: Icon(Icons.check),
+                  heroTag: 'taskButton',
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            FloatingActionButton(
+              onPressed: () {
+                setState(() {
+                  _isButtonsVisible = !_isButtonsVisible; // Toggle the visibility of the buttons
+                });
+              },
+              child: Icon(Icons.add),
+              heroTag: 'mainButton',
+            ),
+          ],
         ),
         body: ClipRRect(
-          borderRadius: BorderRadius.circular(25), // This clips the Scaffold body
+          borderRadius: BorderRadius.circular(25),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white, // Background color of the container
+              color: Colors.white,
             ),
-            child: _buildMonthView(), // The MonthView builder method
+            child: _buildMonthView(),
           ),
         ),
       ),
