@@ -1,5 +1,6 @@
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Dart date formatting
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -19,9 +20,9 @@ abstract class ScheduleItem {
   DateTime dueDate;
   String category;
   Recurrence recurrence;
-  String type;
+  ItemType itemType;
 
-  Type getType();
+  ItemType getItemType();
 
   
   ScheduleItem({
@@ -31,14 +32,14 @@ abstract class ScheduleItem {
     required this.dueDate,
     required this.category,
     required this.recurrence,
-    required this.type
+    required this.itemType,
   });
 }
 
 enum PriorityLevel { low, medium, high, urgent }
 enum Status { notStarted, inProgress, complete }
-enum RecurrenceType { none, daily, weekly, monthly }
-enum Type{ Event, Task}
+enum RecurrenceType { once, daily, weekly, monthly }
+enum ItemType{ event, task}
 
 
 class Categories {
@@ -54,10 +55,14 @@ class Categories {
 class Task extends ScheduleItem {
   PriorityLevel priority;
   Status currentStatus;
-  Type type;
+  @override
+  ItemType itemType;
 
    @override
-  Type getType() => Type.Task; 
+  ItemType getItemType() => ItemType.task;
+  void setPriority () {
+    
+  }
 
   Task({
     required String id,
@@ -67,14 +72,17 @@ class Task extends ScheduleItem {
     required String category,
     required Recurrence recurrence, // Add this line
     required this.priority,
-    this.currentStatus = Status.notStarted,
-  }) : super(
+    required Status currentStatus,
+    required ItemType itemType 
+    
+  }) : itemType = ItemType.task, currentStatus = Status.notStarted, super(
           id: id,
           title: title,
           description: description,
           dueDate: dueDate,
           category: category,
-          recurrence: recurrence, // Pass recurrence to superclass
+          recurrence: recurrence,
+          itemType: itemType,
         );
 
  //FIREBASE TASK INFO
@@ -101,7 +109,9 @@ class Event extends ScheduleItem {
   DateTime endTime;
   String? location;
   @override
-  Type getType() => Type.Event;
+  ItemType itemType;
+  @override
+  ItemType getItemType() => ItemType.event;
 
   Event({
     required String id,
@@ -112,13 +122,16 @@ class Event extends ScheduleItem {
     required String category,
     required Recurrence recurrence, // Add this line
     this.location,
-  }) : super(
+    required ItemType itemType,
+
+  }) : itemType = ItemType.event, super(
           id: id,
           title: title,
           description: description,
           dueDate: dueDate,
           category: category,
           recurrence: recurrence, // Pass recurrence to superclass
+          itemType: ItemType.event,
         );
 
   // FIREBASE EVENT INFO
@@ -142,15 +155,17 @@ class Event extends ScheduleItem {
 
 /// ****************************** REMINDER CLASS *******************************
 class Reminder {
+  String id; // New field for the reminder ID
   ScheduleItem item;
   DateTime reminderTime;
   String message;
 
   Reminder({
+    required this.id, // Include id parameter in the constructor
     required this.item,
     required this.reminderTime,
     String? message,
-  }) : this.message = message ?? _defaultMessageForItem(item, reminderTime);
+  }) : message = message ?? _defaultMessageForItem(item, reminderTime);
 
   // Updated helper method to format event date and time
   static String _defaultMessageForItem(ScheduleItem item, DateTime reminderTime) {
@@ -172,91 +187,155 @@ class Reminder {
 
   // FIREBASE
   Map<String, dynamic> toMap() {
-  return {
-    'reminderTime': Timestamp.fromDate(reminderTime),
-    'message': message,
-  };
+    return {
+      'id': id,
+      'reminderTime': Timestamp.fromDate(reminderTime),
+      'message': message,
+    };
   }
 }
+
 
 /// ************************ CALENDAR CLASS ***********************************
 
 class Calendar {
-  
-  Map<String, List<ScheduleItem>> scheduleItemsByDate = {};
-  Map<String, List<Reminder>> remindersByItemId = {}; // Map item ID to its reminders
-  Map<String, String?> ids = await CalendarUtils.getCurrentUserIdAndCalendarId();
-    final String? userId = ids['userId'];
-    final String? calendarId = ids['calendarId'];
+  Map<String, ScheduleItem> scheduleItemsById = {};
+  Map<String, List<Reminder>> remindersByItemId = {};
+  String? userId;
+  String? calendarId;
 
-    
+  Calendar._privateConstructor();
 
+  static Future<Calendar> create() async {
+    var calendar = Calendar._privateConstructor();
+    await calendar._initialize();
+    return calendar;
+  }
+
+  Future<void> _initialize() async {
+    try {
+      Map<String, String?> ids = await CalendarUtils.getCurrentUserIdAndCalendarId();
+      userId = ids['userId'];
+      calendarId = ids['calendarId'];
+    } catch (e) {
+      print("Error initializing calendar with user and calendar ID: $e");
+    }
+  }
+
+  // Add event or task to calendar list and firebase
   void addScheduleItem(ScheduleItem item, String userId, String calendarId) {
-    final dateKey = _dateKey(item.dueDate);
-    scheduleItemsByDate.putIfAbsent(dateKey, () => []).add(item);
+    try {
+      scheduleItemsById[item.id] = item;
 
-      // Add Scheduled Items to Firebase Database
-      if (item is Task){
-        addTaskToFirebase(item,userId,calendarId);
+      if (item is Task) {
+        addTaskToFirebase(item, userId, calendarId);
+      } else if (item is Event) {
+        addEventToFirebase(item, userId, calendarId);
       }
-      else if (item is Event){
-        addEventToFirebase(item,userId,calendarId);
-      }
+    } catch (e) {
+      print("Error adding schedule item: $e");
     }
-  
-
+  }
+  //Add reminder to calendar class reminder list and firebase 
   void addReminderToItem(String itemId, Reminder reminder) {
-    try{
-      if (!remindersByItemId.containsKey(itemId)) {
-        remindersByItemId[itemId] = [];
-        remindersByItemId[itemId]?.add(reminder);
-        if(reminder.item is Task){
-          addReminderToFirebase(userId,calendarId, itemId, Task, reminder);
-        }
-        else if (reminder.item is Event){
-           addReminderToFirebase(userId,calendarId, itemId, Event, reminder);
+    try {
+      remindersByItemId.putIfAbsent(itemId, () => []).add(reminder);
 
+      var item = scheduleItemsById[itemId];
+      if (item != null) {
+        if (item is Task) {
+          addReminderToFirebase(userId!, calendarId!, itemId, "Task", reminder);
+        } else if (item is Event) {
+          addReminderToFirebase(userId!, calendarId!, itemId, "Event", reminder);
         }
+      }
+    } catch (e) {
+      print("Error adding reminder to item: $e");
     }
-
-    }
-     catch (e) {
-    print("An error occurred: $e");
   }
 
+  // If user wants to delete scheduled item, it will delete scheduled item and any other associations it has like its reminders
+  //Also deletes information from firebase as well
+  Future<void> deleteScheduledItemAndReminders(String itemId, String itemType) async {
+  try {
+    // Delete the scheduled item from its respective collection (tasks or events) in Firebase
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('calendar')
+        .doc(calendarId)
+        .collection(itemType.toLowerCase() + 's') // 'tasks' or 'events'
+        .doc(itemId)
+        .delete();
+
+    // Query and delete all reminders associated with this item in Firebase
+    var remindersQuerySnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('calendar')
+        .doc(calendarId)
+        .collection('reminders')
+        .where('itemId', isEqualTo: itemId)
+        .get();
+
+    for (var doc in remindersQuerySnapshot.docs) {
+      await doc.reference.delete();
+    }
+
+    // Remove the scheduled item from the in-memory list
+    scheduleItemsById.remove(itemId);
+
+    // Remove all associated reminders from the in-memory list
+    remindersByItemId.remove(itemId);
+
+    print("Scheduled item and all associated reminders deleted successfully from Firebase and local lists.");
+  } catch (e) {
+    print("Error deleting scheduled item and reminders: $e");
+    throw e; // Consider handling this more gracefully in your application
   }
+}
+
+// deleting just a reminder (needs reminderID) 
+Future<void> deleteReminder(String itemId, String reminderId) async {
+  try {
+    // Delete the reminder from Firebase
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('calendar')
+        .doc(calendarId)
+        .collection('reminders')
+        .doc(reminderId) // Use the reminder's unique ID
+        .delete();
+
+    // Remove the reminder from the in-memory list
+    // Check if the list of reminders for the item exists and contains the reminder
+    if (remindersByItemId.containsKey(itemId)) {
+      // Assuming reminders have a unique 'id' property for identification
+      remindersByItemId[itemId]?.removeWhere((reminder) => reminder.id == reminderId);
+      // Optionally, if there are no more reminders for the item, you might remove the item's entry
+      if (remindersByItemId[itemId]?.isEmpty ?? false) {
+        remindersByItemId.remove(itemId);
+      }
+    }
+
+    print("Reminder deleted successfully from Firebase and local list.");
+  } catch (e) {
+    print("Error deleting reminder: $e");
+    throw e;
+  }
+}
 
   List<Reminder>? getRemindersForItem(String itemId) {
-    return remindersByItemId[itemId];
-  }
-
-  String _dateKey(DateTime date) =>
-      '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-}
-
-/// ************************ CALENDAR UTILS CLASS **********************************/
-
-class CalendarUtils {
-  static Future<Map<String, String?>> getCurrentUserIdAndCalendarId() async {
-    final User? user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      throw Exception("No user signed in");
+    try {
+      return remindersByItemId[itemId];
+    } catch (e) {
+      print("Error retrieving reminders for item: $e");
+      return null;
     }
-    final userId = user.uid;
-
-    final DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
-    final calendarId = userDoc.data()?['calendarId'] as String?;
-
-    if (calendarId == null) {
-      throw Exception("No calendarId found for user");
-    }
-
-    return {'userId': userId, 'calendarId': calendarId};
   }
-}
-/// ************************ ADDITIONAL FIREBASE FUNCTIONS ******************************
-
-// Add Task to Firebase
+  /************* Firebase Functions ****************/
+  // Add Task to Firebase
 
 Future<void> addTaskToFirebase(Task task, String userId, String calendarId) async {
   try {
@@ -273,13 +352,9 @@ Future<void> addTaskToFirebase(Task task, String userId, String calendarId) asyn
   }
 }
 // Add Reminder to Firebase
-Future<void> addReminderToFirebase({
-  required String userId,
-  required String calendarId,
-  required String itemId,
-  required String itemType,
-  required Reminder reminder,
-}) async {
+Future<void> addReminderToFirebase( String userId,String calendarId,String itemId,
+  String itemType,Reminder reminder,
+) async {
   try {
     await FirebaseFirestore.instance
         .collection('users')
@@ -299,11 +374,9 @@ Future<void> addReminderToFirebase({
 }
 
 // Add Event to Firebase
-Future<void> addEventToFirebase({
-  required Event event,
-  required String userId,
-  required String calendarId
-  }) async {
+Future<void> addEventToFirebase(
+  Event event, String userId,String calendarId
+  ) async {
   try {
     await FirebaseFirestore.instance
         .collection('users')
@@ -318,4 +391,62 @@ Future<void> addEventToFirebase({
   }
 }
 
+
+
+}
+
+/// ************************ CALENDAR UTILS CLASS **********************************/
+
+class CalendarUtils {
+  static Future<Map<String, String>> getCurrentUserIdAndCalendarId() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw Exception("No user signed in");
+    }
+    final userId = user.uid;
+
+    final DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    final data = userDoc.data();
+    if (data == null) {
+      throw Exception("No data found for the user");
+    }
+
+    // Explicitly cast data to Map<String, dynamic> to avoid type errors
+    final Map<String, dynamic> userData = data as Map<String, dynamic>;
+
+    // Extract calendarId from user document data
+    String? calendarId = userData['defaultCalendarId'];
+    if (calendarId == null) {
+      throw Exception("No calendarId found for user");
+    }
+
+    return {'userId': userId, 'calendarId': calendarId};
+  }
+}
+
+
+// Calendar Firebase
+//Jessica Calendar
+String generateCalendarId() {
+  var rng = Random();
+  return 'cal_${List.generate(10, (_) => rng.nextInt(9).toString()).join()}';
+}
+
+Future<void> createUserCalendar(String userId) async {
+  String calendarId = generateCalendarId(); 
+
+  // Create a calendar document with the generated ID 
+  await FirebaseFirestore.instance
+      .collection('users')
+      .doc(userId) // Corrected to use userId
+      .collection('calendar')
+      .doc(calendarId)
+      .set({'name': 'My Calendar', /* other calendar properties */});
+
+  // Optionally, store the calendarId in the user's profile for easy access
+  await FirebaseFirestore.instance
+      .collection('users')
+      .doc(userId)
+      .set({'defaultCalendarId': calendarId}, SetOptions(merge: true));
+}
 
