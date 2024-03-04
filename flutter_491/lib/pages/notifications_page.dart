@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_491/components/app_textfield.dart';
 import 'package:flutter_491/components/toolbar.dart';
+import 'package:flutter_491/components/user_avatar.dart';
 import 'package:flutter_491/styles/app_colors.dart';
+
+import 'package:flutter/material.dart';
+
 
 
 class NotificationPage extends StatelessWidget {

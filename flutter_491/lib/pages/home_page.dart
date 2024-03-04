@@ -1,8 +1,6 @@
 import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_491/config/app_routes.dart';
-import 'package:flutter_491/pages/agenda.dart';
-import 'package:flutter_491/pages/goal.dart';
 import 'package:flutter_491/pages/storage_page.dart';
 import 'package:flutter_491/styles/app_colors.dart';
 import 'package:flutter_491/styles/app_text.dart';
@@ -135,7 +133,6 @@ class HomePage extends StatelessWidget {
                         GestureDetector(
                           onTap: () {
                             // Handle Agenda Icon Click
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => AgendaPage()));
                             print('Agenda icon clicked');
                           },
                           child: Column(
@@ -151,7 +148,6 @@ class HomePage extends StatelessWidget {
                         GestureDetector(
                           onTap: () {
                             // Handle Goal Icon Click
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => GoalPage()));
                             print('Goal icon clicked');
                           },
                           child: Column(
@@ -187,6 +183,7 @@ class HomePage extends StatelessWidget {
                           ),
                         ),
 
+                        // Calendar Icon
                         // Calendar Icon
                         GestureDetector(
                           onTap: () {
