@@ -40,7 +40,13 @@ class _SignUpPageState extends State<SignUpPage> {
       print("Account created: ${userCredential.user!.email}");
 
       // Create a calendar for the user
-      await createUserCalendar(userCredential.user!.uid);
+      try {
+        await createUserCalendar(userCredential.user!.uid);
+        print("CalendarID created");
+      } catch (e) {
+        print("Failed to create user calendar: $e");
+        // Handle calendar creation failure
+      }
   
       Navigator.of(context).pushNamed(AppRoutes.login);
     } on FirebaseAuthException catch (e) {

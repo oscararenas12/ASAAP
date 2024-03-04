@@ -385,6 +385,7 @@ Future<void> addEventToFirebase(
         .doc(calendarId)
         .collection('events')
         .add(event.toMap());
+    print("Successfully Added EventID");
   } catch (e) {
     print("Error adding event to Firestore: $e");
     throw e; 
@@ -433,17 +434,18 @@ String generateCalendarId() {
 }
 
 Future<void> createUserCalendar(String userId) async {
-  String calendarId = generateCalendarId(); 
+  // Create a new calendar ID
+  String calendarId = userId; // Using the user's ID as the calendar ID for simplicity
 
-  // Create a calendar document with the generated ID 
+  // Create a calendar document with the user's ID as the calendar ID
   await FirebaseFirestore.instance
       .collection('users')
-      .doc(userId) // Corrected to use userId
+      .doc(userId)
       .collection('calendar')
       .doc(calendarId)
       .set({'name': 'My Calendar', /* other calendar properties */});
 
-  // Optionally, store the calendarId in the user's profile for easy access
+  // Store the calendarId in the user's document for easy access
   await FirebaseFirestore.instance
       .collection('users')
       .doc(userId)
