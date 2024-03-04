@@ -59,7 +59,9 @@ class HomePage extends StatelessWidget {
         ],
       ),
       body: Column(
+        
         children: [
+          
           // Rounded Image
           Padding(
             padding: EdgeInsets.all(16),

@@ -1,3 +1,6 @@
+import 'package:flutter_491/Campus%20Map/current_location.dart';
+import 'package:flutter_491/Campus%20Map/map_polyline.dart';
+import 'package:flutter_491/Campus%20Map/search_map.dart';
 import 'package:flutter_491/pages/chat_page.dart';
 import 'package:flutter_491/pages/edit_profile_page.dart';
 import 'package:flutter_491/pages/home_page.dart';
@@ -29,6 +32,15 @@ class AppRoutes{
         chat:(context) => ChatPage(),
         notifications_page:(context) => NotificationPage(),
 
+      //map navigator
+        searchmap:(context) => SearchPlaces(),
+        userlocation:(context) => CurrentLocation(),
+        directionpolyine:(context) => MapPolyline(),
+
+
+
+
+
   };
 
 
@@ -46,4 +58,15 @@ class AppRoutes{
   static const signup = '/signup';
   static const customize_AI = '/customize_AI';
   static const storage_page = '/storage_page';
+
+
+//map routes
+  static const searchmap = '/search_map';
+  static const userlocation = '/user_location';
+  static const directionpolyine = '/direction_polyline';
+
+
+
+
+
 }
