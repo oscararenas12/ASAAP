@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_491/config/app_routes.dart';
 import 'package:flutter_491/styles/app_colors.dart';
+import 'calendar_backend.dart';
+
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -34,12 +36,23 @@ class _SignUpPageState extends State<SignUpPage> {
         'number': _numberController.text.trim(),
         // Add other fields as needed
       });
-
+      
       print("Account created: ${userCredential.user!.email}");
+
+      // Create a calendar for the user
+      try {
+        await createUserCalendar(userCredential.user!.uid);
+        print("CalendarID created");
+      } catch (e) {
+        print("Failed to create user calendar: $e");
+        // Handle calendar creation failure
+      }
+  
       Navigator.of(context).pushNamed(AppRoutes.login);
     } on FirebaseAuthException catch (e) {
       print("Failed to create account: ${e.message}");
       // Handle errors based on the FirebaseAuthException code.
+
     }
   }
 
@@ -71,25 +84,21 @@ class _SignUpPageState extends State<SignUpPage> {
             TextField(
               controller: _lastNameController,
               decoration: InputDecoration(labelText: 'Last Name', labelStyle: TextStyle(color: Colors.white)),
-              style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
             ),
             SizedBox(height: 16.0),
             TextField(
               controller: _numberController,
               decoration: InputDecoration(labelText: 'Number', labelStyle: TextStyle(color: Colors.white)),
-              style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
             ),
             SizedBox(height: 16.0),
             TextField(
               controller: _emailController,
               decoration: InputDecoration(labelText: 'Email', labelStyle: TextStyle(color: Colors.white)),
-              style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
             ),
             SizedBox(height: 16.0),
             TextField(
               controller: _passwordController,
               obscureText: !_isPasswordVisible,
-              style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
               decoration: InputDecoration(labelText: 'Password', labelStyle: TextStyle(color: Colors.white),
                 suffixIcon: GestureDetector(
                     onTap: () {

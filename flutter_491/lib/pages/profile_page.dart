@@ -20,28 +20,32 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   String _firstName = '';
   String _lastName = '';
+  String _bio = '';
 
   @override
   void initState() {
     super.initState();
     _loadUserDetails();
+    print(_firstName);
   }
 
+  
   Future<void> _loadUserDetails() async {
     Map<String, String> userDetails = await UserData.getUserDetails(); // Call getUserDetails from UserData
     String firstName = userDetails['firstName'] ?? '';
     String lastName = userDetails['lastName'] ?? '';
+    String bio = userDetails['bio'] ?? '';
 
     setState(() {
       _firstName = userDetails['firstName'] ?? '';
       _lastName = userDetails['lastName'] ?? '';
+      _bio = userDetails['bio'] ?? '';
     });
 
-        //capitalize first letter of first and last name
+    //capitalize first letter of first and last name
     _firstName = firstName.isNotEmpty ? firstName[0].toUpperCase() + firstName.substring(1) : '';
     _lastName = lastName.isNotEmpty ? lastName[0].toUpperCase() + lastName.substring(1) : '';
-
-  }
+ }
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +71,7 @@ class _ProfilePageState extends State<ProfilePage> {
             textAlign: TextAlign.center
             ),
 
-            Text('Student Bio', style: AppText.header2,
+            Text('$_bio', style: AppText.header2,
             textAlign: TextAlign.center
             ),
 
