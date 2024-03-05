@@ -41,7 +41,7 @@ class AppRoutes{
       //map navigator
         searchmap:(context) => SearchPlaces(),
         userlocation:(context) => CurrentLocation(),
-        directionpolyine:(context) => MapPolyline(),
+        directionpolyline:(context) => MapPolyline(),
 
 
 
@@ -72,7 +72,7 @@ class AppRoutes{
 //map routes
   static const searchmap = '/search_map';
   static const userlocation = '/user_location';
-  static const directionpolyine = '/direction_polyline';
+  static const directionpolyline = '/direction_polyline';
 
 
 

@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_491/config/app_routes.dart';
+import 'package:flutter_491/styles/app_text.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 //search imports
@@ -42,12 +44,13 @@ class _CampusMapState extends State<CampusMap> {
 
   static const CameraPosition initialCameraPosition = CameraPosition(
     target: LatLng(33.7838, -118.1141),
-    zoom: 14,
+    zoom: 15,
     );
-  
+
   static const CameraPosition targetPosition = CameraPosition(
     target: LatLng(33.7838, -118.1141),
-    zoom: 14,
+    //back to campus
+    zoom: 15,
     );
 
 //marker for searchPlaces()
@@ -68,10 +71,11 @@ class _CampusMapState extends State<CampusMap> {
     return Scaffold(
       key: homeScaffoldKey,
       appBar: AppBar(
-        title: const Text("CSULB MAP"),
-        foregroundColor: Colors.white,
+        title: const Text("CSULB MAP", style: AppText.header1,),
         backgroundColor: AppColors.darkblue,
       ),
+
+      
       body: Stack(
         children: [
           GoogleMap(
@@ -79,6 +83,7 @@ class _CampusMapState extends State<CampusMap> {
             markers: markersList, 
             //markers: markersUser,
             zoomControlsEnabled: false,
+            //change map style
             mapType: MapType.terrain,
             onMapCreated: (GoogleMapController controller) {
               googleMapController = controller;
@@ -106,8 +111,8 @@ floatingActionButton: Column(
             onPressed: () { 
               toggleOptions(); // When the main FAB is pressed, toggleOptions is called 
             }, 
-            label: Text('OPTIONS'), 
-            icon: Icon(Icons.add), 
+            label: Text("Options"), 
+            icon: Icon(Icons.control_point), 
             backgroundColor: AppColors.darkblue, 
             foregroundColor: const Color.fromARGB(255, 255, 255, 255)
           ), 
@@ -124,12 +129,18 @@ floatingActionButton: Column(
                   tooltip: 'CSULB Location', 
                   child: Icon(Icons.school), 
                 ), 
-                SizedBox(height: 16.0), 
+                SizedBox(height: 10.0), 
                 FloatingActionButton( 
                   onPressed: () async {
                     Position position = await _determinePosition();
+
+                    //user location zoom
                     googleMapController
-                        .animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(position.latitude, position.longitude), zoom: 14)));
+                        .animateCamera(CameraUpdate.newCameraPosition(
+                          CameraPosition(
+                            target: LatLng(position.latitude, position.longitude), 
+                            zoom: 17,
+                            )));
 
                     markersList.clear();
                     markersList.add(Marker(markerId: const MarkerId('currentLocation'),position: LatLng(position.latitude, position.longitude)));
@@ -137,39 +148,22 @@ floatingActionButton: Column(
                     setState(() {});
                   }, 
                   tooltip: 'Your Location',                  
-                  child: Icon(Icons.person_pin_sharp), 
-                ), 
+                  child: Icon(Icons.gps_fixed), 
+                ),
+                SizedBox(height: 10.0), 
+                FloatingActionButton( 
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(AppRoutes.directionpolyline);
+                  }, 
+                  tooltip: 'Directions', 
+                  child: Icon(Icons.directions), 
+                ),  
               ], 
             ), 
           ), 
         ], 
       ), 
 
-
-//      floatingActionButton: FloatingActionButton.extended(
-//        
-//        onPressed: () {
-//          goToCampus();
-//        },
-//        label: const Text("CSULB MAP"),
-//        icon: const Icon(Icons.school),
-//      ),
-//
-//      floatingButton: FloatingActionButton.extended(
-//
-//        onPressed: () async {
-//          Position position = await _determinePosition();
-//          googleMapController
-//              .animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(position.latitude, position.longitude), zoom: 14)));
-//
-//          markersList.clear();
-//          markersList.add(Marker(markerId: const MarkerId('currentLocation'),position: LatLng(position.latitude, position.longitude)));
-//
-//          setState(() {});
-//        },
-//        label: const Text("Current Location"),
-//        icon: const Icon(Icons.location_history),
-//      ),
 //     
     );
   }
@@ -236,7 +230,8 @@ floatingActionButton: Column(
 
     setState(() {});
 
-    googleMapController.animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 14.0));
+//zoom for searching map
+    googleMapController.animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 15.0));
 
   }
 

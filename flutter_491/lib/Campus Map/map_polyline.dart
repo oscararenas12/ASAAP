@@ -56,7 +56,7 @@ class _MapPolylineState extends State<MapPolyline> {
             initialCameraPosition: initialPosition,
 
             //map type
-            mapType: MapType.satellite,
+            mapType: MapType.terrain,
             onMapCreated: (GoogleMapController controller) {
               _controller.complete(controller);
             },
