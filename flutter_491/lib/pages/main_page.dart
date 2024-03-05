@@ -1,13 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_491/Campus%20Map/map.dart';
-import 'package:flutter_491/Campus%20Map/map_screen.dart';
-import 'package:flutter_491/map%20files/custom_info_window.dart';
-import 'package:flutter_491/map%20files/custom_markers.dart';
-import 'package:flutter_491/map%20files/get_user_location.dart';
-import 'package:flutter_491/map%20files/my_polygone.dart';
-import 'package:flutter_491/map%20files/places_api_google.dart';
-import 'package:flutter_491/map%20files/polyline.dart';
-import 'package:flutter_491/map%20files/transform_latlng.dart';
 import 'package:flutter_491/pages/chat_page.dart';
 import 'package:flutter_491/pages/home_page.dart';
 import 'package:flutter_491/pages/map_page.dart';
@@ -79,15 +71,6 @@ class _MainPageState extends State<MainPage> {
   final pages = [
     NewsPage(),
     CampusMap(),
-    //MapPage(), // good MIAN MAP
-    //TransformLatLngToAddress(), //?????
-    //GetUserLocation(), //Testing location
-    //PlacesApiGoogleMapSearch(), // ??????
-    //CustomMarkers(), //Good
-    //CustomInfoWindowMarker(), // GOOD
-    //MyPolygone(), //polygone area works 
-    //MyPolyline(), //polyline works
-
     HomePage(),
     ChatPage(),
     ProfilePage(),

@@ -31,7 +31,8 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_svg: ^2.0.9
-
+  #flutter_map: ^6.1.0
+  #latlong2: ^0.9.0
   table_calendar: ^3.0.9
   intl: ^0.18.1
   shared_preferences: ^2.0.10
@@ -71,7 +72,15 @@ dependencies:
   cloud_firestore: ^4.15.2
   calendar_view: ^1.0.4
 
-  # CHAT GPT dependency implementation
+  # CHAT MAPS dependency implementation
+  google_maps_flutter: ^2.5.3
+  geocoding: ^2.2.0
+  geolocator: ^11.0.0
+  #http: ^0.13.4
+  custom_info_window: ^1.0.1
+
+  flutter_google_places: ^0.3.0
+  awesome_snackbar_content: ^0.1.3
 
 
   
