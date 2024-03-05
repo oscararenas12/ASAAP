@@ -75,7 +75,7 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-//nav bar pages
+//nav bar page
   final pages = [
     NewsPage(),
     CampusMap(),
