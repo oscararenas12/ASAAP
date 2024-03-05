@@ -31,7 +31,7 @@ class AppRoutes{
 
         //home_page navigator
         edit_profile:(context) => EditProfilePage(),
-        map:(context) => MapPage(),
+        //map:(context) => MapPage(),
         chat:(context) => ChatPage(),
         notifications_page:(context) => NotificationPage(),
 

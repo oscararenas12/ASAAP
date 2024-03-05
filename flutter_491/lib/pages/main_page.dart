@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_491/Campus%20Map/map.dart';
 import 'package:flutter_491/pages/chat_page.dart';
 import 'package:flutter_491/pages/home_page.dart';
 import 'package:flutter_491/pages/map_page.dart';
@@ -69,7 +70,7 @@ class _MainPageState extends State<MainPage> {
 //nav bar pages
   final pages = [
     NewsPage(),
-    MapPage(),
+    CampusMap(),
     HomePage(),
     ChatPage(),
     ProfilePage(),
