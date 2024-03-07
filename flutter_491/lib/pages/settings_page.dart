@@ -136,9 +136,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: buildSettingsListTiles({
                   'Dark Mode': _isDarkMode, //Jessica Banuelos
-                  'Account Settings': null,
-                  'Change Password': null,
-                  'Other Settings': null,
                   'Privacy Policy': null,
                   'Terms of Service': null,
                 }),
