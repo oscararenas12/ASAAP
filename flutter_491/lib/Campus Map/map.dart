@@ -115,8 +115,8 @@ floatingActionButton: Column(
             onPressed: () { 
               toggleOptions(); 
             }, 
-            label: Text("Options"), 
-            icon: Icon(Icons.control_point), 
+            label: Text(" + ", style: AppText.header1), 
+            //icon: Icon(Icons.control_point), 
             backgroundColor: AppColors.darkblue, 
             foregroundColor: const Color.fromARGB(255, 255, 255, 255)
           ), 

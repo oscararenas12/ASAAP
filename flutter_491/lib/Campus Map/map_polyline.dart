@@ -44,7 +44,7 @@ class _MapPolylineState extends State<MapPolyline> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(appBar: AppBar(
-        title: const Text("Polyline"),
+        title: const Text("Map Route"),
         foregroundColor: Colors.white,
         backgroundColor: AppColors.darkblue,
       ),
