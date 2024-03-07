@@ -40,6 +40,7 @@ dependencies:
   provider: ^5.0.0
   confetti: ^0.7.0
   fluttermoji: ^1.0.2
+  flutter_colorpicker: ^0.6.0
 
 #GOOGLE MAPS DEPENDENCIES
   google_maps_flutter: ^2.5.3

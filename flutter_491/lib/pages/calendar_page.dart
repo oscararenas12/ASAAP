@@ -1,6 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:calendar_view/calendar_view.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'calendar_backend.dart'; // Import your calendar backend
+
+// Define the list of predefined categories as a map
+Map<String, Color> getPredefinedCategories() {
+  return {
+    Categories.personal: Colors.green,
+    Categories.work: Colors.red,
+    Categories.school: Colors.yellow,
+    // Add more categories as needed
+  };
+}
 
 class FullScreenCalendarPage extends StatefulWidget {
   @override
@@ -84,8 +95,9 @@ class _FullScreenCalendarPageState extends State<FullScreenCalendarPage> {
     TimeOfDay? startTime;
     TimeOfDay? endTime;
     String? recurrence = 'Once';
-    DateTime? selectedDate = _selectedDay;
+    DateTime? selectedStartDate = _selectedDay;
     List<String> selectedDays = []; // List to store selected days
+    DateTime? selectedEndDate = _selectedDay; // Initialize the end date with the selected day
 
     // Create TextEditingController instances for title and description
     TextEditingController titleController = TextEditingController();
@@ -101,6 +113,8 @@ class _FullScreenCalendarPageState extends State<FullScreenCalendarPage> {
       'Saturday',
       'Sunday',
     ];
+
+    String? selectedCategory = getPredefinedCategories().keys.first;
 
     showDialog(
       context: context,
@@ -122,20 +136,20 @@ class _FullScreenCalendarPageState extends State<FullScreenCalendarPage> {
                       decoration: InputDecoration(labelText: 'Description'),
                     ),
                     ListTile(
-                      title: Text(selectedDate != null
-                          ? 'Date: ${selectedDate?.year}-${selectedDate?.month}-${selectedDate?.day}'
-                          : 'Choose Date'),
+                      title: Text(selectedStartDate != null
+                          ? 'Start Date: ${selectedStartDate?.year}-${selectedStartDate?.month}-${selectedStartDate?.day}'
+                          :'Choose Date'),
                       trailing: Icon(Icons.calendar_today),
                       onTap: () async {
                         final DateTime? pickedDate = await showDatePicker(
                           context: context,
-                          initialDate: selectedDate ?? DateTime.now(),
+                          initialDate: selectedStartDate ?? DateTime.now(),
                           firstDate: DateTime(2000),
                           lastDate: DateTime(2100),
                         );
-                        if (pickedDate != null && pickedDate != selectedDate) {
+                        if (pickedDate != null && pickedDate != selectedStartDate) {
                           setState(() {
-                            selectedDate = pickedDate;
+                            selectedStartDate = pickedDate;
                           });
                         }
                       },
@@ -143,6 +157,25 @@ class _FullScreenCalendarPageState extends State<FullScreenCalendarPage> {
                     if (eventType == 'Event')
                       Column(
                         children: [
+                          ListTile(
+                            title: Text(selectedEndDate != null
+                                ? 'End Date: ${selectedEndDate?.year}-${selectedEndDate?.month}-${selectedEndDate?.day}'
+                                : 'Choose End Date'),
+                            trailing: Icon(Icons.calendar_today),
+                            onTap: () async {
+                              final DateTime? pickedEndDate = await showDatePicker(
+                                context: context,
+                                initialDate: selectedEndDate ?? DateTime.now(),
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(2100),
+                              );
+                              if (pickedEndDate != null && pickedEndDate != selectedEndDate) {
+                                setState(() {
+                                  selectedEndDate = pickedEndDate;
+                                });
+                              }
+                            },
+                          ),
                           ListTile(
                             title: Text(startTime != null
                                 ? 'Start Time: ${startTime?.format(context)}'
@@ -164,7 +197,7 @@ class _FullScreenCalendarPageState extends State<FullScreenCalendarPage> {
                             title: Text(endTime != null
                                 ? 'End Time: ${endTime?.format(context)}'
                                 : 'Choose End Time'),
-                            trailing: const Icon(Icons.access_time),
+                            trailing: Icon(Icons.access_time),
                             onTap: () async {
                               final TimeOfDay? pickedEndTime = await showTimePicker(
                                 context: context,
@@ -179,7 +212,7 @@ class _FullScreenCalendarPageState extends State<FullScreenCalendarPage> {
                           ),
                           DropdownButtonFormField<String>(
                             value: recurrence,
-                            decoration: const InputDecoration(labelText: 'Recurrence'),
+                            decoration: InputDecoration(labelText: 'Recurrence'),
                             items: ['Once', 'Daily', 'Weekly', 'Monthly', 'Custom']
                                 .map((String value) => DropdownMenuItem<String>(
                               value: value,
@@ -228,6 +261,21 @@ class _FullScreenCalendarPageState extends State<FullScreenCalendarPage> {
                           });
                         },
                       ),
+                    DropdownButtonFormField<String>(
+                      value: selectedCategory,
+                      decoration: InputDecoration(labelText: 'Category'),
+                      items: getPredefinedCategories().keys
+                          .map((String categoryName) => DropdownMenuItem<String>(
+                        value: categoryName,
+                        child: Text(categoryName),
+                      ))
+                          .toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedCategory = newValue;
+                        });
+                      },
+                    ),
                   ],
                 ),
               );
@@ -242,60 +290,82 @@ class _FullScreenCalendarPageState extends State<FullScreenCalendarPage> {
             ),
             TextButton(
               onPressed: () {
-                if (eventType == 'Event') {
-                  // Calculate the start and end times based on the selected date and time
-                  DateTime? startDateTime = selectedDate;
-                  if (startTime != null) {
-                    startDateTime = startDateTime?.add(Duration(hours: startTime!.hour, minutes: startTime!.minute));
-                  }
+                DateTime? startDateTime;
+                DateTime? endDateTime;
 
-                  DateTime? endDateTime = startDateTime;
-                  if (endTime != null) {
-                    endDateTime = endDateTime?.add(Duration(hours: endTime!.hour, minutes: endTime!.minute));
-                  }
-
-                  // Create a new Event object using the calculated start and end times
-                  Event newEvent = Event(
-                    id: DateTime.now().millisecondsSinceEpoch.toString(),
-                    title: titleController.text,
-                    description: descriptionController.text,
-                    dueDate: startDateTime ?? DateTime.now(),
-                    endTime: endDateTime ?? DateTime.now(),
-                    category: 'Personal',
-                    recurrence: Recurrence(
-                      type: _getRecurrenceType(recurrence),
-                      interval: 1,
-                    ),
-                    itemType: ItemType.event,
+                if (startTime != null) {
+                  startDateTime = DateTime(
+                    selectedStartDate!.year,
+                    selectedStartDate!.month,
+                    selectedStartDate!.day,
+                    startTime!.hour,
+                    startTime!.minute,
                   );
-
-                  // Add the new event to the calendar
-                  _calendar.addScheduleItem(newEvent, _calendar.userId!, _calendar.calendarId!);
-                } else if (eventType == 'Task') {
-                  // For tasks, only the dueDate is relevant
-                  Task newTask = Task(
-                    id: DateTime.now().millisecondsSinceEpoch.toString(),
-                    title: titleController.text,
-                    description: descriptionController.text,
-                    dueDate: selectedDate ?? DateTime.now(),
-                    category: 'Personal',
-                    recurrence: Recurrence(
-                      type: _getRecurrenceType(recurrence),
-                      interval: 1,
-                    ),
-                    priority: PriorityLevel.medium,
-                    currentStatus: Status.notStarted,
-                    itemType: ItemType.task,
-                  );
-
-                  // Add the new task to the calendar
-                  _calendar.addScheduleItem(newTask, _calendar.userId!, _calendar.calendarId!);
                 }
 
-                Navigator.of(context).pop(); // Close the dialog
-                setState(() {}); // Refresh the UI to display the new event or task
+                if (endTime != null) {
+                  endDateTime = DateTime(
+                    selectedEndDate!.year,
+                    selectedEndDate!.month,
+                    selectedEndDate!.day,
+                    endTime!.hour,
+                    endTime!.minute,
+                  );
+                }
+
+                  if (eventType == 'Event') {
+                    // Create a new Event object using the calculated start and end times
+                    Event newEvent = Event(
+                      id: DateTime
+                          .now()
+                          .millisecondsSinceEpoch
+                          .toString(),
+                      title: titleController.text,
+                      description: descriptionController.text,
+                      dueDate: selectedEndDate ?? DateTime.now(),
+                      startTime: startDateTime ?? DateTime.now(),
+                      endTime: endDateTime ?? DateTime.now(),
+                      category: selectedCategory ?? 'Personal',
+                      recurrence: Recurrence(
+                        type: _getRecurrenceType(recurrence),
+                        interval: 1,
+                        endDate: selectedEndDate ?? DateTime.now(),
+                      ),
+                      itemType: ItemType.event,
+                    );
+
+                    // Add the new event to the calendar
+                    _calendar.addScheduleItem(
+                        newEvent, _calendar.userId!, _calendar.calendarId!);
+                  } else if (eventType == 'Task') {
+                    // For tasks, only the dueDate is relevant
+                    Task newTask = Task(
+                      id: DateTime
+                          .now()
+                          .millisecondsSinceEpoch
+                          .toString(),
+                      title: titleController.text,
+                      description: descriptionController.text,
+                      dueDate: selectedEndDate ?? DateTime.now(),
+                      category: selectedCategory ?? 'Personal',
+                      recurrence: Recurrence(
+                        type: _getRecurrenceType(recurrence),
+                        interval: 1,
+                      ),
+                      priority: PriorityLevel.medium,
+                      currentStatus: Status.notStarted,
+                      itemType: ItemType.task,
+                    );
+
+                    // Add the new task to the calendar
+                    _calendar.addScheduleItem(
+                        newTask, _calendar.userId!, _calendar.calendarId!);
+                  }
+
+                  Navigator.of(context).pop(); // Close the dialog
+                  setState(() {}); // Refresh the UI to display the new event or task
               },
-              child: Text('Save'),
+              child: Text('Add'),
             ),
           ],
         );
