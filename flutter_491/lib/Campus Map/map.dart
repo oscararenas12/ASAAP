@@ -42,11 +42,13 @@ class _CampusMapState extends State<CampusMap> {
 
   Completer<GoogleMapController> _controller = Completer();
 
+//initial camera position
   static const CameraPosition initialCameraPosition = CameraPosition(
     target: LatLng(33.7838, -118.1141),
     zoom: 15,
     );
 
+//sends camera back to campus
   static const CameraPosition targetPosition = CameraPosition(
     target: LatLng(33.7838, -118.1141),
     //back to campus
@@ -78,6 +80,7 @@ class _CampusMapState extends State<CampusMap> {
       
       body: Stack(
         children: [
+          //implementationn of GOOGLE MAPS
           GoogleMap(
             initialCameraPosition: initialCameraPosition,
             markers: markersList, 
@@ -91,6 +94,7 @@ class _CampusMapState extends State<CampusMap> {
             },
           ),
           
+          //search box
           SizedBox(
             width: 1000,
             
@@ -103,13 +107,13 @@ class _CampusMapState extends State<CampusMap> {
         
       ),
 
-
+// function to call additional options 
 floatingActionButton: Column( 
         mainAxisAlignment: MainAxisAlignment.end, 
         children: [ 
           FloatingActionButton.extended( 
             onPressed: () { 
-              toggleOptions(); // When the main FAB is pressed, toggleOptions is called 
+              toggleOptions(); 
             }, 
             label: Text("Options"), 
             icon: Icon(Icons.control_point), 
@@ -168,13 +172,13 @@ floatingActionButton: Column(
     );
   }
 
-
+  //changes postion of camera to new position
   Future<void> goToCampus() async {
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(targetPosition));
   }
 
-//searchpalces
+//function to Searchplaces and locations
   Future<void> _handlePressButton() async {
     Prediction? p = await PlacesAutocomplete.show(
         context: context,
@@ -213,6 +217,7 @@ floatingActionButton: Column(
     //homeScaffoldKey.currentState!.showSnackBar(SnackBar(content: Text(response.errorMessage!)));
   }
 
+//gets the new locations and sets markers
   Future<void> displayPrediction(Prediction p, ScaffoldState? currentState) async {
 
     GoogleMapsPlaces places = GoogleMapsPlaces(
@@ -235,6 +240,7 @@ floatingActionButton: Column(
 
   }
 
+//functions for finding user lcoation
     Future<Position> _determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
