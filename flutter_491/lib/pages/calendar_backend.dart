@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Dart date formatting
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -45,9 +46,7 @@ enum ItemType{ event, task}
 class Categories {
   static const String work = 'Work';
   static const String personal = 'Personal';
-  static const String shopping = 'Shopping';
-  static const String education = 'Education';
-  static const String health = 'Health';
+  static const String school = 'School';
   // Add more predefined categories as needed
 }
 
@@ -106,6 +105,7 @@ class Task extends ScheduleItem {
 
 /// ********************************** EVENT CLASS *****************************************
 class Event extends ScheduleItem {
+  DateTime startTime;
   DateTime endTime;
   String? location;
   @override
@@ -118,6 +118,7 @@ class Event extends ScheduleItem {
     required String title,
     String? description, // Make optional in constructor
     required DateTime dueDate,
+    required this.startTime,
     required this.endTime,
     required String category,
     required Recurrence recurrence, // Add this line
@@ -140,7 +141,8 @@ class Event extends ScheduleItem {
     'id': id,
     'title': title,
     'description': description ?? "",
-    'startTime': Timestamp.fromDate(dueDate), 
+    'dueDate': dueDate,
+    'startTime':Timestamp.fromDate(startTime),
     'endTime': Timestamp.fromDate(endTime),
     'category': category,
     'location': location ?? "",
