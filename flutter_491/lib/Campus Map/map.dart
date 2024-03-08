@@ -95,11 +95,14 @@ class _CampusMapState extends State<CampusMap> {
           ),
           
           //search box
+
           SizedBox(
-            width: 1000,
+            width: 500,
             
             child: ElevatedButton(onPressed: _handlePressButton,            
-            child: const Text("Search Places"),
+            child: const Text("Search Places", style: AppText.subtitle1,),
+            
+            
             ),
           )
         ],
@@ -115,7 +118,7 @@ floatingActionButton: Column(
             onPressed: () { 
               toggleOptions(); 
             }, 
-            label: Text(" + ", style: AppText.header1), 
+            label: Text("+", style: AppText.randomplussign), 
             //icon: Icon(Icons.control_point), 
             backgroundColor: AppColors.darkblue, 
             foregroundColor: const Color.fromARGB(255, 255, 255, 255)
@@ -130,7 +133,7 @@ floatingActionButton: Column(
                   onPressed: () {
                     goToCampus();
                   }, 
-                  tooltip: 'CSULB Location', 
+                  tooltip: "CSULB Location", 
                   child: Icon(Icons.school), 
                 ), 
                 SizedBox(height: 10.0), 

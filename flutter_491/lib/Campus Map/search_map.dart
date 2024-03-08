@@ -52,8 +52,7 @@ class _SearchPlacesState extends State<SearchPlaces> {
             },
           ),
           SizedBox(
-            width: 1000,
-            
+            width: 100,
             child: ElevatedButton(onPressed: _handlePressButton,            
             child: const Text("Search Places"),
             ),

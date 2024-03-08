@@ -40,6 +40,14 @@ class AppText{
 
   ); 
 
+  //random button
+    static const randomplussign  = TextStyle(
+    color: Color.fromARGB(255, 255, 255, 255),
+    fontSize: 40,
+    fontWeight: FontWeight.w400,
+
+  ); 
+
 
 
 
