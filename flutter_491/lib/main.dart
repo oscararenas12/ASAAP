@@ -24,6 +24,9 @@ Future<void> main() async {
     ),
   );
 
+  /* Jessica line 27 & 28: Ensures Firebase is initialized*/
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 

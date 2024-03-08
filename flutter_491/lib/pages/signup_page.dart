@@ -6,6 +6,33 @@ import 'package:flutter_491/config/app_routes.dart';
 import 'package:flutter_491/styles/app_colors.dart';
 import 'calendar_backend.dart';
 
+Future<void> sendVerificationEmail(BuildContext context) async {
+  User? user = FirebaseAuth.instance.currentUser;
+  if (user != null && !user.emailVerified) {
+    try {
+      await user.sendEmailVerification();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Verification email sent. Please check your inbox.'),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to send verification email. Try again later.'),
+        ),
+      );
+      print(e); // For debugging purposes
+    }
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Email is already verified or user is not logged in.'),
+      ),
+    );
+  }
+}
+
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -34,11 +61,14 @@ class _SignUpPageState extends State<SignUpPage> {
         'firstName': _firstNameController.text.trim(),
         'lastName': _lastNameController.text.trim(),
         'number': _numberController.text.trim(),
+        'emailVerified': false,
         // Add other fields as needed
       });
-      
+
       print("Account created: ${userCredential.user!.email}");
 
+      //Send Verification Email
+      await sendVerificationEmail(context);
       // Create a calendar for the user
       try {
         await createUserCalendar(userCredential.user!.uid);
@@ -47,6 +77,8 @@ class _SignUpPageState extends State<SignUpPage> {
         print("Failed to create user calendar: $e");
         // Handle calendar creation failure
       }
+
+      
   
       Navigator.of(context).pushNamed(AppRoutes.login);
     } on FirebaseAuthException catch (e) {
