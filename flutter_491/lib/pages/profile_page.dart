@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_491/components/user_avatar.dart';
 import 'package:flutter_491/config/app_routes.dart';
@@ -8,16 +9,15 @@ import 'package:flutter_491/components/toolbar.dart';
 import 'package:fluttermoji/fluttermojiCircleAvatar.dart';
 import 'package:flutter_491/config/user_data.dart';
 
-
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  const ProfilePage({Key? key});
 
-   @override
+  @override
   _ProfilePageState createState() => _ProfilePageState();
-  
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  late Future<void> _loadUserDetailsFuture;
   String _firstName = '';
   String _lastName = '';
   String _bio = '';
@@ -25,62 +25,51 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    _loadUserDetails();
-    print(_firstName);
+  }
+  
+  Future<void> _logout() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false); // Navigate to login and remove all other routes
+    } catch (e) {
+      print('Error logging out: $e');
+    }
   }
 
-  
-  Future<void> _loadUserDetails() async {
-    Map<String, String> userDetails = await UserData.getUserDetails(); // Call getUserDetails from UserData
-    String firstName = userDetails['firstName'] ?? '';
-    String lastName = userDetails['lastName'] ?? '';
-    String bio = userDetails['bio'] ?? '';
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: Toolbar(title: 'Profile'),
+    body: FutureBuilder<DocumentSnapshot>(
+      future: FirebaseFirestore.instance.collection('users').doc(UserData.uid).get(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+        if (!snapshot.hasData || snapshot.data == null) {
+          return Center(child: Text('No data available'));
+        }
 
-    setState(() {
-      _firstName = userDetails['firstName'] ?? '';
-      _lastName = userDetails['lastName'] ?? '';
-      _bio = userDetails['bio'] ?? '';
-    });
+        final data = snapshot.data!.data() as Map<String, dynamic>;
+        _firstName = data['firstName'] ?? '';
+        _lastName = data['lastName'] ?? '';
+        _bio = data['bio'] ?? '';
 
-    //capitalize first letter of first and last name
-    _firstName = firstName.isNotEmpty ? firstName[0].toUpperCase() + firstName.substring(1) : '';
-    _lastName = lastName.isNotEmpty ? lastName[0].toUpperCase() + lastName.substring(1) : '';
- }
-
-  @override
-  Widget build(BuildContext context) {
-
-    return Scaffold(
-      appBar: Toolbar(title: 'Profile'),
-      body: ListView(
-        physics: BouncingScrollPhysics(),
-        children: <Widget>[
-
-          SizedBox(
-            height: 25,
-          ),
-          FluttermojiCircleAvatar(
-            backgroundColor: Colors.blueGrey[100],
-            radius: 100,
-          ),
-          SizedBox(
-            height: 15,
-          ),
-            
-            Text('$_firstName $_lastName', style: AppText.header1,
-            textAlign: TextAlign.center
+        return ListView(
+          physics: BouncingScrollPhysics(),
+          children: <Widget>[
+            SizedBox(height: 25),
+            FluttermojiCircleAvatar(
+              backgroundColor: Colors.blueGrey[100],
+              radius: 100,
             ),
-
-            Text('$_bio', style: AppText.header2,
-            textAlign: TextAlign.center
-            ),
-
-          SizedBox(
-            height: 20,
-          ),
-          
-        
-          //
+            SizedBox(height: 15),
+            Text('$_firstName $_lastName', style: AppText.header1, textAlign: TextAlign.center),
+            Text('$_bio', style: AppText.header2, textAlign: TextAlign.center),
+            SizedBox(height: 20),
             Divider(
               color: AppColors.darkblue,
               thickness: 2,
@@ -199,11 +188,8 @@ class _ProfilePageState extends State<ProfilePage> {
               height: 20,
               indent: 30,
               endIndent: 30,),
-
-            TextButton(onPressed: () {
-              Navigator.of(context).pushNamed(AppRoutes.login);
-              print('Logout clicked');
-            }, 
+            
+            TextButton(onPressed: _logout, 
             style: TextButton.styleFrom(
               textStyle: AppText.header2,
               foregroundColor: Colors.white,
@@ -216,11 +202,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
 
 
-        ],
-      ),
-    );
-    
-    
+               ],
+        );
+      },
+    ),
+  );
+}
     //return Scaffold(
     //  
     //  body: SingleChildScrollView(
@@ -384,5 +371,4 @@ class _ProfilePageState extends State<ProfilePage> {
     //  ),
     //);
   }
-}
 

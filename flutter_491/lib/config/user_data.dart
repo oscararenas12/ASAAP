@@ -2,9 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserData {
+  static String? get uid => FirebaseAuth.instance.currentUser?.uid;
+
   static Future<Map<String, String>> getUserDetails() async {
-    final FirebaseAuth _auth = FirebaseAuth.instance;
-    String? uid = _auth.currentUser?.uid;
+    String? uid = UserData.uid;
     Map<String, String> userDetails = {};
 
     if (uid != null) {
@@ -19,8 +20,7 @@ class UserData {
 
   static Future<void> updateUserDetails(String firstName, String lastName, String bio) async {
     try {
-      final FirebaseAuth _auth = FirebaseAuth.instance;
-      String? uid = _auth.currentUser?.uid;
+      String? uid = UserData.uid;
 
       if (uid != null) {
         await FirebaseFirestore.instance.collection('users').doc(uid).update({

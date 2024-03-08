@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_491/config/app_routes.dart';
 import 'package:flutter_491/pages/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
+
+final GoogleSignIn googleSignIn = GoogleSignIn();
 
 //Kayla's Contribution
 class LoginPage extends StatefulWidget {
 
   final FirebaseAuth _auth;
+  
 
   LoginPage({Key? key}) : _auth = FirebaseAuth.instance, super(key: key);
 
@@ -188,6 +193,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),),
               
                   ElevatedButton(onPressed: () {
+                    _signInWithGoogle(context);
                     print('google clicked');
                     
                   }, child: Image.asset('assets/images/google.png',
@@ -217,6 +223,48 @@ class _LoginPageState extends State<LoginPage> {
 
 
 //Kayla's Contribution
+void _signInWithGoogle(BuildContext context) async {
+  try {
+    // Attempt to sign in with Google
+    final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+    if (googleSignInAccount != null) {
+      final GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount.authentication;
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
+
+      // Sign in to Firebase with Google credentials
+      final UserCredential userCredential = await widget._auth.signInWithCredential(credential);
+      final User? user = userCredential.user;
+
+      if (user != null) {
+        // Navigate to the home page if authentication is successful
+        Navigator.of(context).pushReplacementNamed(AppRoutes.main);
+      }
+    }
+  } catch (e) {
+    // Handle authentication errors
+    print('Error signing in with Google: $e');
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text('Failed to sign in with Google. Please try again later.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
   void _signIn(BuildContext context) async {
     // Get user input from controllers

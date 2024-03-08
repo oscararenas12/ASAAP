@@ -81,15 +81,15 @@ class _SettingsPageState extends State<SettingsPage> {
 
   void _handleSettingsTap(String key) {
     switch (key) {
-      case 'Account Settings':
+      //case 'Account Settings':
         // Implement logic for Account Settings
-        break;
+        //break;
       case 'Change Password':
         // Implement logic for Change Password
         break;
-      case 'Other Settings':
+      //case 'Other Settings':
         // Implement logic for Other Settings
-        break;
+        //break;
       case 'Privacy Policy':
         _launchURL('https://example.com/privacy-policy');
         break;
@@ -136,9 +136,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: buildSettingsListTiles({
                   'Dark Mode': _isDarkMode, //Jessica Banuelos
-                  'Account Settings': null,
                   'Change Password': null,
-                  'Other Settings': null,
                   'Privacy Policy': null,
                   'Terms of Service': null,
                 }),
