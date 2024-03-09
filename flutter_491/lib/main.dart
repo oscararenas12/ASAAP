@@ -26,11 +26,11 @@ Future<void> main() async {
     ),
   );
 
-  /* Jessica line 27 & 28: Ensures Firebase is initialized*/
-  // WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp();
-  // runApp(MyApp());
+  /* Jessica line 30 & 31: Ensures Firebase is initialized*/
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
 
+  //Nhat: themenotifier for darkmode
     runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeNotifier(),
