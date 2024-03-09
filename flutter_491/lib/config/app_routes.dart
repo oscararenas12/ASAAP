@@ -44,9 +44,6 @@ class AppRoutes{
         directionpolyline:(context) => MapPolyline(),
 
 
-
-
-
   };
 
 

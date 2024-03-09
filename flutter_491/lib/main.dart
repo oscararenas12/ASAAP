@@ -5,8 +5,10 @@ import 'package:flutter_491/pages/home_page.dart';
 import 'package:flutter_491/pages/login_page.dart';
 import 'package:flutter_491/pages/main_page.dart';
 import 'package:flutter_491/pages/news_page.dart';
+import 'package:flutter_491/pages/themenotifier.dart';
 import 'package:flutter_491/styles/app_colors.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -25,22 +27,19 @@ Future<void> main() async {
   );
 
   /* Jessica line 27 & 28: Ensures Firebase is initialized*/
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(MyApp());
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp();
+  // runApp(MyApp());
+
+    runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeNotifier(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  static bool isDarkMode = false;
-
-  static void setDarkMode() {
-    isDarkMode = true;
-  }
-
-  static void setLightMode() {
-    isDarkMode = false;
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -49,17 +48,17 @@ class MyApp extends StatelessWidget {
           headlineLarge: TextStyle(),
           bodyMedium: TextStyle(),
         ).apply(
-          bodyColor: Colors.white, 
-          displayColor: Colors.white, 
-          
+          bodyColor: Colors.white,
+          displayColor: Colors.white,
         ),
-
-
         fontFamily: 'Urbanist',
-        brightness: isDarkMode ? Brightness.dark : Brightness.light,
-        scaffoldBackgroundColor: isDarkMode ? AppColors.black : AppColors.background,
+        brightness: Provider.of<ThemeNotifier>(context).isDarkMode
+            ? Brightness.dark
+            : Brightness.light,
+        scaffoldBackgroundColor: Provider.of<ThemeNotifier>(context).isDarkMode
+            ? AppColors.black
+            : AppColors.background,
         useMaterial3: true,
-
       ),
       initialRoute: AppRoutes.login,
       routes: AppRoutes.pages,
