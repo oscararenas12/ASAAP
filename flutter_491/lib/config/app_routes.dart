@@ -1,4 +1,5 @@
 import 'package:flutter_491/Campus%20Map/current_location.dart';
+import 'package:flutter_491/Campus%20Map/map%20style/satelite_map.dart';
 import 'package:flutter_491/Campus%20Map/map_polyline.dart';
 import 'package:flutter_491/Campus%20Map/search_map.dart';
 import 'package:flutter_491/pages/agenda.dart';
@@ -43,6 +44,12 @@ class AppRoutes{
         userlocation:(context) => CurrentLocation(),
         directionpolyline:(context) => MapPolyline(),
 
+        satelite:(context) => SateliteMap(),
+
+
+
+
+
 
   };
 
@@ -70,6 +77,8 @@ class AppRoutes{
   static const searchmap = '/search_map';
   static const userlocation = '/user_location';
   static const directionpolyline = '/direction_polyline';
+    static const satelite = '/satelite';
+
 
 
 

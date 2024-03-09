@@ -34,7 +34,8 @@ class _MapScreenState extends State<MapScreen> {
                 case MapMenu.searchmap:
                 Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context){
                   return const SearchPlaces(); //campus = simple map screen
-                }));                  break;
+                }));                  
+                break;
 
                 case MapMenu.userlocation:
                   print('User Location');

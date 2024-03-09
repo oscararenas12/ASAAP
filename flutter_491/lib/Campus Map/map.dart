@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_491/config/app_routes.dart';
@@ -29,6 +30,8 @@ const kGoogleApiKey = 'AIzaSyCiyR5a7gk_rViJRJhing0WaLNxtV27Jxs';
 final homeScaffoldKey = GlobalKey<ScaffoldState>();
 
 class _CampusMapState extends State<CampusMap> {
+
+  
 
   bool showOptions = false; 
   
@@ -66,6 +69,38 @@ class _CampusMapState extends State<CampusMap> {
 
   //choose different mode
   final Mode _mode = Mode.overlay;
+
+
+//MAP POLYGON
+    final Set<Polygon> _myPolygone = HashSet<Polygon>();
+
+//POLYGON points
+    List<LatLng> points = [
+      const LatLng(33.78867876728708, -118.12246157474198),
+      const LatLng(33.78682407875926, -118.12283708405593),
+      const LatLng(33.78139353372489, -118.12223626921372),
+      const LatLng(33.78131327676593, -118.1154663736074),
+      const LatLng(33.775400808576606, -118.11549856011891),
+      const LatLng(33.77543648080471, -118.1114645177704),
+      const LatLng(33.780778228578356, -118.11141087359594),
+      const LatLng(33.780796063571195, -118.10813857854862),
+      const LatLng(33.7885985171823, -118.10811712088558),
+    ];
+
+    @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _myPolygone.add(
+      Polygon(polygonId: const PolygonId('mappolygone'),
+      points: points,
+      fillColor: Colors.cyan.withOpacity(0.1),
+      geodesic: true,
+      strokeWidth: 4,
+      strokeColor: AppColors.darkblue,
+      ),
+    );
+  } //MAP POLYGON ^
   
 
   @override
@@ -88,6 +123,7 @@ class _CampusMapState extends State<CampusMap> {
             zoomControlsEnabled: false,
             //change map style
             mapType: MapType.terrain,
+            polygons: _myPolygone,
             onMapCreated: (GoogleMapController controller) {
               googleMapController = controller;
               _controller.complete(controller);

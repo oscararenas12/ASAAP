@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_491/Campus%20Map/map%20style/satelite_map.dart';
 import 'package:flutter_491/config/app_routes.dart';
 import 'package:flutter_491/styles/app_text.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -19,23 +18,23 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:geolocator/geolocator.dart';
 
 enum MapSettings {
-  satelite,
+  mapstyle,
   logout,
 }
 
 
-class MapCampus extends StatefulWidget {
-  const MapCampus({super.key}); //({Key? key}) : super(key: key);
+class SateliteMap extends StatefulWidget {
+  const SateliteMap({super.key}); //({Key? key}) : super(key: key);
 
   @override
-  State<MapCampus> createState() => _MapCampusState();
+  State<SateliteMap> createState() => _SateliteMapState();
 }
 
 //From searchPlaces()
 const kGoogleApiKey = 'AIzaSyCiyR5a7gk_rViJRJhing0WaLNxtV27Jxs';
 final homeScaffoldKey = GlobalKey<ScaffoldState>();
 
-class _MapCampusState extends State<MapCampus> {
+class _SateliteMapState extends State<SateliteMap> {
 
   
 
@@ -125,10 +124,9 @@ class _MapCampusState extends State<MapCampus> {
               switch (value) {
                 //mapstyle
 
-                case MapSettings.satelite:
-                Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context){
-                  return const SateliteMap(); //campus = simple map screen
-                }));                  break;
+                case MapSettings.mapstyle:
+                  Navigator.of(context).pushNamed(AppRoutes.edit_profile);
+                  break;
                 //logout
                 case MapSettings.logout:
                   print('Map Style');
@@ -141,7 +139,7 @@ class _MapCampusState extends State<MapCampus> {
               return [
                 PopupMenuItem(
                   child: Text('Map Style'),
-                  value: MapSettings.satelite,
+                  value: MapSettings.mapstyle,
                 ),
                 PopupMenuItem(
                   child: Text('logout'),
@@ -164,7 +162,7 @@ class _MapCampusState extends State<MapCampus> {
             //markers: markersUser,
             zoomControlsEnabled: false,
             //change map style
-            mapType: MapType.terrain,
+            mapType: MapType.satellite,
             polygons: _myPolygone,
             onMapCreated: (GoogleMapController controller) {
               googleMapController = controller;
