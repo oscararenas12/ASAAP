@@ -45,7 +45,6 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _numberController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   bool _isPasswordVisible = false;
 
@@ -61,7 +60,6 @@ class _SignUpPageState extends State<SignUpPage> {
       await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
         'firstName': _firstNameController.text.trim(),
         'lastName': _lastNameController.text.trim(),
-        'number': _numberController.text.trim(),
         'bio': _bioController.text.trim(),
         'emailVerified': false,
         // Add other fields as needed
@@ -95,10 +93,19 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.darkblue,
-        title: Text('Create Account'),
-          // Add a back button to the AppBar
+        title: Text(
+          'Create Account',
+          style: TextStyle(
+            color: Colors.white, // Set text color to white
+            fontWeight: FontWeight.bold, // Set text bold
+          ),
+        ),
+        // Add a back button to the AppBar
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white, // Set icon color to white
+          ),
           onPressed: () {
             Navigator.of(context).pushNamed(AppRoutes.login); // Navigate back to the previous screen
           },
@@ -108,50 +115,71 @@ class _SignUpPageState extends State<SignUpPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            TextField(
+            TextFormField(
               controller: _firstNameController,
-              decoration: InputDecoration(labelText: 'First Name', labelStyle: TextStyle(color: Colors.white)),
-              style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
+              decoration: InputDecoration(
+                labelText: 'First Name',
+                prefixIcon: Icon(Icons.person),
+              ),
+              style: TextStyle(color: Colors.black),
             ),
             SizedBox(height: 16.0),
-            TextField(
+            TextFormField(
               controller: _lastNameController,
-              decoration: InputDecoration(labelText: 'Last Name', labelStyle: TextStyle(color: Colors.white)),
+              decoration: InputDecoration(
+                labelText: 'Last Name',
+                prefixIcon: Icon(Icons.person),
+              ),
+              style: TextStyle(color: Colors.black),
             ),
             SizedBox(height: 16.0),
-            TextField(
-              controller: _numberController,
-              decoration: InputDecoration(labelText: 'Number', labelStyle: TextStyle(color: Colors.white)),
-            ),
-            SizedBox(height: 16.0),
-            TextField(
+            TextFormField(
               controller: _emailController,
-              decoration: InputDecoration(labelText: 'Email', labelStyle: TextStyle(color: Colors.white)),
+              decoration: InputDecoration(
+                labelText: 'Email',
+                prefixIcon: Icon(Icons.email),
+              ),
+              style: TextStyle(color: Colors.black),
             ),
             SizedBox(height: 16.0),
-            TextField(
+            TextFormField(
               controller: _passwordController,
               obscureText: !_isPasswordVisible,
-              decoration: InputDecoration(labelText: 'Password', labelStyle: TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                labelText: 'Password',
+                prefixIcon: Icon(Icons.lock),
                 suffixIcon: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
-                    child: Icon(
-                      _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                      color: Colors.white,
-                    ),
+                  onTap: () {
+                    setState(() {
+                      _isPasswordVisible = !_isPasswordVisible;
+                    });
+                  },
+                  child: Icon(
+                    _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                    color: Colors.black,
+                  ),
                 ),
               ),
+              style: TextStyle(color: Colors.black),
             ),
-            
-            SizedBox(height: 16.0),
+            SizedBox(height: 24.0),
             ElevatedButton(
               onPressed: _createAccount,
-              child: Text('Create Account'),
+              style: ElevatedButton.styleFrom(
+                primary: AppColors.darkblue, // Set button color
+                onPrimary: Colors.white, // Set text color
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0), // Set button border radius
+                ),
+              ),
+              child: Text(
+                'Create Account',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold, // Set text bold
+                ),
+              ),
             ),
           ],
         ),

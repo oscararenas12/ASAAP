@@ -89,59 +89,46 @@ void _restartPage() {
 }
 
 void _deleteAccount() {
-  // Show a dialog to confirm account deletion
   showDialog(
     context: context,
     builder: (BuildContext context) {
-      TextEditingController passwordController = TextEditingController(); // Controller for password input field
-
       return AlertDialog(
-        title: Text("Confirm Account Deletion"),
+        title: Text(
+          'Delete your Account?',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Please enter your password to confirm account deletion:"),
-            SizedBox(height: 16),
-            TextField(
-              controller: passwordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(),
-              ),
+            Text(
+              'If you select Delete, we will delete your account on our server. Your app data will also be deleted and you won\'t be able to retrieve it.',
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Since this is a security-sensitive operation, you will be asked to login again before your account can be deleted.',
             ),
           ],
         ),
-        actions: <Widget>[
+        actions: [
           TextButton(
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: Colors.black87),
+            ),
             onPressed: () {
-              Navigator.of(context).pop(); // Cancel account deletion
+              Navigator.of(context).pop();
             },
-            child: Text("Cancel"),
           ),
-          TextButton(
-            onPressed: () async {
-              String password = passwordController.text.trim();
-              if (password.isNotEmpty) {
-                // Re-authenticate the user
-                bool success = await _reauthenticate(password);
-                if (success) {
-                  // User re-authenticated successfully, proceed with account deletion
-                  deleteUserAccount();
-                } else {
-                  // Re-authentication failed, display an error message
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Failed to re-authenticate. Please try again.')),
-                  );
-                }
-              } else {
-                // Display error message if password is empty
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Please enter your password')),
-                );
-              }
+          ElevatedButton(
+            child: Text('Delete'),
+            style: ElevatedButton.styleFrom(
+              primary: Colors.red,
+            ),
+            onPressed: () {
+              // Call the delete account function
+              _deleteUserAccount();
             },
-            child: Text("Delete"),
           ),
         ],
       );
@@ -149,53 +136,49 @@ void _deleteAccount() {
   );
 }
 
-Future<bool> _reauthenticate(String password) async {
+Future<void> _deleteUserAccount() async {
   try {
-    // Get the current user
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      // No user is currently signed in
-      return false;
-    }
-
-    // Prompt the user to re-enter their password for re-authentication
-    AuthCredential credential = EmailAuthProvider.credential(
-      email: user.email!,
-      password: password,
-    );
-
-    // Re-authenticate the user
-    await user.reauthenticateWithCredential(credential);
-
-    // Re-authentication succeeded
-    return true;
-  } catch (e) {
-    // Re-authentication failed
-    print('Error re-authenticating user: $e');
-    return false;
-  }
-}
-
-
-Future<void> deleteUserAccount() async {
-  try {
-    // Get the current user
-    User? user = FirebaseAuth.instance.currentUser;
-
+    final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      // Delete the user's document from Firestore
+      // Delete user's document from Firestore
       await FirebaseFirestore.instance.collection('users').doc(user.uid).delete();
-
-      // Delete the user's account from Firebase Authentication
+      
+      // Delete user account
       await user.delete();
 
-      print('User account and data deleted successfully');
+      // Navigate to the login page
+      Navigator.of(context).pushReplacementNamed(AppRoutes.login);
     } else {
       print('No user is currently signed in');
     }
+  } on FirebaseAuthException catch (e) {
+    if (e.code == "requires-recent-login") {
+      await _reauthenticateAndDelete();
+    } else {
+      // Handle other Firebase exceptions
+      print('Firebase Auth Exception: $e');
+    }
   } catch (e) {
+    // Handle general exception
     print('Error deleting user account: $e');
-    // Handle the error here
+  }
+}
+
+Future<void> _reauthenticateAndDelete() async {
+  try {
+    final providerData = FirebaseAuth.instance.currentUser?.providerData.first;
+
+    if (GoogleAuthProvider().providerId == providerData!.providerId) {
+      await FirebaseAuth.instance.currentUser!
+          .reauthenticateWithProvider(GoogleAuthProvider());
+    } else {
+      // Handle other providers if necessary
+    }
+
+    await FirebaseAuth.instance.currentUser?.delete();
+  } catch (e) {
+    // Handle exceptions
+    print('Error reauthenticating and deleting user account: $e');
   }
 }
 
