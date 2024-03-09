@@ -17,7 +17,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  late Future<void> _loadUserDetailsFuture;
   String _firstName = '';
   String _lastName = '';
   String _bio = '';
@@ -25,8 +24,33 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
+    _fetchUserData();
   }
   
+  Future<void> _fetchUserData() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        DocumentSnapshot userData = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        if (userData.exists) {
+          setState(() {
+            _firstName = userData['firstName'] ?? '';
+            _lastName = userData['lastName'] ?? '';
+            _bio = userData['bio'] ?? '';
+
+            // If 'bio' field doesn't exist, add it with an empty string value
+            if (!_bio.isNotEmpty) {
+              FirebaseFirestore.instance.collection('users').doc(user.uid).update({'bio': ''});
+              _bio = ''; // Update local variable
+            }
+          });
+        }
+      }
+    } catch (e) {
+      print('Error fetching user data: $e');
+    }
+  }
+
   Future<void> _logout() async {
     try {
       await FirebaseAuth.instance.signOut();

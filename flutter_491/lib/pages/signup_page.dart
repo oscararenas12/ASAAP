@@ -46,6 +46,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _numberController = TextEditingController();
+  final TextEditingController _bioController = TextEditingController();
   bool _isPasswordVisible = false;
 
 
@@ -61,6 +62,7 @@ class _SignUpPageState extends State<SignUpPage> {
         'firstName': _firstNameController.text.trim(),
         'lastName': _lastNameController.text.trim(),
         'number': _numberController.text.trim(),
+        'bio': _bioController.text.trim(),
         'emailVerified': false,
         // Add other fields as needed
       });
@@ -68,7 +70,7 @@ class _SignUpPageState extends State<SignUpPage> {
       print("Account created: ${userCredential.user!.email}");
 
       //Send Verification Email
-      await sendVerificationEmail(context);
+      //await sendVerificationEmail(context);
       // Create a calendar for the user
       try {
         await createUserCalendar(userCredential.user!.uid);

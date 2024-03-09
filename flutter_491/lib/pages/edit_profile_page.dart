@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_491/components/user_avatar.dart';
 import 'package:flutter_491/config/app_routes.dart';
 import 'package:flutter_491/config/user_data.dart';
+import 'package:flutter_491/pages/profile_page.dart';
 import 'package:flutter_491/styles/app_colors.dart';
 import 'package:flutter_491/styles/app_text.dart';
 import 'package:fluttermoji/fluttermojiCircleAvatar.dart';
@@ -25,28 +26,33 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void initState() {
     super.initState();
-    _loadUserDetails();
+    // Fetch user data from Firestore
+    _fetchUserData();
   }
 
-  Future<void> _loadUserDetails() async {
-    Map<String, String> userDetails =
-        await UserData.getUserDetails(); // Call getUserDetails from UserData
-    String firstName = userDetails['firstName'] ?? '';
-    String lastName = userDetails['lastName'] ?? '';
-    String bio = userDetails['bio'] ?? '';
+Future<void> _fetchUserData() async {
+  try {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DocumentSnapshot userData = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      if (userData.exists) {
+        setState(() {
+          _firstName = userData['firstName'] ?? '';
+          _lastName = userData['lastName'] ?? '';
+          _bio = userData['bio'] ?? '';
 
-    setState(() {
-      _firstName = userDetails['firstName'] ?? '';
-      _lastName = userDetails['lastName'] ?? '';
-      _bio = userDetails['bio'] ?? '';
-    });
-
-    //capitalize first letter of first and last name
-    _firstName =
-        firstName.isNotEmpty ? firstName[0].toUpperCase() + firstName.substring(1) : '';
-    _lastName =
-        lastName.isNotEmpty ? lastName[0].toUpperCase() + lastName.substring(1) : '';
+          // If 'bio' field doesn't exist, add it with an empty string value
+          if (!_bio.isNotEmpty) {
+            FirebaseFirestore.instance.collection('users').doc(user.uid).update({'bio': ''});
+            _bio = ''; // Update local variable
+          }
+        });
+      }
+    }
+  } catch (e) {
+    print('Error fetching user data: $e');
   }
+}
 
   Future<void> _saveChanges() async {
     try {
@@ -62,9 +68,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
-  void _restartPage() {
-    Navigator.of(context).pushNamed(AppRoutes.profile);
-  }
+void _restartPage() {
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (context) => ProfilePage()),
+  );
+}
 
  void _changePassword(BuildContext context) {
   Navigator.push(
