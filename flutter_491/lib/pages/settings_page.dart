@@ -8,6 +8,9 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_491/styles/app_colors.dart';
 import 'package:provider/provider.dart';
 
+//new code for the setting page by Nhat
+//do so because themenotifier required a different approach
+//in order to make darkmode change automatically
 class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);
 

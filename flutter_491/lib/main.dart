@@ -30,7 +30,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  //Nhat: themenotifier for darkmode
+  //Nhat: themenotifier for darkmode, make dark mode change automatically
     runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeNotifier(),
