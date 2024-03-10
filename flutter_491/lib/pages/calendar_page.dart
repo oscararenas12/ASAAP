@@ -91,6 +91,7 @@ class _FullScreenCalendarPageState extends State<FullScreenCalendarPage> {
     }
   }
 
+
   void _showAddEventDialog(BuildContext context, String eventType) {
     TimeOfDay? startTime;
     TimeOfDay? endTime;
@@ -246,21 +247,6 @@ class _FullScreenCalendarPageState extends State<FullScreenCalendarPage> {
                         ],
                       ),
                     if (eventType == 'Task')
-                      DropdownButtonFormField<String>(
-                        value: recurrence,
-                        decoration: InputDecoration(labelText: 'Recurrence'),
-                        items: ['Once', 'Daily', 'Weekly', 'Monthly']
-                            .map((String value) => DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        ))
-                            .toList(),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            recurrence = newValue;
-                          });
-                        },
-                      ),
                     DropdownButtonFormField<String>(
                       value: selectedCategory,
                       decoration: InputDecoration(labelText: 'Category'),

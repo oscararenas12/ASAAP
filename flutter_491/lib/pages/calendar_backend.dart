@@ -256,6 +256,7 @@ class Calendar {
     }
   }
 
+
   // If user wants to delete scheduled item, it will delete scheduled item and any other associations it has like its reminders
   //Also deletes information from firebase as well
   Future<void> deleteScheduledItemAndReminders(String itemId, String itemType) async {
@@ -348,11 +349,13 @@ Future<void> addTaskToFirebase(Task task, String userId, String calendarId) asyn
         .doc(calendarId)
         .collection('tasks')
         .add(task.toMap());
+    print("Task added successfully to Firestore");
   } catch (e) {
     print("Error adding task to Firestore: $e");
     throw e;
   }
 }
+
 // Add Reminder to Firebase
 Future<void> addReminderToFirebase( String userId,String calendarId,String itemId,
   String itemType,Reminder reminder,
