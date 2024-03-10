@@ -9,7 +9,8 @@ import 'package:flutter_491/styles/app_colors.dart';
 import 'package:flutter_491/styles/app_text.dart';
 import 'package:fluttermoji/fluttermojiCircleAvatar.dart';
 import 'package:flutter_491/pages/change_password_page.dart';
-import 'package:flutter_491/config/user_data.dart';
+import 'package:flutter_491/pages/main_page.dart';
+
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({Key? key}) : super(key: key);
@@ -71,7 +72,7 @@ Future<void> _fetchUserData() async {
 void _restartPage() {
   Navigator.pushReplacement(
     context,
-    MaterialPageRoute(builder: (context) => ProfilePage()),
+    MaterialPageRoute(builder: (context) => MainPage()),
   );
 }
 
@@ -145,6 +146,7 @@ Future<void> _deleteUserAccount() async {
       
       // Delete user account
       await user.delete();
+      print('User account has been deleted');
 
       // Navigate to the login page
       Navigator.of(context).pushReplacementNamed(AppRoutes.login);
@@ -171,6 +173,7 @@ Future<void> _reauthenticateAndDelete() async {
     if (GoogleAuthProvider().providerId == providerData!.providerId) {
       await FirebaseAuth.instance.currentUser!
           .reauthenticateWithProvider(GoogleAuthProvider());
+          print('Account reauthenticated');
     } else {
       // Handle other providers if necessary
     }
