@@ -68,7 +68,7 @@ class _SignUpPageState extends State<SignUpPage> {
       print("Account created: ${userCredential.user!.email}");
 
       //Send Verification Email
-      //await sendVerificationEmail(context);
+      await sendVerificationEmail(context);
       // Create a calendar for the user
       try {
         await createUserCalendar(userCredential.user!.uid);
