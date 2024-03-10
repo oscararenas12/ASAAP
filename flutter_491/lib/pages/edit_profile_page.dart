@@ -9,7 +9,8 @@ import 'package:flutter_491/styles/app_colors.dart';
 import 'package:flutter_491/styles/app_text.dart';
 import 'package:fluttermoji/fluttermojiCircleAvatar.dart';
 import 'package:flutter_491/pages/change_password_page.dart';
-import 'package:flutter_491/config/user_data.dart';
+import 'package:flutter_491/pages/main_page.dart';
+
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({Key? key}) : super(key: key);
@@ -71,7 +72,7 @@ Future<void> _fetchUserData() async {
 void _restartPage() {
   Navigator.pushReplacement(
     context,
-    MaterialPageRoute(builder: (context) => ProfilePage()),
+    MaterialPageRoute(builder: (context) => MainPage()),
   );
 }
 
@@ -89,13 +90,15 @@ void _restartPage() {
 }
 
 void _deleteAccount() {
+  String password = ''; // Initialize password variable
+
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
         title: Text(
           'Delete your Account?',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -103,10 +106,20 @@ void _deleteAccount() {
           children: [
             Text(
               'If you select Delete, we will delete your account on our server. Your app data will also be deleted and you won\'t be able to retrieve it.',
+              style: TextStyle(color: Colors.red),
             ),
             SizedBox(height: 20),
             Text(
-              'Since this is a security-sensitive operation, you will be asked to login again before your account can be deleted.',
+              'Since this is a security-sensitive operation, you need to enter your password to proceed.',
+              style: TextStyle(color: Colors.red),
+            ),
+            SizedBox(height: 20),
+            TextField(
+              decoration: InputDecoration(labelText: 'Enter your password'),
+              onChanged: (value) {
+                password = value; // Update password variable as user types
+              },
+              obscureText: true, // Mask the entered password
             ),
           ],
         ),
@@ -126,8 +139,8 @@ void _deleteAccount() {
               primary: Colors.red,
             ),
             onPressed: () {
-              // Call the delete account function
-              _deleteUserAccount();
+              // Call the delete account function with password
+              _deleteUserAccount(password);
             },
           ),
         ],
@@ -136,15 +149,21 @@ void _deleteAccount() {
   );
 }
 
-Future<void> _deleteUserAccount() async {
+Future<void> _deleteUserAccount(String password) async {
   try {
     final user = FirebaseAuth.instance.currentUser;
+
     if (user != null) {
+      // Reauthenticate user with provided password
+      final credential = EmailAuthProvider.credential(email: user.email!, password: password);
+      await user.reauthenticateWithCredential(credential);
+
       // Delete user's document from Firestore
       await FirebaseFirestore.instance.collection('users').doc(user.uid).delete();
-      
+
       // Delete user account
       await user.delete();
+      print('User account has been deleted');
 
       // Navigate to the login page
       Navigator.of(context).pushReplacementNamed(AppRoutes.login);
@@ -166,16 +185,20 @@ Future<void> _deleteUserAccount() async {
 
 Future<void> _reauthenticateAndDelete() async {
   try {
-    final providerData = FirebaseAuth.instance.currentUser?.providerData.first;
+    final user = FirebaseAuth.instance.currentUser;
 
-    if (GoogleAuthProvider().providerId == providerData!.providerId) {
-      await FirebaseAuth.instance.currentUser!
-          .reauthenticateWithProvider(GoogleAuthProvider());
-    } else {
-      // Handle other providers if necessary
+    if (user != null) {
+      final providerData = user.providerData.first;
+
+      if (GoogleAuthProvider().providerId == providerData.providerId) {
+        await user.reauthenticateWithProvider(GoogleAuthProvider());
+        print('Account reauthenticated');
+      } else {
+        // Handle other providers if necessary
+      }
+
+      await user.delete();
     }
-
-    await FirebaseAuth.instance.currentUser?.delete();
   } catch (e) {
     // Handle exceptions
     print('Error reauthenticating and deleting user account: $e');
