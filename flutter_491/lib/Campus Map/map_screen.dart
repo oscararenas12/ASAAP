@@ -3,7 +3,6 @@ import 'package:flutter_491/Campus%20Map/current_location.dart';
 import 'package:flutter_491/Campus%20Map/map.dart';
 import 'package:flutter_491/Campus%20Map/map_polyline.dart';
 import 'package:flutter_491/Campus%20Map/search_map.dart';
-import 'package:flutter_491/config/app_routes.dart';
 import 'package:flutter_491/styles/app_colors.dart';
 
 //MENU OPTIONS testing

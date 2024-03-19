@@ -1,9 +1,12 @@
 import 'package:calendar_view/calendar_view.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_491/config/app_routes.dart';
 import 'package:flutter_491/pages/agenda.dart';
 import 'package:flutter_491/pages/goal.dart';
+import 'package:flutter_491/pages/login_page.dart';
 import 'package:flutter_491/pages/storage_page.dart';
+import 'package:flutter_491/pages/verify_email_page.dart';
 import 'package:flutter_491/styles/app_colors.dart';
 import 'package:flutter_491/styles/app_text.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -76,6 +79,17 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
+          //Jessica - SendEmailVerification
+          StreamBuilder<User?>(
+        stream:FirebaseAuth.instance.authStateChanges(),
+        builder: (context,snapshot){
+          if(snapshot.hasData){
+            return VerifyEmailPage();
+          }else{
+            return LoginPage();
+          }
+        }
+      ),
 
           // Weekly TableCalendar Widget
           TableCalendar(

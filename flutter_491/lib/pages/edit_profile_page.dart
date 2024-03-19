@@ -276,8 +276,7 @@ Future<void> deleteUserAccount() async {
                     _restartPage();
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: AppColors.darkblue,
-                    onPrimary: Colors.white,
+                    foregroundColor: Colors.white, backgroundColor: AppColors.darkblue,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -294,8 +293,7 @@ Future<void> deleteUserAccount() async {
                   _changePassword(context);
                 },
                 style: ElevatedButton.styleFrom(
-                  primary: AppColors.darkblue,
-                  onPrimary: Colors.white,
+                  foregroundColor: Colors.white, backgroundColor: AppColors.darkblue,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

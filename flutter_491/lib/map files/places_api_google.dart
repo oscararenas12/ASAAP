@@ -48,13 +48,6 @@ class _PlacesApiGoogleMapSearchState extends State<PlacesApiGoogleMapSearch> {
 
   void onModify()
   {
-    if(tokenForSession == null)
-    {
-      setState(() {
-        tokenForSession = uuid.v4();
-      });
-    }
-
     makeSuggestion(_controller.text);
   }
 

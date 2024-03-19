@@ -16,6 +16,7 @@ import 'package:flutter_491/pages/signup_page.dart';
 import 'package:flutter_491/pages/customizeAI.dart';
 import 'package:flutter_491/pages/storage_page.dart';
 import 'package:flutter_491/pages/profile_page.dart';
+import 'package:flutter_491/pages/verify_email_page.dart';
 
 class AppRoutes{
 
@@ -31,6 +32,9 @@ class AppRoutes{
         agenda:(context) => AgendaPage(),
         goal:(context) => GoalPage(),
         profile:(context) => ProfilePage(),
+        //email verifcation
+        verify_email_page:(context) => VerifyEmailPage(),
+       
 
         //home_page navigator
         edit_profile:(context) => EditProfilePage(),
@@ -67,6 +71,7 @@ class AppRoutes{
   static const agenda = '/agenda';
   static const goal = '/goal';
   static const profile = '/profile';
+  static const verify_email_page = '/verify_email_page';
 
 
 //map routes

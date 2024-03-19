@@ -9,6 +9,9 @@ import 'package:flutter_491/styles/app_colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,6 +43,35 @@ class MyApp extends StatelessWidget {
   static void setLightMode() {
     isDarkMode = false;
   }
+
+//   // Jessica - Creating Dynamic link
+//     MyApp({super.key}) {
+//     _initDynamicLinks();
+//   }
+
+//   void _initDynamicLinks() async {
+//   final PendingDynamicLinkData? data = await FirebaseDynamicLinks.instance.getInitialLink();
+//   final Uri? deepLink = data?.link;
+//   if (deepLink != null) {
+//     navigateBasedOnLink(deepLink);
+//   }
+
+//   FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {
+//     final Uri deepLink = dynamicLinkData.link;
+//     navigateBasedOnLink(deepLink);
+//   }).onError((e) {
+//     // Handle errors
+//     print('Dynamic Link Failed: $e');
+//   });
+// }
+
+// void navigateBasedOnLink(Uri deepLink) {
+//   if (deepLink.path == '/login') {
+//     navigatorKey.currentState?.pushNamed(AppRoutes.login);
+//   }
+//   // Add other navigation logic based on different paths
+// }
+
 
   @override
   Widget build(BuildContext context) {
