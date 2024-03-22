@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_491/pages/home_page.dart';
+import 'package:flutter_491/config/app_routes.dart';
 import 'dart:async';
+
+import 'package:flutter_491/pages/main_page.dart';
 
 //updates databases to reflect that the email has been verified
 Future<void> updateEmailVerifiedStatus(String userId) async {
@@ -30,8 +32,6 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
   @override
   void initState() {
     super.initState();
-    // Call the sendVerificationEmail function immediately
-    sendVerificationEmail();
     // Initiate the email verification check
     checkEmailVerification();
   }
@@ -62,9 +62,9 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     user = FirebaseAuth.instance.currentUser;
     
     if (user != null && user.emailVerified) {
-      setState(() {
+      setState(() async {
         isEmailVerified = true;
-        updateEmailVerifiedStatus(user!.uid);
+        await updateEmailVerifiedStatus(user!.uid);
       });
       timer?.cancel(); // Stop the timer if the email is verified
     }
@@ -87,25 +87,35 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: isEmailVerified
-            ? HomePage() // Redirect to HomePage if verified
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Please check your email for the verification link.'),
-                  ElevatedButton(
-                    onPressed: () async {
-                      await checkEmailVerification(); // Re-check email verification
-                    },
-                    child: Text('Refresh'),
-                  ),
-                ],
-              ),
-      ),
-    );
-  }
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: Center(
+      child: isEmailVerified
+          ? MainPage() // Redirect to HomePage if verified
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Please check your email for the verification link.'),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () async {
+                    await checkEmailVerification(); // Re-check email verification
+                  },
+                  child: Text('Refresh'),
+                ),
+                SizedBox(height: 20), // Add some spacing
+                ElevatedButton(
+                  onPressed: () {
+                    // Navigate back to the login page
+                    Navigator.of(context).pushNamed(AppRoutes.login);
+                  },
+                  child: Text('Back to Login'),
+                ),
+              ],
+            ),
+    ),
+  );
+}
+
 }
 

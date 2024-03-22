@@ -267,41 +267,73 @@ void _signInWithGoogle(BuildContext context) async {
 }
 
   void _signIn(BuildContext context) async {
-    // Get user input from controllers
-    String email = emailController.text;
-    String password = passwordController.text;
+  // Get user input from controllers
+  String email = emailController.text;
+  String password = passwordController.text;
 
-    try {
-      // Sign in with email and password
-      await widget._auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+  try {
+    // Sign in with email and password
+    var userCredential = await widget._auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
 
+    // Check if the user's email is verified
+    if (userCredential.user != null && userCredential.user!.emailVerified) {
       // Navigate to the home page if authentication is successful
       Navigator.of(context).pushReplacementNamed(AppRoutes.main);
-    } catch (e) {
-      // Handle authentication errors
-      print('Error signing in: $e');
-
-      // Display an error message to the user
+    } else {
+      // Email is not verified, show the popup
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Error'),
-          content: Text('Failed to sign in. Please check your credentials and try again.'),
+          title: Text('Verify Your Email'),
+          content: Text('You need to verify your email to continue. Please check your email inbox.'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
+                // Optionally, redirect the user to the email verification page
+                // Navigator.of(context).pushNamed('/verify-email');
               },
-              child: Text('OK'),
+              child: Text('Later'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Resend the verification email if necessary
+                // await userCredential.user!.sendEmailVerification();
+                // Redirect the user to the email verification page
+                Navigator.of(context).pushReplacementNamed(AppRoutes.verify_email_page);
+
+              },
+              child: Text('Verify Email'),
             ),
           ],
         ),
       );
     }
+  } catch (e) {
+    // Handle authentication errors
+    print('Error signing in: $e');
+
+    // Display an error message to the user
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text('Failed to sign in. Please check your credentials and try again.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
+}
 }
 
 
