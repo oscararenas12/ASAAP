@@ -33,7 +33,6 @@ Future<void> sendVerificationEmail(BuildContext context) async {
   }
 }
 
-
 class SignUpPage extends StatefulWidget {
   @override
   _SignUpPageState createState() => _SignUpPageState();
@@ -48,16 +47,19 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _bioController = TextEditingController();
   bool _isPasswordVisible = false;
 
-
   Future<void> _createAccount() async {
     try {
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
 
       // Save additional user information to Firestore
-      await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .set({
         'firstName': _firstNameController.text.trim(),
         'lastName': _lastNameController.text.trim(),
         'bio': _bioController.text.trim(),
@@ -78,13 +80,10 @@ class _SignUpPageState extends State<SignUpPage> {
         // Handle calendar creation failure
       }
 
-      
-  
       Navigator.of(context).pushNamed(AppRoutes.login);
     } on FirebaseAuthException catch (e) {
       print("Failed to create account: ${e.message}");
       // Handle errors based on the FirebaseAuthException code.
-
     }
   }
 
@@ -107,7 +106,8 @@ class _SignUpPageState extends State<SignUpPage> {
             color: Colors.white, // Set icon color to white
           ),
           onPressed: () {
-            Navigator.of(context).pushNamed(AppRoutes.login); // Navigate back to the previous screen
+            Navigator.of(context).pushNamed(
+                AppRoutes.login); // Navigate back to the previous screen
           },
         ),
       ),
@@ -157,7 +157,9 @@ class _SignUpPageState extends State<SignUpPage> {
                     });
                   },
                   child: Icon(
-                    _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                    _isPasswordVisible
+                        ? Icons.visibility
+                        : Icons.visibility_off,
                     color: Colors.black,
                   ),
                 ),
@@ -168,10 +170,11 @@ class _SignUpPageState extends State<SignUpPage> {
             ElevatedButton(
               onPressed: _createAccount,
               style: ElevatedButton.styleFrom(
-                primary: AppColors.darkblue, // Set button color
-                onPrimary: Colors.white, // Set text color
+                foregroundColor: Colors.white,
+                backgroundColor: AppColors.darkblue, // Set text color
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0), // Set button border radius
+                  borderRadius:
+                      BorderRadius.circular(10.0), // Set button border radius
                 ),
               ),
               child: Text(
