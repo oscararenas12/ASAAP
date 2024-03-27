@@ -6,32 +6,7 @@ import 'package:flutter_491/config/app_routes.dart';
 import 'package:flutter_491/styles/app_colors.dart';
 import 'calendar_backend.dart';
 
-Future<void> sendVerificationEmail(BuildContext context) async {
-  User? user = FirebaseAuth.instance.currentUser;
-  if (user != null && !user.emailVerified) {
-    try {
-      await user.sendEmailVerification();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Verification email sent. Please check your inbox.'),
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to send verification email. Try again later.'),
-        ),
-      );
-      print(e); // For debugging purposes
-    }
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Email is already verified or user is not logged in.'),
-      ),
-    );
-  }
-}
+
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -47,6 +22,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _bioController = TextEditingController();
   bool _isPasswordVisible = false;
 
+ 
   Future<void> _createAccount() async {
     try {
       UserCredential userCredential =
@@ -63,15 +39,13 @@ class _SignUpPageState extends State<SignUpPage> {
         'firstName': _firstNameController.text.trim(),
         'lastName': _lastNameController.text.trim(),
         'bio': _bioController.text.trim(),
+        'email': _emailController.text.trim(),
         'emailVerified': false,
         // Add other fields as needed
       });
 
       print("Account created: ${userCredential.user!.email}");
 
-      //Send Verification Email
-      await sendVerificationEmail(context);
-      // Create a calendar for the user
       try {
         await createUserCalendar(userCredential.user!.uid);
         print("CalendarID created");
@@ -79,8 +53,9 @@ class _SignUpPageState extends State<SignUpPage> {
         print("Failed to create user calendar: $e");
         // Handle calendar creation failure
       }
+      // If all was successfully generated to create account- send user to verify email page
+        Navigator.of(context).pushNamed(AppRoutes.verify_email_page);
 
-      Navigator.of(context).pushNamed(AppRoutes.login);
     } on FirebaseAuthException catch (e) {
       print("Failed to create account: ${e.message}");
       // Handle errors based on the FirebaseAuthException code.
@@ -106,8 +81,8 @@ class _SignUpPageState extends State<SignUpPage> {
             color: Colors.white, // Set icon color to white
           ),
           onPressed: () {
-            Navigator.of(context).pushNamed(
-                AppRoutes.login); // Navigate back to the previous screen
+            // If all was successfully generated to create account- send user to verify email page
+        Navigator.of(context).pushNamed(AppRoutes.verify_email_page);
           },
         ),
       ),
@@ -170,7 +145,7 @@ class _SignUpPageState extends State<SignUpPage> {
             ElevatedButton(
               onPressed: _createAccount,
               style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
+                foregroundColor: Colors.white, 
                 backgroundColor: AppColors.darkblue, // Set text color
                 shape: RoundedRectangleBorder(
                   borderRadius:

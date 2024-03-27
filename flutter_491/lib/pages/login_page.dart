@@ -266,45 +266,72 @@ void _signInWithGoogle(BuildContext context) async {
   }
 }
 
-  void _signIn(BuildContext context) async {
-    // Get user input from controllers
-    String email = emailController.text;
-    String password = passwordController.text;
+ void _signIn(BuildContext context) async {
+  // Get user input from controllers
+  String email = emailController.text;
+  String password = passwordController.text;
 
-    try {
-      // Sign in with email and password
-      await widget._auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+  try {
+    // Sign in with email and password
+    UserCredential userCredential = await widget._auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
 
-      // Navigate to the home page if authentication is successful
+    User? user = userCredential.user;
+
+    if (user != null && user.emailVerified) {
+      // Navigate to the home page if authentication is successful and email is verified
       Navigator.of(context).pushReplacementNamed(AppRoutes.main);
-    } catch (e) {
-      // Handle authentication errors
-      print('Error signing in: $e');
-
-      // Display an error message to the user
+    } else {
+      // Ask the user to verify their email
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Error'),
-          content: Text(
-            'Failed to sign in. Please check your credentials and try again.',
-            style: TextStyle(color: Colors.black), // Set content text color to black
-          ),
+          title: Text('Email not verified'),
+          content: Text('Please verify your email before signing in.',
+        style: TextStyle(color: Colors.black), // Set content text color to black
+        ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
               },
-              child: Text('OK'),
+              child: Text('Later'),
             ),
+            TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+            // Redirect to verify email page
+            Navigator.of(context).pushNamed(AppRoutes.verify_email_page);
+          },
+          child: Text('Verify Email'),
+        ),
           ],
         ),
       );
     }
+  } catch (e) {
+    // Handle authentication errors
+    print('Error signing in: $e');
+    // Display an error message to the user
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text('Failed to sign in. Please check your credentials and try again.',
+        style: TextStyle(color: Colors.black), // Set content text color to black
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 }
-
-
+}

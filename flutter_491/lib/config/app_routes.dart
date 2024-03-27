@@ -17,6 +17,7 @@ import 'package:flutter_491/pages/signup_page.dart';
 import 'package:flutter_491/pages/customizeAI.dart';
 import 'package:flutter_491/pages/storage_page.dart';
 import 'package:flutter_491/pages/profile_page.dart';
+import 'package:flutter_491/pages/verify_email_page.dart';
 
 class AppRoutes{
 
@@ -45,12 +46,9 @@ class AppRoutes{
         directionpolyline:(context) => MapPolyline(),
 
         satelite:(context) => SateliteMap(),
-
-
-
-
-
-
+        
+        //email verification page
+        verify_email_page:(context)=> VerifyEmailPage(),
   };
 
 
@@ -79,9 +77,5 @@ class AppRoutes{
   static const directionpolyline = '/direction_polyline';
     static const satelite = '/satelite';
 
-
-
-
-
-
+  static const verify_email_page = '/verify_email_page';
 }
