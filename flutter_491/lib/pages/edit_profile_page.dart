@@ -11,7 +11,6 @@ import 'package:fluttermoji/fluttermojiCircleAvatar.dart';
 import 'package:flutter_491/pages/change_password_page.dart';
 import 'package:flutter_491/pages/main_page.dart';
 
-
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({Key? key}) : super(key: key);
 
@@ -31,29 +30,35 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _fetchUserData();
   }
 
-Future<void> _fetchUserData() async {
-  try {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      DocumentSnapshot userData = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-      if (userData.exists) {
-        setState(() {
-          _firstName = userData['firstName'] ?? '';
-          _lastName = userData['lastName'] ?? '';
-          _bio = userData['bio'] ?? '';
+  Future<void> _fetchUserData() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        DocumentSnapshot userData = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+        if (userData.exists) {
+          setState(() {
+            _firstName = userData['firstName'] ?? '';
+            _lastName = userData['lastName'] ?? '';
+            _bio = userData['bio'] ?? '';
 
-          // If 'bio' field doesn't exist, add it with an empty string value
-          if (!_bio.isNotEmpty) {
-            FirebaseFirestore.instance.collection('users').doc(user.uid).update({'bio': ''});
-            _bio = ''; // Update local variable
-          }
-        });
+            // If 'bio' field doesn't exist, add it with an empty string value
+            if (!_bio.isNotEmpty) {
+              FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(user.uid)
+                  .update({'bio': ''});
+              _bio = ''; // Update local variable
+            }
+          });
+        }
       }
+    } catch (e) {
+      print('Error fetching user data: $e');
     }
-  } catch (e) {
-    print('Error fetching user data: $e');
   }
-}
 
   Future<void> _saveChanges() async {
     try {
@@ -69,141 +74,145 @@ Future<void> _fetchUserData() async {
     }
   }
 
-void _restartPage() {
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(builder: (context) => MainPage()),
-  );
-}
+  void _restartPage() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => MainPage()),
+    );
+  }
 
- void _changePassword(BuildContext context) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => ChangePasswordPage()),
-  ).then((success) {
-    if (success != null && success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Password changed successfully')),
-      );
-    }
-  });
-}
+  void _changePassword(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ChangePasswordPage()),
+    ).then((success) {
+      if (success != null && success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Password changed successfully')),
+        );
+      }
+    });
+  }
 
-void _deleteAccount() {
-  String password = ''; // Initialize password variable
+  void _deleteAccount() {
+    String password = ''; // Initialize password variable
 
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text(
-          'Delete your Account?',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'If you select Delete, we will delete your account on our server. Your app data will also be deleted and you won\'t be able to retrieve it.',
-              style: TextStyle(color: Colors.red),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Since this is a security-sensitive operation, you need to enter your password to proceed.',
-              style: TextStyle(color: Colors.red),
-            ),
-            SizedBox(height: 20),
-            TextField(
-              decoration: InputDecoration(labelText: 'Enter your password'),
-              onChanged: (value) {
-                password = value; // Update password variable as user types
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Delete your Account?',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'If you select Delete, we will delete your account on our server. Your app data will also be deleted and you won\'t be able to retrieve it.',
+                style: TextStyle(color: Colors.red),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Since this is a security-sensitive operation, you need to enter your password to proceed.',
+                style: TextStyle(color: Colors.red),
+              ),
+              SizedBox(height: 20),
+              TextField(
+                decoration: InputDecoration(labelText: 'Enter your password'),
+                onChanged: (value) {
+                  password = value; // Update password variable as user types
+                },
+                obscureText: true, // Mask the entered password
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: Colors.black87),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
               },
-              obscureText: true, // Mask the entered password
+            ),
+            ElevatedButton(
+              child: Text('Delete'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+              ),
+              onPressed: () {
+                // Call the delete account function with password
+                _deleteUserAccount(password);
+              },
             ),
           ],
-        ),
-        actions: [
-          TextButton(
-            child: Text(
-              'Cancel',
-              style: TextStyle(color: Colors.black87),
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          ElevatedButton(
-            child: Text('Delete'),
-            style: ElevatedButton.styleFrom(
-              primary: Colors.red,
-            ),
-            onPressed: () {
-              // Call the delete account function with password
-              _deleteUserAccount(password);
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
-
-Future<void> _deleteUserAccount(String password) async {
-  try {
-    final user = FirebaseAuth.instance.currentUser;
-
-    if (user != null) {
-      // Reauthenticate user with provided password
-      final credential = EmailAuthProvider.credential(email: user.email!, password: password);
-      await user.reauthenticateWithCredential(credential);
-
-      // Delete user's document from Firestore
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).delete();
-
-      // Delete user account
-      await user.delete();
-      print('User account has been deleted');
-
-      // Navigate to the login page
-      Navigator.of(context).pushReplacementNamed(AppRoutes.login);
-    } else {
-      print('No user is currently signed in');
-    }
-  } on FirebaseAuthException catch (e) {
-    if (e.code == "requires-recent-login") {
-      await _reauthenticateAndDelete();
-    } else {
-      // Handle other Firebase exceptions
-      print('Firebase Auth Exception: $e');
-    }
-  } catch (e) {
-    // Handle general exception
-    print('Error deleting user account: $e');
+        );
+      },
+    );
   }
-}
 
-Future<void> _reauthenticateAndDelete() async {
-  try {
-    final user = FirebaseAuth.instance.currentUser;
+  Future<void> _deleteUserAccount(String password) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
 
-    if (user != null) {
-      final providerData = user.providerData.first;
+      if (user != null) {
+        // Reauthenticate user with provided password
+        final credential = EmailAuthProvider.credential(
+            email: user.email!, password: password);
+        await user.reauthenticateWithCredential(credential);
 
-      if (GoogleAuthProvider().providerId == providerData.providerId) {
-        await user.reauthenticateWithProvider(GoogleAuthProvider());
-        print('Account reauthenticated');
+        // Delete user's document from Firestore
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .delete();
+
+        // Delete user account
+        await user.delete();
+        print('User account has been deleted');
+
+        // Navigate to the login page
+        Navigator.of(context).pushReplacementNamed(AppRoutes.login);
       } else {
-        // Handle other providers if necessary
+        print('No user is currently signed in');
       }
-
-      await user.delete();
+    } on FirebaseAuthException catch (e) {
+      if (e.code == "requires-recent-login") {
+        await _reauthenticateAndDelete();
+      } else {
+        // Handle other Firebase exceptions
+        print('Firebase Auth Exception: $e');
+      }
+    } catch (e) {
+      // Handle general exception
+      print('Error deleting user account: $e');
     }
-  } catch (e) {
-    // Handle exceptions
-    print('Error reauthenticating and deleting user account: $e');
   }
-}
+
+  Future<void> _reauthenticateAndDelete() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        final providerData = user.providerData.first;
+
+        if (GoogleAuthProvider().providerId == providerData.providerId) {
+          await user.reauthenticateWithProvider(GoogleAuthProvider());
+          print('Account reauthenticated');
+        } else {
+          // Handle other providers if necessary
+        }
+
+        await user.delete();
+      }
+    } catch (e) {
+      // Handle exceptions
+      print('Error reauthenticating and deleting user account: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -291,8 +300,8 @@ Future<void> _reauthenticateAndDelete() async {
                     _restartPage();
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: AppColors.darkblue,
-                    onPrimary: Colors.white,
+                    foregroundColor: Colors.white,
+                    backgroundColor: AppColors.darkblue,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -309,8 +318,8 @@ Future<void> _reauthenticateAndDelete() async {
                   _changePassword(context);
                 },
                 style: ElevatedButton.styleFrom(
-                  primary: AppColors.darkblue,
-                  onPrimary: Colors.white,
+                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.darkblue,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

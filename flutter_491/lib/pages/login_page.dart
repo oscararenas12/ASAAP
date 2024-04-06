@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_491/config/app_routes.dart';
 import 'package:flutter_491/pages/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_491/styles/app_colors.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 
@@ -348,40 +349,108 @@ void _resetPassword(BuildContext context) {
     String email = emailController.text;
     String password = passwordController.text;
 
-    try {
-      // Sign in with email and password
-      await widget._auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+  try {
+   
+    // Sign in with email and password
+    UserCredential userCredential = await widget._auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
 
-      // Navigate to the home page if authentication is successful
+    User? user = userCredential.user;
+
+    if (user != null && user.emailVerified) {
+      // Navigate to the home page if authentication is successful and email is verified
       Navigator.of(context).pushReplacementNamed(AppRoutes.main);
-    } catch (e) {
-      // Handle authentication errors
-      print('Error signing in: $e');
-
-      // Display an error message to the user
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Error'),
-          content: Text(
-            'Failed to sign in. Please check your credentials and try again.',
-            style: TextStyle(color: Colors.black), // Set content text color to black
+    } else if ( user != null && user.emailVerified == false){
+      // Ask the user to verify their email
+        showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Color.fromARGB(255, 221, 244, 255), // Light blue background color for the dialog
+        title: Text(
+          'Email not verified',
+          style: TextStyle(
+            color: AppColors.lighterBlue, // The blue color we defined earlier
+            fontWeight: FontWeight.bold, // Make the title text bold
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: Text('OK'),
-            ),
-          ],
         ),
-      );
+        content: Text(
+          'Please verify your email before signing in.',
+          textAlign: TextAlign.center, // Center the content text
+          style: TextStyle(
+            color: AppColors.lighterBlue, // The blue color we defined earlier
+          ),
+        ),
+        actionsAlignment: MainAxisAlignment.center, // Center the action buttons horizontally
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: Text(
+              'Later',
+              style: TextStyle(color: AppColors.lighterBlue), // The blue color we defined earlier
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+              // Redirect to verify email page
+              Navigator.of(context).pushNamed(AppRoutes.verify_email_page);
+            },
+            child: Text(
+              'Verify Email',
+              style: TextStyle(color: AppColors.lighterBlue), // The blue color we defined earlier
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  } on FirebaseAuthException catch (e) {
+     String errorMessage;
+    
+    if (e.code == 'user-not-found') {
+      errorMessage = 'No user found for that email.';
+    } else if (e.code == 'wrong-password') {
+      errorMessage = 'Wrong password provided for that user.';
+    } else {
+      errorMessage = 'An error occurred. Please try again.';
     }
+
+    showDialog(
+  context: context,
+  builder: (context) => AlertDialog(
+    backgroundColor: Color.fromARGB(255, 221, 244, 255), // Light blue background color for the dialog
+    title: Text(
+      'Login Error',
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        color: Color.fromARGB(255, 43, 106, 147), // Blue color from the logo
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+    content: Text(
+      errorMessage, // Display the appropriate error message
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        color: Color.fromARGB(255, 43, 106, 147), // Blue color from the logo
+      ),
+    ),
+    actionsAlignment: MainAxisAlignment.center,
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.of(context).pop(),
+        child: Text(
+          'OK',
+          style: TextStyle(color: Color.fromARGB(255, 43, 106, 147)), // Blue color from the logo
+        ),
+      ),
+    ],
+  ),
+);
+
   }
 }
-
-
+}

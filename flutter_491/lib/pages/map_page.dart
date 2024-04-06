@@ -302,6 +302,10 @@ floatingActionButton: Column(
       apiHeaders: await const GoogleApiHeaders().getHeaders()
     );
 
+
+
+
+
     PlacesDetailsResponse detail = await places.getDetailsByPlaceId(p.placeId!);
 
     final lat = detail.result.geometry!.location.lat;
