@@ -252,7 +252,10 @@ void _signInWithGoogle(BuildContext context) async {
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Error'),
-        content: Text('Failed to sign in with Google. Please try again later.'),
+        content: Text(
+            'Failed to sign in with Google.',
+            style: TextStyle(color: Colors.black), // Set content text color to black
+          ),
         actions: [
           TextButton(
             onPressed: () {
