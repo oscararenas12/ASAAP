@@ -176,7 +176,7 @@ class _LoginPageState extends State<LoginPage> {
 
                   //Forgot password 
                   TextButton(onPressed: () {
-                    print('Forgot clicked');
+                      _resetPassword(context);
                   }, 
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.white,
@@ -268,6 +268,80 @@ void _signInWithGoogle(BuildContext context) async {
     );
   }
 }
+
+void _resetPassword(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      TextEditingController resetEmailController = TextEditingController();
+      return AlertDialog(
+        title: Text("Reset Password"),
+        content: TextField(
+          controller: resetEmailController,
+          decoration: InputDecoration(hintText: "Enter your email"),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              String email = resetEmailController.text.trim();
+              if (email.isNotEmpty) {
+                try {
+                  await widget._auth.sendPasswordResetEmail(email: email);
+                  Navigator.of(context).pop();
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text('Success'),
+                      content: Text('Password reset email sent.',style: TextStyle(color: Colors.black),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Close the dialog
+                          },
+                          child: Text('OK'),
+                        ),
+                      ],
+                    ),
+                  );
+                } catch (e) {
+                  print('Error resetting password: $e');
+                  Navigator.of(context).pop();
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text('Error'),
+                      content: Text(
+                        'Failed to reset password. Please try again later.',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Close the dialog
+                          },
+                          child: Text('OK'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              }
+            },
+            child: Text('Reset'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('Cancel'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 
   void _signIn(BuildContext context) async {
     // Get user input from controllers

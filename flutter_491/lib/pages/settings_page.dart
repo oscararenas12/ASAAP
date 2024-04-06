@@ -63,24 +63,6 @@ class SettingsPage extends StatelessWidget {
         ),
         child: ListTile(
           title: Text(
-            'Change Password',
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
-          onTap: () {
-            // Implement logic for Change Password
-          },
-        ),
-      ),
-      Container(
-        margin: const EdgeInsets.only(bottom: 8),
-        decoration: BoxDecoration(
-          color: AppColors.darkblue,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: ListTile(
-          title: Text(
             'Privacy Policy',
             style: TextStyle(
               color: Colors.white,
