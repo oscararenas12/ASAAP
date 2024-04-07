@@ -94,125 +94,73 @@ class _EditProfilePageState extends State<EditProfilePage> {
     });
   }
 
-  void _deleteAccount() {
-    String password = ''; // Initialize password variable
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            'Delete your Account?',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'If you select Delete, we will delete your account on our server. Your app data will also be deleted and you won\'t be able to retrieve it.',
-                style: TextStyle(color: Colors.red),
-              ),
-              SizedBox(height: 20),
-              Text(
-                'Since this is a security-sensitive operation, you need to enter your password to proceed.',
-                style: TextStyle(color: Colors.red),
-              ),
-              SizedBox(height: 20),
-              TextField(
-                decoration: InputDecoration(labelText: 'Enter your password'),
-                onChanged: (value) {
-                  password = value; // Update password variable as user types
+Future<void> showDeleteAccountDialog(BuildContext context) async {
+  return showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      // Use a Builder widget to get a valid context
+      return Builder(
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+              'Delete Account',
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+            ),
+            content: Text('Are you sure you want to delete your account?'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
                 },
-                obscureText: true, // Mask the entered password
+              ),
+              ElevatedButton(
+                child: Text('Delete'),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.red,
+                ),
+                onPressed: () async {
+                  Navigator.of(context).pop(); // Close the dialog
+
+                  // Navigate to the login page
+                  Navigator.of(context).pushReplacementNamed(AppRoutes.login);
+                  // Delete user account
+                  await deleteUserAccount();
+
+
+                },
               ),
             ],
-          ),
-          actions: [
-            TextButton(
-              child: Text(
-                'Cancel',
-                style: TextStyle(color: Colors.black87),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            ElevatedButton(
-              child: Text('Delete'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-              ),
-              onPressed: () {
-                // Call the delete account function with password
-                _deleteUserAccount(password);
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+          );
+        },
+      );
+    },
+  );
+}
 
-  Future<void> _deleteUserAccount(String password) async {
-    try {
-      final user = FirebaseAuth.instance.currentUser;
+Future<void> deleteUserAccount() async {
+  try {
+    User? user = FirebaseAuth.instance.currentUser;
 
-      if (user != null) {
-        // Reauthenticate user with provided password
-        final credential = EmailAuthProvider.credential(
-            email: user.email!, password: password);
-        await user.reauthenticateWithCredential(credential);
+    if (user != null) {
+      // Reference to the user's document in Firestore
+      final userDocRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
 
-        // Delete user's document from Firestore
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .delete();
+      // Delete user's document from Firestore
+      await userDocRef.delete();
 
-        // Delete user account
-        await user.delete();
-        print('User account has been deleted');
-
-        // Navigate to the login page
-        Navigator.of(context).pushReplacementNamed(AppRoutes.login);
-      } else {
-        print('No user is currently signed in');
-      }
-    } on FirebaseAuthException catch (e) {
-      if (e.code == "requires-recent-login") {
-        await _reauthenticateAndDelete();
-      } else {
-        // Handle other Firebase exceptions
-        print('Firebase Auth Exception: $e');
-      }
-    } catch (e) {
-      // Handle general exception
-      print('Error deleting user account: $e');
+      // Delete user account
+      await user.delete();
+      print('User account and associated document have been deleted');
+    } else {
+      print('No user is currently signed in');
     }
+  } catch (e) {
+    // Handle exceptions
+    print('Error deleting user account: $e');
   }
+}
 
-  Future<void> _reauthenticateAndDelete() async {
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-
-      if (user != null) {
-        final providerData = user.providerData.first;
-
-        if (GoogleAuthProvider().providerId == providerData.providerId) {
-          await user.reauthenticateWithProvider(GoogleAuthProvider());
-          print('Account reauthenticated');
-        } else {
-          // Handle other providers if necessary
-        }
-
-        await user.delete();
-      }
-    } catch (e) {
-      // Handle exceptions
-      print('Error reauthenticating and deleting user account: $e');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -332,7 +280,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               SizedBox(height: 10),
               TextButton(
                 onPressed: () {
-                  _deleteAccount();
+                  showDeleteAccountDialog(context);
                 },
                 child: Text(
                   'Delete Account',

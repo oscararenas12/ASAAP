@@ -125,6 +125,6 @@ class ChangePasswordPage extends StatelessWidget {
   void _logout(BuildContext context) {
     FirebaseAuth.instance.signOut();
     Navigator.of(context).popUntil((route) => route.isFirst);
-    Navigator.of(context).pushReplacementNamed(AppRoutes.login); // Replace '/login' with your login route
+    Navigator.of(context).pushReplacementNamed(AppRoutes.login); 
   }
 }
