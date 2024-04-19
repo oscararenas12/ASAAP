@@ -117,7 +117,7 @@ Future<void> showDeleteAccountDialog(BuildContext context) async {
               ElevatedButton(
                 child: Text('Delete'),
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.red,
+                  backgroundColor: Colors.red,
                 ),
                 onPressed: () async {
                   Navigator.of(context).pop(); // Close the dialog
