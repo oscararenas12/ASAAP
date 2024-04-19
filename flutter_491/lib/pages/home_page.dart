@@ -1,4 +1,3 @@
-import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_491/config/app_routes.dart';
 import 'package:flutter_491/pages/agenda.dart';
@@ -11,13 +10,18 @@ import 'package:intl/intl.dart';
 
 import 'calendar_page.dart';
 
+final GlobalKey agendaKey = GlobalKey();
+final GlobalKey goalKey = GlobalKey();
+final GlobalKey storageKey = GlobalKey();
+final GlobalKey calendarKey = GlobalKey();
+
 enum HomeMenu {
   edit,
   logout,
 }
 
 class HomePage extends StatelessWidget {
-  HomePage({super.key});
+  HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +33,7 @@ class HomePage extends StatelessWidget {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: AppColors.darkblue,
-        title: Text('Welcome Shark', style: AppText.header1),
+        title: const Text('Welcome Shark', style: AppText.header1),
 
         actions: [
           PopupMenuButton<HomeMenu>(
@@ -44,14 +48,14 @@ class HomePage extends StatelessWidget {
                 default:
               }
             },
-            icon: Icon(Icons.more_vert_rounded),
+            icon: const Icon(Icons.more_vert_rounded),
             itemBuilder: (context) {
               return [
-                PopupMenuItem(
-                  child: Text('edit'),
+                const PopupMenuItem(
                   value: HomeMenu.edit,
+                  child: Text('edit'),
                 ),
-                PopupMenuItem(
+                const PopupMenuItem(
                   child: Text('logout'),
                   value: HomeMenu.logout,
                 ),
@@ -66,7 +70,7 @@ class HomePage extends StatelessWidget {
           
           // Rounded Image
           Padding(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: ClipOval(
               child: Image.asset(
                 'assets/temp/User Icon.png',
@@ -93,7 +97,7 @@ class HomePage extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
             ),
-            daysOfWeekStyle: DaysOfWeekStyle(
+            daysOfWeekStyle: const DaysOfWeekStyle(
               weekdayStyle: TextStyle(color: AppColors.darkblue),
               weekendStyle: TextStyle(color: AppColors.darkblue),
             ),
@@ -102,9 +106,9 @@ class HomePage extends StatelessWidget {
           // Expanded Lower Part of the Screen with Padding
           Expanded(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: AppColors.lighterBlue,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(20.0),
@@ -116,16 +120,16 @@ class HomePage extends StatelessWidget {
                   children: [
                     // Today's Date in Bold
                     Padding(
-                      padding: EdgeInsets.only(left: 16, top: 16, right: 16),
+                      padding: const EdgeInsets.only(left: 16, top: 16, right: 16),
                       child: Text(
                         'Today: ${DateFormat('MMMM d, yyyy').format(now)}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
                     // Clickable Icons
                     Row(
@@ -139,7 +143,8 @@ class HomePage extends StatelessWidget {
                             print('Agenda icon clicked');
                           },
                           child: Column(
-                            children: [
+                            key: agendaKey,
+                            children: const [
                               Icon(Icons.more_vert, size: 40, color: AppColors.darkblue),
                               SizedBox(height: 8),
                               Text('Agenda'),
@@ -155,7 +160,8 @@ class HomePage extends StatelessWidget {
                             print('Goal icon clicked');
                           },
                           child: Column(
-                            children: [
+                            key: goalKey,
+                            children: const [
                               Icon(Icons.star, size: 40, color: AppColors.darkblue),
                               SizedBox(height: 8),
                               Text('Goal'),
@@ -165,7 +171,7 @@ class HomePage extends StatelessWidget {
                       ],
                     ),
 
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
 
                     // Storage Icon and Calendar Icon in the same row
                     Row(
@@ -179,7 +185,8 @@ class HomePage extends StatelessWidget {
                             print('Storage icon clicked');
                           },
                           child: Column(
-                            children: [
+                            key: storageKey,
+                            children: const [
                               Icon(Icons.storage, size: 40, color: AppColors.darkblue),
                               SizedBox(height: 8),
                               Text('Storage'),
@@ -195,13 +202,13 @@ class HomePage extends StatelessWidget {
                               context: context,
                               builder: (BuildContext context) {
                                 return Dialog(
-                                  insetPadding: EdgeInsets.all(10), // Add some padding to the Dialog
+                                  insetPadding: const EdgeInsets.all(10), // Add some padding to the Dialog
                                   backgroundColor: Colors.transparent, // Ensures no white background for rounded corners
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(25), // Curved edges for the Dialog
                                   ),
                                   child: AnimatedContainer(
-                                    duration: Duration(milliseconds: 500),
+                                    duration: const Duration(milliseconds: 500),
                                     curve: Curves.easeOut,
                                     decoration: BoxDecoration(
                                       color: Colors.white,
@@ -216,7 +223,8 @@ class HomePage extends StatelessWidget {
                             );
                           },
                           child: Column(
-                            children: [
+                            key: calendarKey,
+                            children: const [
                               Icon(Icons.event, size: 40, color: AppColors.darkblue),
                               SizedBox(height: 8),
                               Text('Calendar'),
