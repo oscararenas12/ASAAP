@@ -2,10 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_491/components/user_avatar.dart';
 import 'package:flutter_491/config/app_routes.dart';
+import 'package:flutter_491/pages/tutorial_manager.dart';
 import 'package:flutter_491/styles/app_colors.dart';
 import 'package:flutter_491/styles/app_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_491/components/toolbar.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:fluttermoji/fluttermojiCircleAvatar.dart';
 import 'package:flutter_491/config/user_data.dart';
 
@@ -16,10 +18,13 @@ class ProfilePage extends StatefulWidget {
   _ProfilePageState createState() => _ProfilePageState();
 }
 
+
 class _ProfilePageState extends State<ProfilePage> {
   String _firstName = '';
   String _lastName = '';
   String _bio = '';
+
+  
 
   @override
   void initState() {
@@ -59,22 +64,35 @@ class _ProfilePageState extends State<ProfilePage> {
       print('Error logging out: $e');
     }
   }
+    //Tutorial Display
+    // List of tutorials
+  final List<String> tutorials = [
+    "Newsfeed",
+    "Map",
+    "Homepage",
+    "Chatbot",
+    "Profile",
+
+    // Add more tutorials here
+  ];
+
+ 
 
 @override
 Widget build(BuildContext context) {
   return Scaffold(
-    appBar: Toolbar(title: 'Profile'),
+    appBar: const Toolbar(title: 'Profile'),
     body: FutureBuilder<DocumentSnapshot>(
       future: FirebaseFirestore.instance.collection('users').doc(UserData.uid).get(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         }
         if (!snapshot.hasData || snapshot.data == null) {
-          return Center(child: Text('No data available'));
+          return const Center(child: Text('No data available'));
         }
 
         final data = snapshot.data!.data() as Map<String, dynamic>;
@@ -83,18 +101,18 @@ Widget build(BuildContext context) {
         _bio = data['bio'] ?? '';
 
         return ListView(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           children: <Widget>[
-            SizedBox(height: 25),
+            const SizedBox(height: 25),
             FluttermojiCircleAvatar(
               backgroundColor: Colors.blueGrey[100],
               radius: 100,
             ),
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
             Text('$_firstName $_lastName', style: AppText.header1, textAlign: TextAlign.center),
             Text('$_bio', style: AppText.header2, textAlign: TextAlign.center),
-            SizedBox(height: 20),
-            Divider(
+            const SizedBox(height: 20),
+            const Divider(
               color: AppColors.darkblue,
               thickness: 2,
               height: 20,
@@ -112,10 +130,10 @@ Widget build(BuildContext context) {
               foregroundColor: Colors.white,
             ),
             
-            child: Text('Edit Profile')),
+            child: const Text('Edit Profile')),
         
         
-            Divider(
+            const Divider(
               color: AppColors.darkblue,
               thickness: 1,
               height: 20,
@@ -132,9 +150,9 @@ Widget build(BuildContext context) {
               foregroundColor: Colors.white,
             ),
             
-            child: Text('Customize AI')),
+            child: const Text('Customize AI')),
         
-            Divider(
+            const Divider(
               color: AppColors.darkblue,
               thickness: 1,
               height: 20,
@@ -150,9 +168,9 @@ Widget build(BuildContext context) {
               foregroundColor: Colors.white,
             ),
             
-            child: Text('Saved')),
+            child: const Text('Saved')),
         
-            Divider(
+            const Divider(
               color: AppColors.darkblue,
               thickness: 1,
               height: 20,
@@ -167,9 +185,9 @@ Widget build(BuildContext context) {
                   foregroundColor: Colors.white,
                 ),
 
-                child: Text('Notifications')),
+                child: const Text('Notifications')),
 
-            Divider(
+            const Divider(
               color: AppColors.darkblue,
               thickness: 1,
               height: 20,
@@ -186,27 +204,77 @@ Widget build(BuildContext context) {
               foregroundColor: Colors.white,
             ),
             
-            child: Text('Settings')),
+            child: const Text('Settings')),
         
-            Divider(
+            const Divider(
               color: AppColors.darkblue,
               thickness: 1,
               height: 20,
               indent: 30,
               endIndent: 30,),
-        
-          
-            TextButton(onPressed: () {
-              print('Tutorial clicked');
-            }, 
-            style: TextButton.styleFrom(
-              textStyle: AppText.header2,
-              foregroundColor: Colors.white,
+          //Jessica's Contribution for App's Tutorial
+          // Tutorial button that opens the bottom sheet
+            ExpansionTile(
+  title: Text(
+    'Tutorials',
+    style: AppText.header2.copyWith(color: Colors.white),
+    textAlign: TextAlign.center,
+  ),
+  tilePadding: const EdgeInsets.only(left: 25),
+  children: <Widget>[
+    const Divider(
+      color: AppColors.darkblue,
+      thickness: 1,
+      height: 20,
+      indent: 30,
+      endIndent: 30,
+    ),
+    ...[
+      {'icon': 'assets/svg/Paper.svg', 'text': 'Newsfeed', 'width': 24.0, 'height': 24.0,/*'function': TutorialManager.showNewsfeedTutorial, 'route': '/news'*/},
+      {'icon': 'assets/svg/Pin_alt.svg', 'text': 'Map', 'width': 24.0, 'height': 24.0, /*'function': TutorialManager.showMapTutorial, 'route': '/map'*/},
+      {'icon': 'assets/svg/Home.svg', 'text': 'Homepage', 'width': 22.0, 'height': 22.0,'function': TutorialManager.showHomeMainPageTutorial, 'route': '/main'},
+      {'icon': 'assets/svg/Ai Bot.svg', 'text': 'Chatbot', 'width': 30.0, 'height': 30.0,/*'function': TutorialManager.showChatbotTutorial, 'route': '/chat'*/}, // Slightly larger to match other icons
+      {'icon': 'assets/svg/User_cicrle.svg', 'text': 'Profile', 'width': 24.0, 'height': 24.0, /*'function': TutorialManager.showProfileTutorial, 'route': '/profile'*/},
+    ].map((item) => ListTile(
+      onTap: () {
+      // First navigate to the appropriate screen.
+      if (item['route'] != null) {
+      Navigator.of(context).pushNamed(item['route'] as String);
+      }
+      if (item['function'] != null) {
+        (item['function'] as Function(BuildContext))(context);
+  }
+},
+      title: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: Row(
+         // mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              item['icon'] as String,
+              width: item['width'] as double,
+              height: item['height'] as double,
             ),
-            
-            child: Text('Tutorial')),
+           const SizedBox(width: 20), // Space between the icon and the text
+            Expanded(
+              child: Text(
+                item['text'] as String,
+                style: AppText.subtitle1.copyWith(color: Colors.white),
+              ),
+            ),
+            // ... other widgets ...
+          ],
+        ),
+      ),
+    )).toList(),
+  ],
+),
 
-            Divider(
+
+
+            const Divider(
               color: AppColors.darkblue,
               thickness: 1,
               height: 20,
@@ -219,7 +287,7 @@ Widget build(BuildContext context) {
               foregroundColor: Colors.white,
             ),
             
-            child: Text('Log out')),
+            child: const Text('Log out')),
 
 
 
@@ -395,4 +463,5 @@ Widget build(BuildContext context) {
     //  ),
     //);
   }
+
 

@@ -35,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
 
         body: SingleChildScrollView(  //gets rid of overflow for scrolling
           child: Padding(
-            padding: EdgeInsets.all(24),
+            padding: const EdgeInsets.all(24),
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
                 //SizedBox(
                     //height: 50,
                   //),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
 
               
                   Image.asset('assets/images/image 6.png',
@@ -53,26 +53,26 @@ class _LoginPageState extends State<LoginPage> {
                     width: 200,
                   ), 
             
-                  SizedBox(
+                  const SizedBox(
                     height: 30,
                   ),
               
                 //TEXTFIELDS for username and password
             
-                  Row(
+                  const Row(
                     children: [
                       Text('Email'),
                     ],
                   ),
             
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
             
                   TextField(
                     controller: emailController,
-                    style: TextStyle(color: Color.fromARGB(137, 0, 0, 0)), //set textfield color to black
-                    decoration: InputDecoration(
+                    style: const TextStyle(color: Color.fromARGB(137, 0, 0, 0)), //set textfield color to black
+                    decoration: const InputDecoration(
                       hintText: 'Email',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(20))
@@ -85,31 +85,31 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                   ),
               
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
             
-                  Row(
+                  const Row(
                     children: [
                       Text('Password'),
                     ],
                   ),
             
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
               
                   TextField(
                     controller: passwordController,
-                    style: TextStyle(color: Color.fromARGB(137, 0, 0, 0)), //set textfield color to black
+                    style: const TextStyle(color: Color.fromARGB(137, 0, 0, 0)), //set textfield color to black
                     obscureText: !_isPasswordVisible,
                     decoration: InputDecoration(
                       hintText: 'Password',
-                      border: OutlineInputBorder(
+                      border: const OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(20))
                       
                       ), 
-                      hintStyle: TextStyle(color: Color.fromARGB(138, 135, 131, 131)), // Set the hint color to grey
+                      hintStyle: const TextStyle(color: Color.fromARGB(138, 135, 131, 131)), // Set the hint color to grey
                       filled: true,
                       fillColor: Colors.white,
 
@@ -133,7 +133,7 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
               
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
               
@@ -150,11 +150,11 @@ class _LoginPageState extends State<LoginPage> {
                     foregroundColor: Colors.white,
                   ),
               
-                  child: Text('Log In')),
+                  child: const Text('Log In')),
                 ),
               
                   
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
             
@@ -172,7 +172,7 @@ class _LoginPageState extends State<LoginPage> {
                     foregroundColor: Colors.white,
                   ),
               
-                  child: Text('Create Account')),
+                  child: const Text('Create Account')),
                 ),
 
                   //Forgot password 
@@ -183,12 +183,12 @@ class _LoginPageState extends State<LoginPage> {
                     foregroundColor: Colors.white,
                   ),
                   
-                  child: Text('Forgot Password?')),
+                  child: const Text('Forgot Password?')),
               
               
               
                 //OPTIONAL - Sign in with different accounts
-                  Text('Or sign in with',
+                  const Text('Or sign in with',
                   style: TextStyle(
                     color: Colors.white,
                   ),),
@@ -203,7 +203,7 @@ class _LoginPageState extends State<LoginPage> {
                   
                   )),
                 //----------------------------------------------- 
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               
                 ],
               
@@ -252,14 +252,14 @@ void _signInWithGoogle(BuildContext context) async {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Error'),
-        content: Text('Failed to sign in with Google. Please try again later.'),
+        title: const Text('Error'),
+        content: const Text('Failed to sign in with Google. Please try again later.'),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(); // Close the dialog
             },
-            child: Text('OK'),
+            child: const Text('OK'),
           ),
         ],
       ),
@@ -271,7 +271,7 @@ void _signInWithGoogle(BuildContext context) async {
   // Get user input from controllers
   String email = emailController.text;
   String password = passwordController.text;
-
+//Jessica's Contribution Below
   try {
    
     // Sign in with email and password
@@ -290,15 +290,15 @@ void _signInWithGoogle(BuildContext context) async {
         showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Color.fromARGB(255, 221, 244, 255), // Light blue background color for the dialog
-        title: Text(
+        backgroundColor: const Color.fromARGB(255, 221, 244, 255), // Light blue background color for the dialog
+        title: const Text(
           'Email not verified',
           style: TextStyle(
             color: AppColors.lighterBlue, // The blue color we defined earlier
             fontWeight: FontWeight.bold, // Make the title text bold
           ),
         ),
-        content: Text(
+        content: const Text(
           'Please verify your email before signing in.',
           textAlign: TextAlign.center, // Center the content text
           style: TextStyle(
@@ -311,7 +311,7 @@ void _signInWithGoogle(BuildContext context) async {
             onPressed: () {
               Navigator.of(context).pop(); // Close the dialog
             },
-            child: Text(
+            child: const Text(
               'Later',
               style: TextStyle(color: AppColors.lighterBlue), // The blue color we defined earlier
             ),
@@ -322,7 +322,7 @@ void _signInWithGoogle(BuildContext context) async {
               // Redirect to verify email page
               Navigator.of(context).pushNamed(AppRoutes.verify_email_page);
             },
-            child: Text(
+            child: const Text(
               'Verify Email',
               style: TextStyle(color: AppColors.lighterBlue), // The blue color we defined earlier
             ),
@@ -345,8 +345,8 @@ void _signInWithGoogle(BuildContext context) async {
     showDialog(
   context: context,
   builder: (context) => AlertDialog(
-    backgroundColor: Color.fromARGB(255, 221, 244, 255), // Light blue background color for the dialog
-    title: Text(
+    backgroundColor: const Color.fromARGB(255, 221, 244, 255), // Light blue background color for the dialog
+    title: const Text(
       'Login Error',
       textAlign: TextAlign.center,
       style: TextStyle(
@@ -357,7 +357,7 @@ void _signInWithGoogle(BuildContext context) async {
     content: Text(
       errorMessage, // Display the appropriate error message
       textAlign: TextAlign.center,
-      style: TextStyle(
+      style: const TextStyle(
         color: Color.fromARGB(255, 43, 106, 147), // Blue color from the logo
       ),
     ),
@@ -365,7 +365,7 @@ void _signInWithGoogle(BuildContext context) async {
     actions: [
       TextButton(
         onPressed: () => Navigator.of(context).pop(),
-        child: Text(
+        child: const Text(
           'OK',
           style: TextStyle(color: Color.fromARGB(255, 43, 106, 147)), // Blue color from the logo
         ),

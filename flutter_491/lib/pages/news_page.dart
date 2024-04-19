@@ -6,7 +6,8 @@ import 'package:flutter_491/styles/app_colors.dart';
 import 'package:flutter_491/styles/app_text.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-
+//Jessica's Contribution for App's Tutorial
+final GlobalKey bellIconKey = GlobalKey();
 
 class NewsPage extends StatelessWidget{
 
@@ -42,7 +43,7 @@ class NewsPage extends StatelessWidget{
         },
         itemCount: heading.length,
         separatorBuilder: (BuildContext context, int index){
-          return SizedBox(
+          return const SizedBox(
             height: 24,
           );
         },
