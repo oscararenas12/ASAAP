@@ -36,7 +36,7 @@ class _ChatPageState extends State<ChatPage> {
       id: '1', firstName: "erick", lastName: 'garcia');
   final ChatUser _gptUser = ChatUser(id: '2', firstName: "AI");
   List<ChatMessage> _messages = <ChatMessage>[];
-  List<ChatUser> _typingUsers = <ChatUser>[];
+  final List<ChatUser> _typingUsers = <ChatUser>[];
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool _isConversationsPageVisible = false;
 
@@ -51,8 +51,7 @@ class _ChatPageState extends State<ChatPage> {
   void _initializeCurrentUser() async {
     User? user = _auth.currentUser;
     // Optionally, you can retrieve additional user information from Firestore if needed
-    DocumentSnapshot userData = await FirebaseFirestore.instance.collection(
-        'users').doc(user!.uid).get();
+    DocumentSnapshot userData = await FirebaseFirestore.instance.collection('users').doc(user!.uid).get();
 
     setState(() {
       // Create a ChatUser with the current user's information
@@ -63,7 +62,11 @@ class _ChatPageState extends State<ChatPage> {
         // You can include other attributes such as the user's avatar, if you have it
       );
     });
+
+    // Clear the chat history as soon as the user is initialized
+    await _clearChatHistory();
   }
+
 
   Future<void> _loadChatHistory() async {
     final prefs = await SharedPreferences.getInstance();
@@ -118,15 +121,17 @@ class _ChatPageState extends State<ChatPage> {
     final response = await _openAI.onChatCompletion(request: request);
     for (var element in response!.choices) {
       if (element.message != null) {
+        ChatMessage newMessage = ChatMessage(
+          user: _gptUser,
+          createdAt: DateTime.now(),
+          text: element.message!.content,
+        );
         setState(() {
-          _messages.insert(
-            0, ChatMessage(
-            user: _gptUser,
-            createdAt: DateTime.now(),
-            text: element.message!.content,
-          ),
-          );
+          _messages.insert(0, newMessage);
         });
+
+        // Save to Firestore
+        _saveMessageToFirestore(newMessage);
       }
     }
     setState(() {
@@ -134,6 +139,20 @@ class _ChatPageState extends State<ChatPage> {
     });
     await _saveChatHistory();
   }
+
+  void _saveMessageToFirestore(ChatMessage message) async {
+    var user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await FirebaseFirestore.instance.collection('users/${user.uid}/conversations')
+          .add({
+        'text': message.text,
+        'createdAt': message.createdAt.toIso8601String(),
+        'userId': message.user.id,
+        'userName': '${message.user.firstName!} ${message.user.lastName ?? ''}',
+      });
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -160,6 +179,9 @@ class _ChatPageState extends State<ChatPage> {
                 child: DashChat(
                   currentUser: _currentUser,
                   onSend: (ChatMessage m) {
+                    // Save the user's message to Firestore
+                    _saveMessageToFirestore(m);
+                    // Get a response from the chatbot
                     getChatResponse(m);
                   },
                   messages: _messages,
