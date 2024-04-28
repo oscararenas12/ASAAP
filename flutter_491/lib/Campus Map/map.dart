@@ -3,6 +3,7 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_491/config/app_routes.dart';
+import 'package:flutter_491/pages/tutorial_manager.dart';
 import 'package:flutter_491/styles/app_text.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -17,10 +18,16 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 //user location imports
 import 'package:geolocator/geolocator.dart';
 
+//Global Keys for tutorial
+final GlobalKey optionsToggleKey = GlobalKey();
+final GlobalKey campusButtonKey = GlobalKey();
+final GlobalKey currentLocationButtonKey = GlobalKey();
+final GlobalKey searchBarKey = GlobalKey();
+final GlobalKey directionButtonKey = GlobalKey();
 
 class CampusMap extends StatefulWidget {
-  const CampusMap({super.key}); //({Key? key}) : super(key: key);
-
+  const CampusMap({Key? key}) : super(key: key);
+    
   @override
   State<CampusMap> createState() => _CampusMapState();
 }
@@ -33,15 +40,21 @@ class _CampusMapState extends State<CampusMap> {
 
   
 
-  bool showOptions = false; 
+  bool showOptions = false;
   
-  void toggleOptions() { 
-    setState(() { 
-      showOptions = 
-          !showOptions; // Toggling the visibility of additional options 
-    });
-  }
+  
+  
 
+ void toggleOptions() {
+  print("toggleOptions called. Current state: $showOptions"); // Check current state
+  setState(() {
+    showOptions = !showOptions;
+    print("toggleOptions after toggle: $showOptions"); // Check state after toggle
+  });
+  
+
+  
+}
 
   Completer<GoogleMapController> _controller = Completer();
 
@@ -100,18 +113,20 @@ class _CampusMapState extends State<CampusMap> {
       strokeColor: AppColors.darkblue,
       ),
     );
+     TutorialManager.init(toggleOptions);
   } //MAP POLYGON ^
   
 
   @override
   Widget build(BuildContext context) {
+    print("Build called. showOptions: $showOptions"); // Monitor build calls and state
+
     return Scaffold(
       key: homeScaffoldKey,
       appBar: AppBar(
         title: const Text("CSULB MAP", style: AppText.header1,),
         backgroundColor: AppColors.darkblue,
       ),
-
       
       body: Stack(
         children: [
@@ -132,7 +147,8 @@ class _CampusMapState extends State<CampusMap> {
           
           //search box
 
-          SizedBox(
+          SizedBox( 
+            key: searchBarKey,
             width: 500,
             
             child: ElevatedButton(onPressed: _handlePressButton,            
@@ -148,9 +164,10 @@ class _CampusMapState extends State<CampusMap> {
 
 // function to call additional options 
 floatingActionButton: Column( 
-        mainAxisAlignment: MainAxisAlignment.end, 
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [ 
           FloatingActionButton.extended( 
+            key: optionsToggleKey,
             onPressed: () { 
               toggleOptions(); 
             }, 
@@ -166,6 +183,7 @@ floatingActionButton: Column(
             child: Column( 
               children: [ 
                 FloatingActionButton( 
+                  key: campusButtonKey,
                   onPressed: () {
                     goToCampus();
                   }, 
@@ -174,6 +192,7 @@ floatingActionButton: Column(
                 ), 
                 SizedBox(height: 10.0), 
                 FloatingActionButton( 
+                  key: currentLocationButtonKey,
                   onPressed: () async {
                     Position position = await _determinePosition();
 
@@ -195,6 +214,7 @@ floatingActionButton: Column(
                 ),
                 SizedBox(height: 10.0), 
                 FloatingActionButton( 
+                  key: directionButtonKey,
                   onPressed: () {
                     Navigator.of(context).pushNamed(AppRoutes.directionpolyline);
                   }, 

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_491/components/user_avatar.dart';
 import 'package:flutter_491/config/app_routes.dart';
+import 'package:flutter_491/pages/main_page.dart';
 import 'package:flutter_491/pages/tutorial_manager.dart';
 import 'package:flutter_491/styles/app_colors.dart';
 import 'package:flutter_491/styles/app_text.dart';
@@ -12,7 +13,10 @@ import 'package:fluttermoji/fluttermojiCircleAvatar.dart';
 import 'package:flutter_491/config/user_data.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key});
+ // Pass in the function to change the page.
+  final Function(int)? changePage;
+  
+  const ProfilePage({Key? key, this.changePage}) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -24,7 +28,6 @@ class _ProfilePageState extends State<ProfilePage> {
   String _lastName = '';
   String _bio = '';
 
-  
 
   @override
   void initState() {
@@ -230,16 +233,19 @@ Widget build(BuildContext context) {
       endIndent: 30,
     ),
     ...[
-      {'icon': 'assets/svg/Paper.svg', 'text': 'Newsfeed', 'width': 24.0, 'height': 24.0,/*'function': TutorialManager.showNewsfeedTutorial, 'route': '/news'*/},
-      {'icon': 'assets/svg/Pin_alt.svg', 'text': 'Map', 'width': 24.0, 'height': 24.0, /*'function': TutorialManager.showMapTutorial, 'route': '/map'*/},
-      {'icon': 'assets/svg/Home.svg', 'text': 'Homepage', 'width': 22.0, 'height': 22.0,'function': TutorialManager.showHomeMainPageTutorial, 'route': '/main'},
+      {'icon': 'assets/svg/Paper.svg', 'text': 'Newsfeed', 'width': 24.0, 'height': 24.0,'function': TutorialManager.showNewsfeedTutorial,  'index': 0},
+      {'icon': 'assets/svg/Pin_alt.svg', 'text': 'Map', 'width': 24.0, 'height': 24.0, 'function': TutorialManager.showMapTutorial, 'index': 1},
+      {'icon': 'assets/svg/Home.svg', 'text': 'Homepage', 'width': 22.0, 'height': 22.0,'function': TutorialManager.showHomeMainPageTutorial, 'index': 2},
       {'icon': 'assets/svg/Ai Bot.svg', 'text': 'Chatbot', 'width': 30.0, 'height': 30.0,/*'function': TutorialManager.showChatbotTutorial, 'route': '/chat'*/}, // Slightly larger to match other icons
       {'icon': 'assets/svg/User_cicrle.svg', 'text': 'Profile', 'width': 24.0, 'height': 24.0, /*'function': TutorialManager.showProfileTutorial, 'route': '/profile'*/},
     ].map((item) => ListTile(
       onTap: () {
       // First navigate to the appropriate screen.
-      if (item['route'] != null) {
-      Navigator.of(context).pushNamed(item['route'] as String);
+      if (item['index'] != null) {
+      Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => MainPage(initialPage: item['index'] as int)),
+      ModalRoute.withName('/main')
+      );
       }
       if (item['function'] != null) {
         (item['function'] as Function(BuildContext))(context);

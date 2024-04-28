@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_491/components/post_item.dart';
 import 'package:flutter_491/components/toolbar.dart';
 import 'package:flutter_491/config/app_routes.dart';
+import 'package:flutter_491/pages/tutorial_manager.dart';
 import 'package:flutter_491/styles/app_colors.dart';
 import 'package:flutter_491/styles/app_text.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -10,6 +11,10 @@ import 'dart:convert';
 
 //Jessica's Contribution for App's Tutorial
 final GlobalKey bellIconKey = GlobalKey();
+final GlobalKey firstBookmarkIconKey = GlobalKey();
+final GlobalKey firstShareIconKey = GlobalKey();
+final GlobalKey firstOptionsMenuKey = GlobalKey();
+
 
 class NewsPage extends StatefulWidget {
   NewsPage({super.key});
@@ -24,11 +29,22 @@ class _NewsPageState extends State<NewsPage> {
   List<String> descriptions = []; // List to store article descriptions
   List<String> majors = ['Technology', 'Biology', 'Mathematics', 'Physics']; // List of college majors
   String? selectedMajor; // Selected major
+  
 
   @override
   void initState() {
     super.initState();
     fetchNews();
+
+     // Ensure the tutorial starts after everything is ready
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+            TutorialManager.showNewsfeedTutorial(context, onReady: () {
+                // Perform any additional checks if necessary
+                return true; // This would be your readiness condition
+            });
+        }
+    });
   }
 
   Future<void> fetchNews() async {
@@ -95,6 +111,7 @@ class _NewsPageState extends State<NewsPage> {
               onPressed: () {
                 // Add your navigation logic here
               },
+              key: bellIconKey,
               icon: SvgPicture.asset('assets/svg/Bell.svg'),
             ),
           ],
@@ -104,9 +121,15 @@ class _NewsPageState extends State<NewsPage> {
           ? ListView.separated(
         itemBuilder: (context, index) {
           return PostItem(
+            //key, bookmarkIconkey, shareIconKeyand optionsKey for tutorial purposes
+            key: ValueKey(index), // Unique key for PostItem
             heading: headlines[index],
             imageUrl: imageUrls[index],
             description: descriptions[index],
+            bookmarkIconKey: index == 0 ? firstBookmarkIconKey : null,
+            shareIconKey: index == 0 ? firstShareIconKey : null,
+            optionsMenuKey: index == 0 ? firstOptionsMenuKey : null, // Only for the first item
+
           );
         },
         itemCount: headlines.length,

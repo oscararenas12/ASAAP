@@ -1,13 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_491/pages/home_page.dart';
 import 'package:flutter_491/pages/main_page.dart';
-import 'package:flutter_491/pages/news_page.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
+import 'package:flutter_491/Campus Map/map.dart';
+import 'package:flutter_491/pages/news_page.dart';
+import 'package:flutter_491/components/post_item.dart';
+
 
 //Jessica's contribution App's Tutorial
 class TutorialManager {
   static get targets => null;
 
+  static Function? _toggleOptionsCallback;
+
+  // Call this method to initialize the manager with the callback
+  static void init(Function toggleOptionsCallback) {
+    _toggleOptionsCallback = toggleOptionsCallback;
+  }
+
+  // Use this method to run the callback from anywhere within TutorialManager
+  static void callToggleOptions() {
+    if (_toggleOptionsCallback != null) {
+      _toggleOptionsCallback!();
+    }
+  }
   // This method now accepts targets directly
   static void showTutorial(BuildContext context, List<TargetFocus> targets) {
     TutorialCoachMark tutorialCoachMark = TutorialCoachMark(
@@ -18,7 +34,12 @@ class TutorialManager {
       opacityShadow: 0.8,
       alignSkip: Alignment.bottomRight,
       onFinish: () => print('Tutorial finished'),
-      onClickTarget: (target) => print('Target clicked: ${target.identify}'),
+      onClickTarget: (target) {
+         if (target.identify == "Options Toggle") {
+            TutorialManager.callToggleOptions();
+        }
+      print('Target clicked: ${target.identify}');
+      },
       onClickOverlay: (target) => print('Overlay clicked: ${target.identify}'),
       onSkip: () {
         print("Skip clicked");
@@ -34,10 +55,18 @@ class TutorialManager {
     TutorialManager.showTutorial(context, targets);
   }
   //Show tutorial for Newsfeed page
-static void showNewsfeedTutorial(BuildContext context) {
-    List<TargetFocus> targets = createTargetsForNewsfeedPage();
-    TutorialManager.showTutorial(context, targets);
-  }
+static void showNewsfeedTutorial(BuildContext context, {Function? onReady}) {
+    if (onReady != null) {
+        onReady(() {
+            List<TargetFocus> targets = createTargetsForNewsfeedPage();
+            showTutorial(context, targets);
+        });
+    } else {
+        List<TargetFocus> targets = createTargetsForNewsfeedPage();
+        showTutorial(context, targets);
+    }
+}
+
 
   //Show tutorial for Map page
  static void showMapTutorial(BuildContext context) {
@@ -272,30 +301,100 @@ static void showNewsfeedTutorial(BuildContext context) {
     ];
   }
   
-  List<TargetFocus> createTargetsForNewsfeedPage() {
-  return [TargetFocus(
-        identify: "Notification Bell",
-        keyTarget: bellIconKey, // Assuming this is passed to the IconButton
-        contents: [
-          TargetContent(
-            align: ContentAlign.top,
-           builder: (context, controller) {
+ List<TargetFocus> createTargetsForNewsfeedPage() {
+  return [
+    TargetFocus(
+      identify: "Notification Bell",
+      keyTarget: bellIconKey,  // Ensure these keys are defined and assigned to the correct widgets elsewhere in your code
+      contents: [
+        TargetContent(
+          align: ContentAlign.bottom,
+          builder: (context, controller) {
             return const Padding(
               padding: EdgeInsets.only(bottom: 10.0),
               child: Text(
-                "View your notifications here",
+                "View your notifications here.",
                 style: TextStyle(
-                color: Colors.white, 
-                fontSize: 30,
-                fontWeight: FontWeight.bold, 
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
             );
           },
-          ),
-        ],
-      )];
-  }
+        ),
+      ],
+    ),
+    TargetFocus(
+      identify: "Bookmark Icon",
+      keyTarget: firstBookmarkIconKey,
+      contents: [
+        TargetContent(
+          align: ContentAlign.bottom,
+          builder: (context, controller) {
+            return const Padding(
+              padding: EdgeInsets.only(bottom: 10.0),
+              child: Text(
+                "Bookmark posts for later viewing.",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+    ),
+    TargetFocus(
+      identify: "Share Icon",
+      keyTarget: firstShareIconKey,
+      contents: [
+        TargetContent(
+          align: ContentAlign.top,
+          builder: (context, controller) {
+            return const Padding(
+              padding: EdgeInsets.only(top: 10.0),
+              child: Text(
+                "Share this post with friends.",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+    ),
+    TargetFocus(
+      identify: "Options Menu",
+      keyTarget: firstOptionsMenuKey,
+      contents: [
+        TargetContent(
+          align: ContentAlign.bottom,
+          builder: (context, controller) {
+            return const Padding(
+              padding: EdgeInsets.only(bottom: 10.0),
+              child: Text(
+                "Access more options like reporting.",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+    ),
+    // Add more TargetFocus configurations for other elements if needed
+  ];
+}
+
   
 
 
@@ -304,7 +403,119 @@ List<TargetFocus> createTargetsForProfilePage() {
 }
 
 List<TargetFocus> createTargetsForMapPage() {
-  return[];
+  return [
+    TargetFocus(
+      identify: "Search Bar",
+      keyTarget: searchBarKey,
+      contents: [
+        TargetContent(
+          align: ContentAlign.bottom,
+          builder: (context, controller) {
+            return const Padding(
+              padding: EdgeInsets.only(bottom: 10.0),
+              child: Text(
+                "Use this to search places on the map.",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+    ),
+    TargetFocus(
+      identify: "Options Toggle",
+      keyTarget: optionsToggleKey,
+      contents: [
+        TargetContent(
+          align: ContentAlign.bottom,
+          builder: (context, controller) {
+            return const Padding(
+              padding: EdgeInsets.only(bottom: 10.0),
+              child: Text(
+                "Tap here to toggle map options",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+    ),
+    TargetFocus(
+      identify: "Campus Button",
+      keyTarget: campusButtonKey,
+      contents: [
+        TargetContent(
+          align: ContentAlign.bottom,
+          builder: (context, controller) {
+            return const Padding(
+              padding: EdgeInsets.only(bottom: 10.0),
+              child: Text(
+                "Click here to take you back to CSULB campus on the map.",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+    ),
+    TargetFocus(
+      identify: "Current Location Button",
+      keyTarget: currentLocationButtonKey,
+      contents: [
+        TargetContent(
+          align: ContentAlign.bottom,
+          builder: (context, controller) {
+            return const Padding(
+              padding: EdgeInsets.only(bottom: 10.0),
+              child: Text(
+                "Click here to find your current location on the map.",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+    ),
+    TargetFocus(
+      identify: "Distance Button",
+      keyTarget: directionButtonKey,
+      contents: [
+        TargetContent(
+          align: ContentAlign.bottom,
+          builder: (context, controller) {
+            return const Padding(
+              padding: EdgeInsets.only(bottom: 10.0),
+              child: Text(
+                "Click here to calculate the distance to your desired destination.",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+    ),
+    // ... Add more targets as needed ...
+  ];
 }
 List<TargetFocus> createTargetsForChatbotPage() {
   return [];

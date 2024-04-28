@@ -18,6 +18,7 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 //user location imports
 import 'package:geolocator/geolocator.dart';
 
+
 enum MapSettings {
   satelite,
   logout,
@@ -176,14 +177,12 @@ class _MapCampusState extends State<MapCampus> {
           //search box
           SizedBox(
             width: 500,
-            child: ElevatedButton(onPressed: _handlePressButton,            
+            child: ElevatedButton(
+              onPressed: _handlePressButton,            
             child: const Text("Search Places", style: AppText.subtitle1,),
             
             ),
           ),
-
-
-          
         ],
     
       ),
@@ -192,7 +191,7 @@ class _MapCampusState extends State<MapCampus> {
 floatingActionButton: Column( 
         mainAxisAlignment: MainAxisAlignment.end, 
         children: [ 
-          FloatingActionButton.extended( 
+          FloatingActionButton.extended(
             onPressed: () { 
               toggleOptions(); 
             }, 

@@ -18,33 +18,42 @@ final GlobalKey newsFeedKey = GlobalKey();
   final GlobalKey chatbotKey = GlobalKey();
   final GlobalKey userKey = GlobalKey();
 
+  // Global key to access the MainPageState from other pages.
+GlobalKey<_MainPageState> mainPageKey = GlobalKey<_MainPageState>();
+
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  final int initialPage;
+  const MainPage({Key? key, this.initialPage = 2}) : super(key: key);
 
   @override
   State<MainPage> createState() => _MainPageState();
 }
 class _MainPageState extends State<MainPage> {
 
-  int currentIndex = 2;
-
+  late int currentIndex;
   @override
   void initState() {
+
     super.initState();
+    currentIndex = widget.initialPage;
     //Initiates tutorial when main_page is first instantiated when user logs in
     WidgetsBinding.instance.addPostFrameCallback((_) => showTutorialIfFirstTimeHomeMain());
   }
 
+ 
 //Function calls to show tutorial which is only called when user first lands on main page for the first time
   Future<void> showTutorialIfFirstTimeHomeMain() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool hasSeenTutorialHomeMainPage = prefs.getBool('hasSeenTutorialHomeMainPage') ?? false;
+   SharedPreferences prefs = await SharedPreferences.getInstance();
+   bool hasSeenTutorialHomeMainPage = prefs.getBool('hasSeenTutorialHomeMainPage') ?? false;
+   print("Has seen main page tutorial: $hasSeenTutorialHomeMainPage");
 
-    if (!hasSeenTutorialHomeMainPage) {
+   if (!hasSeenTutorialHomeMainPage) {
       await prefs.setBool('hasSeenTutorialHomeMainPage', true);
+      print("Showing tutorial");
       TutorialManager.showHomeMainPageTutorial(context);
-    }
-  }
+   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -103,10 +112,10 @@ class _MainPageState extends State<MainPage> {
   }
 
   final pages = [
-    NewsPage(),
-    const CampusMap(),
-    HomePage(),
-    const ChatPage(),
-    const ProfilePage(),
+    NewsPage(), //Index 0
+    const CampusMap(), //Index 1
+    HomePage(), //Index 2
+    const ChatPage(), //Index 3
+    const ProfilePage(), //Index 4
   ];
 }

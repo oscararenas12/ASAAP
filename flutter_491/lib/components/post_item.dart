@@ -15,8 +15,11 @@ class PostItem extends StatelessWidget {
   final String heading;
   final String imageUrl;
   final String description;
+  final GlobalKey? bookmarkIconKey;
+  final GlobalKey? shareIconKey;
+  final GlobalKey? optionsMenuKey;
 
-  const PostItem({super.key, required this.heading, required this.imageUrl, required this.description});
+  const PostItem({super.key, required this.heading, required this.imageUrl, required this.description, this.bookmarkIconKey, this.shareIconKey, this.optionsMenuKey});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +35,7 @@ class PostItem extends StatelessWidget {
                 height: 50,
                 width: 50,
               ),
-              SizedBox(
+              const SizedBox(
                 width: 20,
               ),
               Flexible(
@@ -45,7 +48,7 @@ class PostItem extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 24,
           ),
           Image.network(
@@ -54,7 +57,7 @@ class PostItem extends StatelessWidget {
             width: double.infinity,
             fit: BoxFit.cover,
           ),
-          SizedBox(
+          const SizedBox(
             height: 16,
           ),
           Text(
@@ -65,14 +68,16 @@ class PostItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Icon(
+                key: bookmarkIconKey,
                 Icons.bookmark,
                 size: 22,
                 color: Colors.white,
               ),
-              SizedBox(
+              const SizedBox(
                 width: 12,
               ),
               Icon(
+                key: shareIconKey,
                 Icons.share,
                 size: 22,
                 color: Colors.white,
@@ -89,26 +94,27 @@ class PostItem extends StatelessWidget {
                     default:
                   }
                 },
+                key: optionsMenuKey,
                 icon: Icon(
                   Icons.more_vert_rounded,
                   color: Colors.white,
                 ),
                 itemBuilder: (context) {
                   return [
-                    PopupMenuItem(
-                      child: Text('options'),
+                    const PopupMenuItem(
                       value: NewsMenu.option,
+                      child: Text('options'),
                     ),
-                    PopupMenuItem(
-                      child: Text('report'),
+                    const PopupMenuItem(
                       value: NewsMenu.report,
+                      child: Text('report'),
                     ),
                   ];
                 },
               ),
             ],
           ),
-          Divider(
+          const Divider(
             color: AppColors.darkblue,
             thickness: 1,
             height: 10,
