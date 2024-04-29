@@ -1,6 +1,7 @@
 import 'package:flutter_491/Campus%20Map/current_location.dart';
 import 'package:flutter_491/Campus%20Map/map%20style/satelite_map.dart';
 import 'package:flutter_491/Campus%20Map/map_polyline.dart';
+import 'package:flutter_491/Campus%20Map/map_screen.dart';
 import 'package:flutter_491/Campus%20Map/search_map.dart';
 import 'package:flutter_491/pages/agenda.dart';
 import 'package:flutter_491/pages/chat_page.dart';
@@ -18,6 +19,7 @@ import 'package:flutter_491/pages/customizeAI.dart';
 import 'package:flutter_491/pages/storage_page.dart';
 import 'package:flutter_491/pages/profile_page.dart';
 import 'package:flutter_491/pages/verify_email_page.dart';
+import 'package:flutter_491/Campus Map/map.dart';
 import 'package:flutter_491/pages/friends_list_page.dart';
 import 'package:flutter_491/pages/friend_profile.dart';
 
@@ -34,7 +36,8 @@ class AppRoutes{
         storage_page:(context) => StoragePage(),
         agenda:(context) => AgendaPage(),
         goal:(context) => GoalPage(),
-        profile:(context) => ProfilePage(),
+        profile:(context) => ProfilePage(), 
+        map:(context) => CampusMap(),
         friends_list_page: (context) => FriendsListPage(),
         // friend_profile: (context) => FriendProfilePage(userId: '',),
 
