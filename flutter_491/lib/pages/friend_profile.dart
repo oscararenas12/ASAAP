@@ -27,7 +27,7 @@ class FriendProfilePage extends StatelessWidget {
           bottom: TabBar(
             tabs: [
               Tab(text: 'Profile'),
-              Tab(text: 'Message'), // New tab for messaging
+              Tab(text: 'Profile Comments'), // New tab for messaging
             ],
           ),
         ),
