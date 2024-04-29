@@ -66,6 +66,7 @@ dependencies:
   calendar_view: ^1.0.4
   google_sign_in: ^6.2.1
   image_picker: ^1.0.7
+  firebase_storage: ^11.6.9
 
   
 
