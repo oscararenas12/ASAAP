@@ -37,7 +37,16 @@ class UserAvatar extends StatelessWidget {
                     return CircularProgressIndicator();
                   }
                   final userData = snapshot.data;
-                  final avatarDetails = userData?['fluttermoji']; // Safe access with null-aware operator
+                  String? avatarDetails = userData?.get('fluttermoji');
+
+                  // If the 'fluttermoji' field doesn't exist, add it with a default value
+                  if (avatarDetails == null) {
+                    // Update the user's document with the default Fluttermoji data
+                    FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+                      'fluttermoji': '', // Set default value here
+                    });
+                  }
+
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 30),
                     child: CircleAvatar(

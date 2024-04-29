@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_491/config/app_routes.dart';
 import 'package:flutter_491/pages/friend_profile.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:fluttermoji/fluttermojiFunctions.dart';
 
 class FriendsListPage extends StatefulWidget {
   const FriendsListPage({Key? key}) : super(key: key);
@@ -195,32 +197,32 @@ void _acceptFriendRequest(String requestId) async {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Friends'),
+          title: Text('Friends',
+             style: TextStyle(color: Colors.white,)
+          ),
           backgroundColor: Colors.blue[700],
           elevation: 0,
           bottom: TabBar(
             tabs: [
-              Tab(text: 'Friends'),
-              Tab(text: 'Requests'),
+              Tab(
+              child: Text(
+                'Friends',
+                style: TextStyle(
+                  color: Colors.white, // Set the color to white
+                ),
+              ),
+            ),
+            Tab(
+              child: Text(
+                'Requests',
+                style: TextStyle(
+                  color: Colors.white, // Set the color to white
+                ),
+              ),
+            ),
             ],
           ),
-          actions: [
-            IconButton(
-              onPressed: () {
-                if (_currentUserUid != null) {
-                  Clipboard.setData(ClipboardData(text: _currentUserUid!)); // Copy UID to clipboard
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Your User ID: $_currentUserUid'),
-                      duration: Duration(seconds: 3),
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
-                }
-              },
-              icon: Icon(Icons.person),
-            ),
-          ],
+          bottomOpacity: 1, // Ensure the bottom tab bar is fully opaque
         ),
         body: TabBarView(
           children: [
@@ -253,12 +255,18 @@ void _acceptFriendRequest(String requestId) async {
 
                           final userData = snapshot.data!.data() as Map<String, dynamic>;
                           final userName = '${userData['firstName']} ${userData['lastName']}';
+                          final fluttermojiUrl = userData['fluttermoji'] ?? '';
+
                           return Card(
                             elevation: 2,
                             margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                             child: ListTile(
                               leading: CircleAvatar(
-                                backgroundImage: NetworkImage('${userData['avatarUrl']}'),
+                                backgroundColor: const Color.fromARGB(255, 238, 238, 238),
+                                child: SvgPicture.string(
+                                  FluttermojiFunctions()
+                                      .decodeFluttermojifromString(fluttermojiUrl ?? ''),
+                                    ),
                               ),
                               title: Text(
                                 userName,
@@ -309,12 +317,34 @@ void _acceptFriendRequest(String requestId) async {
             ),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            _showAddFriendsDialog(context);
-          },
-          tooltip: 'Add Friend',
-          child: Icon(Icons.add),
+        floatingActionButton: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FloatingActionButton(
+              onPressed: () {
+                _showAddFriendsDialog(context);
+              },
+              tooltip: 'Add Friend',
+              child: Icon(Icons.add),
+            ),
+            SizedBox(height: 10),
+            FloatingActionButton(
+              onPressed: () {
+                if (_currentUserUid != null) {
+                  Clipboard.setData(ClipboardData(text: _currentUserUid!)); // Copy UID to clipboard
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Your User ID: $_currentUserUid'),
+                      duration: Duration(seconds: 3),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
+              },
+              tooltip: 'Copy User ID',
+              child: Icon(Icons.person),
+            ),
+          ],
         ),
       ),
     );
