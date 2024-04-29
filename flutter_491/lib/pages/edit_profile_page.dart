@@ -7,9 +7,11 @@ import 'package:flutter_491/config/user_data.dart';
 import 'package:flutter_491/pages/profile_page.dart';
 import 'package:flutter_491/styles/app_colors.dart';
 import 'package:flutter_491/styles/app_text.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:fluttermoji/fluttermojiCircleAvatar.dart';
 import 'package:flutter_491/pages/change_password_page.dart';
 import 'package:flutter_491/pages/main_page.dart';
+import 'package:fluttermoji/fluttermojiFunctions.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({Key? key}) : super(key: key);
@@ -22,6 +24,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   String _firstName = '';
   String _lastName = '';
   String _bio = '';
+  String avatarDetails = '';
+  
 
   @override
   void initState() {
@@ -52,6 +56,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   .update({'bio': ''});
               _bio = ''; // Update local variable
             }
+
+            // Fetch Fluttermoji data
+            avatarDetails = userData['fluttermoji'] ?? '';
           });
         }
       }
@@ -183,10 +190,17 @@ Future<void> deleteUserAccount() async {
                 children: [
                   Stack(
                     children: [
-                      FluttermojiCircleAvatar(
-                        backgroundColor: Colors.blueGrey[100],
-                        radius: 80,
-                      ),
+                      CircleAvatar(
+                      radius: 100,
+                      backgroundColor: Colors.grey[200],
+                      child: SvgPicture.string(
+                        FluttermojiFunctions()
+                            .decodeFluttermojifromString(avatarDetails ?? ''),
+                            fit: BoxFit.contain, // Ensure the SVG fits within the CircleAvatar
+                            height: 160, // Specify the height to match the CircleAvatar size
+                            width: 160, // Specify the width to match the CircleAvatar size
+                          ),
+                     ),
                       Positioned(
                         bottom: 0,
                         right: 0,

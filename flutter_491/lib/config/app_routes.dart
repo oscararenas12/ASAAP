@@ -18,6 +18,8 @@ import 'package:flutter_491/pages/customizeAI.dart';
 import 'package:flutter_491/pages/storage_page.dart';
 import 'package:flutter_491/pages/profile_page.dart';
 import 'package:flutter_491/pages/verify_email_page.dart';
+import 'package:flutter_491/pages/friends_list_page.dart';
+import 'package:flutter_491/pages/friend_profile.dart';
 
 class AppRoutes{
 
@@ -33,6 +35,8 @@ class AppRoutes{
         agenda:(context) => AgendaPage(),
         goal:(context) => GoalPage(),
         profile:(context) => ProfilePage(),
+        friends_list_page: (context) => FriendsListPage(),
+        // friend_profile: (context) => FriendProfilePage(userId: '',),
 
         //home_page navigator
         edit_profile:(context) => EditProfilePage(),
@@ -69,13 +73,15 @@ class AppRoutes{
   static const agenda = '/agenda';
   static const goal = '/goal';
   static const profile = '/profile';
+  static const friends_list_page = '/friends_list';
+  // static const friend_profile = '/friend_profile';
 
 
 //map routes
   static const searchmap = '/search_map';
   static const userlocation = '/user_location';
   static const directionpolyline = '/direction_polyline';
-    static const satelite = '/satelite';
+  static const satelite = '/satelite';
 
   static const verify_email_page = '/verify_email_page';
 }

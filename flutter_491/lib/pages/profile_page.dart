@@ -2,10 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_491/components/user_avatar.dart';
 import 'package:flutter_491/config/app_routes.dart';
+import 'package:flutter_491/pages/friends_list_page.dart';
 import 'package:flutter_491/styles/app_colors.dart';
 import 'package:flutter_491/styles/app_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_491/components/toolbar.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:fluttermoji/fluttermoji.dart';
 import 'package:fluttermoji/fluttermojiCircleAvatar.dart';
 import 'package:flutter_491/config/user_data.dart';
 
@@ -78,6 +81,7 @@ Widget build(BuildContext context) {
         }
 
         final data = snapshot.data!.data() as Map<String, dynamic>;
+        final avatarDetails = data['fluttermoji'];
         _firstName = data['firstName'] ?? '';
         _lastName = data['lastName'] ?? '';
         _bio = data['bio'] ?? '';
@@ -86,10 +90,17 @@ Widget build(BuildContext context) {
           physics: BouncingScrollPhysics(),
           children: <Widget>[
             SizedBox(height: 25),
-            FluttermojiCircleAvatar(
-              backgroundColor: Colors.blueGrey[100],
-              radius: 100,
-            ),
+            CircleAvatar(
+                      radius: 100,
+                      backgroundColor: Colors.grey[200],
+                      child: SvgPicture.string(
+                        FluttermojiFunctions()
+                            .decodeFluttermojifromString(avatarDetails ?? ''),
+                            fit: BoxFit.contain, // Ensure the SVG fits within the CircleAvatar
+                            height: 160, // Specify the height to match the CircleAvatar size
+                            width: 160, // Specify the width to match the CircleAvatar size
+                          ),
+                    ),
             SizedBox(height: 15),
             Text('$_firstName $_lastName', style: AppText.header1, textAlign: TextAlign.center),
             Text('$_bio', style: AppText.header2, textAlign: TextAlign.center),
@@ -176,7 +187,29 @@ Widget build(BuildContext context) {
               indent: 30,
               endIndent: 30,),
         
-          
+            TextButton(onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                        builder: (context) => FriendsListPage(),
+                ),
+              );
+              print('Friends List Clicked');
+            }, 
+            style: TextButton.styleFrom(
+              textStyle: AppText.header2,
+              foregroundColor: Colors.white,
+            ),
+            
+            child: Text('Friends')),
+
+            Divider(
+              color: AppColors.darkblue,
+              thickness: 1,
+              height: 20,
+              indent: 30,
+              endIndent: 30,),  
+
+
             TextButton(onPressed: () {
               Navigator.of(context).pushNamed(AppRoutes.Settings);
               print('settings clicked');
@@ -212,6 +245,9 @@ Widget build(BuildContext context) {
               height: 20,
               indent: 30,
               endIndent: 30,),
+
+
+            
             
             TextButton(onPressed: _logout, 
             style: TextButton.styleFrom(

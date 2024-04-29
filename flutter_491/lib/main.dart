@@ -8,9 +8,11 @@ import 'package:flutter_491/pages/news_page.dart';
 import 'package:flutter_491/pages/themenotifier.dart';
 import 'package:flutter_491/styles/app_colors.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:fluttermoji/fluttermojiController.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +31,7 @@ Future<void> main() async {
   /* Jessica line 30 & 31: Ensures Firebase is initialized*/
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  Get.put(FluttermojiController());
 
   //Nhat: themenotifier for darkmode, make dark mode change automatically
     runApp(
