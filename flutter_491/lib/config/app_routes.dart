@@ -1,5 +1,9 @@
+//import 'dart:js';
+
 import 'package:flutter_491/Campus%20Map/current_location.dart';
+import 'package:flutter_491/Campus%20Map/custom_markers.dart';
 import 'package:flutter_491/Campus%20Map/map%20style/satelite_map.dart';
+import 'package:flutter_491/Campus%20Map/map.dart';
 import 'package:flutter_491/Campus%20Map/map_polyline.dart';
 import 'package:flutter_491/Campus%20Map/map_screen.dart';
 import 'package:flutter_491/Campus%20Map/search_map.dart';
@@ -44,6 +48,8 @@ class AppRoutes{
         //home_page navigator
         edit_profile:(context) => EditProfilePage(),
         //map:(context) => MapPage(),
+        map:(context) => CampusMap(),
+
         chat:(context) => ChatPage(),
         notifications_page:(context) => NotificationPage(),
 
@@ -53,6 +59,7 @@ class AppRoutes{
         directionpolyline:(context) => MapPolyline(),
 
         satelite:(context) => SateliteMap(),
+        events:(context) => InfoWindow(),
         
         //email verification page
         verify_email_page:(context)=> VerifyEmailPage(),
@@ -85,6 +92,7 @@ class AppRoutes{
   static const userlocation = '/user_location';
   static const directionpolyline = '/direction_polyline';
   static const satelite = '/satelite';
+  static const events = '/events';
 
   static const verify_email_page = '/verify_email_page';
 }

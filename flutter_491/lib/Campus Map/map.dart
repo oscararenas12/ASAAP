@@ -189,7 +189,8 @@ floatingActionButton: Column(
                   }, 
                   tooltip: "CSULB Location", 
                   child: Icon(Icons.school), 
-                ), 
+                ),
+                
                 SizedBox(height: 10.0), 
                 FloatingActionButton( 
                   key: currentLocationButtonKey,
@@ -212,6 +213,7 @@ floatingActionButton: Column(
                   tooltip: 'Your Location',                  
                   child: Icon(Icons.gps_fixed), 
                 ),
+
                 SizedBox(height: 10.0), 
                 FloatingActionButton( 
                   key: directionButtonKey,
@@ -220,7 +222,16 @@ floatingActionButton: Column(
                   }, 
                   tooltip: 'Directions', 
                   child: Icon(Icons.directions), 
-                ),  
+                ),
+
+                SizedBox(height: 10.0), 
+                FloatingActionButton( 
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(AppRoutes.events);
+                  }, 
+                  tooltip: 'events', 
+                  child: Icon(Icons.event_available), 
+                ),    
               ], 
             ), 
           ), 
