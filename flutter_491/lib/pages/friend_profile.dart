@@ -34,7 +34,10 @@ class FriendProfilePage extends StatelessWidget {
         body: TabBarView(
           children: [
             FutureBuilder<DocumentSnapshot>(
-              future: FirebaseFirestore.instance.collection('users').doc(userId).get(),
+              future: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(userId)
+                  .get(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
@@ -53,20 +56,23 @@ class FriendProfilePage extends StatelessWidget {
                 }
 
                 final userData = snapshot.data!.data() as Map<String, dynamic>;
-                final userName = '${userData['firstName']} ${userData['lastName']}';
+                final userName =
+                    '${userData['firstName']} ${userData['lastName']}';
                 final fluttermojiUrl = userData['fluttermoji'] ?? '';
                 final bio = userData['bio'] ?? '';
 
                 return Center(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 20.0, horizontal: 16.0),
                     child: Column(
                       children: [
                         CircleAvatar(
                           radius: 100,
                           backgroundColor: Colors.grey[200],
                           child: SvgPicture.string(
-                            FluttermojiFunctions().decodeFluttermojifromString(fluttermojiUrl ?? ''),
+                            FluttermojiFunctions().decodeFluttermojifromString(
+                                fluttermojiUrl ?? ''),
                             fit: BoxFit.contain,
                             height: 160,
                             width: 160,
@@ -79,7 +85,8 @@ class FriendProfilePage extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                             boxShadow: [
                               BoxShadow(
-                                color: Color.fromARGB(255, 66, 63, 63).withOpacity(0.5),
+                                color: Color.fromARGB(255, 66, 63, 63)
+                                    .withOpacity(0.5),
                                 spreadRadius: 2,
                                 blurRadius: 5,
                                 offset: Offset(0, 3),
@@ -92,7 +99,10 @@ class FriendProfilePage extends StatelessWidget {
                             children: [
                               Text(
                                 userName,
-                                style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.w900),
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w900),
                               ),
                               SizedBox(height: 10),
                               _buildInfoRow('Email:', userData['email'] ?? ''),
@@ -101,14 +111,14 @@ class FriendProfilePage extends StatelessWidget {
                             ],
                           ),
                         ),
-
                         SizedBox(height: 20),
                         ElevatedButton(
                           onPressed: () => _removeFriend(context, userId),
-                           style: ElevatedButton.styleFrom(
-                            primary: Colors.red, // Background color
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red, // Background color
                           ),
-                          child: Text('Remove Friend', style: TextStyle(color: Colors.white)),
+                          child: Text('Remove Friend',
+                              style: TextStyle(color: Colors.white)),
                         ),
                       ],
                     ),
@@ -123,29 +133,30 @@ class FriendProfilePage extends StatelessWidget {
     );
   }
 
-Widget _buildInfoRow(String title, String content) {
-  return Container(
-    padding: EdgeInsets.all(10),
-    decoration: BoxDecoration(
-      color: Color.fromARGB(255, 222, 221, 221),
-      borderRadius: BorderRadius.circular(10),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          title,
-          style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        SizedBox(height: 5),
-        Text(
-          content,
-          style: TextStyle(fontSize: 16, color: Colors.black),
-        ),
-      ],
-    ),
-  );
-}
+  Widget _buildInfoRow(String title, String content) {
+    return Container(
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Color.fromARGB(255, 222, 221, 221),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+                fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 5),
+          Text(
+            content,
+            style: TextStyle(fontSize: 16, color: Colors.black),
+          ),
+        ],
+      ),
+    );
+  }
 
   void _removeFriend(BuildContext context, String friendId) async {
     final currentUser = FirebaseAuth.instance.currentUser;
@@ -156,12 +167,18 @@ Widget _buildInfoRow(String title, String content) {
 
     try {
       // Remove friend from the current user's friend list
-      await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).update({
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .update({
         'friends': FieldValue.arrayRemove([friendId]),
       });
-      
+
       // Remove current user from friend's friend list
-      await FirebaseFirestore.instance.collection('users').doc(friendId).update({
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(friendId)
+          .update({
         'friends': FieldValue.arrayRemove([currentUser.uid]),
       });
 
@@ -186,7 +203,8 @@ class MessageChat extends StatefulWidget {
 
 class _MessageChatState extends State<MessageChat> {
   final TextEditingController _messageController = TextEditingController();
-  late Stream<QuerySnapshot> _messagesStream; // Stream to listen for new messages
+  late Stream<QuerySnapshot>
+      _messagesStream; // Stream to listen for new messages
 
   @override
   void initState() {
@@ -227,16 +245,23 @@ class _MessageChatState extends State<MessageChat> {
               // Extract messages from the snapshot
               final List<Message> messages = snapshot.data!.docs.map((doc) {
                 final data = doc.data() as Map<String, dynamic>;
-                return Message(sender: data['sender'], text: data['text'], timestamp: data['timestamp']);
+                return Message(
+                    sender: data['sender'],
+                    text: data['text'],
+                    timestamp: data['timestamp']);
               }).toList();
 
               return ListView.builder(
-                reverse: true, // Reverse the list to display newest messages at the bottom
+                reverse:
+                    true, // Reverse the list to display newest messages at the bottom
                 itemCount: messages.length,
                 itemBuilder: (context, index) {
                   final message = messages[index];
                   return FutureBuilder<DocumentSnapshot>(
-                    future: FirebaseFirestore.instance.collection('users').doc(message.sender).get(),
+                    future: FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(message.sender)
+                        .get(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return ListTile(
@@ -257,8 +282,10 @@ class _MessageChatState extends State<MessageChat> {
                         );
                       }
 
-                      final senderData = snapshot.data!.data() as Map<String, dynamic>;
-                      final senderName = '${senderData['firstName']} ${senderData['lastName']}';
+                      final senderData =
+                          snapshot.data!.data() as Map<String, dynamic>;
+                      final senderName =
+                          '${senderData['firstName']} ${senderData['lastName']}';
 
                       return ListTile(
                         title: Text(
@@ -322,7 +349,11 @@ class _MessageChatState extends State<MessageChat> {
     String recipientId = widget.userId; // Access userId from widget
 
     // Update the sender's database with the message
-    await FirebaseFirestore.instance.collection('users').doc(senderId).collection('messages').add({
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(senderId)
+        .collection('messages')
+        .add({
       'sender': senderId,
       'recipient': recipientId,
       'text': text,
@@ -330,7 +361,11 @@ class _MessageChatState extends State<MessageChat> {
     });
 
     // Update the recipient's database with the message
-    await FirebaseFirestore.instance.collection('users').doc(recipientId).collection('messages').add({
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(recipientId)
+        .collection('messages')
+        .add({
       'sender': senderId,
       'recipient': recipientId,
       'text': text,

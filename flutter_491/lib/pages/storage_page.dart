@@ -20,6 +20,7 @@ class _StoragePageState extends State<StoragePage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       folders = prefs.getStringList('folders') ?? [];
+      folders.sort(); // Sort folders alphabetically
     });
   }
 
@@ -71,8 +72,10 @@ class _StoragePageState extends State<StoragePage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  width: double.infinity,
-                  child: Icon(Icons.folder, color: Colors.white, size: 25)), // Adjust the size as needed
+                    width: double.infinity,
+                    child: Icon(Icons.folder,
+                        color: Colors.white,
+                        size: 25)), // Adjust the size as needed
                 SizedBox(height: 10),
                 Text(
                   folderName,
@@ -87,7 +90,8 @@ class _StoragePageState extends State<StoragePage> {
             top: 0.0,
             right: 0.0,
             child: IconButton(
-              icon: Icon(Icons.close, color: Colors.white, size: 15), // Adjust the size as needed
+              icon: Icon(Icons.close,
+                  color: Colors.white, size: 15), // Adjust the size as needed
               onPressed: () {
                 _showFolderMenu(folderName);
               },
@@ -98,7 +102,6 @@ class _StoragePageState extends State<StoragePage> {
     );
   }
 
-
   void _showFolderMenu(String folderName) {
     showModalBottomSheet(
       context: context,
@@ -108,6 +111,14 @@ class _StoragePageState extends State<StoragePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.edit, color: AppColors.darkblue),
+                title: Text('Rename'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showRenameFolderDialog(folderName);
+                },
+              ),
               ListTile(
                 leading: Icon(Icons.delete, color: AppColors.darkblue),
                 title: Text('Remove'),
@@ -153,12 +164,55 @@ class _StoragePageState extends State<StoragePage> {
                 if (folderName.isNotEmpty) {
                   setState(() {
                     folders.add(folderName);
+                    folders.sort(); // Sort folders alphabetically
                     _saveFolders(); // Save folders after creation
                   });
                 }
                 Navigator.pop(context);
               },
               child: Text('Create'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showRenameFolderDialog(String folderName) {
+    TextEditingController folderNameController =
+        TextEditingController(text: folderName);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Rename Folder'),
+          content: TextField(
+            controller: folderNameController,
+            decoration: InputDecoration(
+              hintText: 'Enter new folder name',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                String newFolderName = folderNameController.text.trim();
+                if (newFolderName.isNotEmpty && newFolderName != folderName) {
+                  setState(() {
+                    folders[folders.indexOf(folderName)] = newFolderName;
+                    folders.sort(); // Sort folders alphabetically
+                    _saveFolders(); // Save folders after renaming
+                  });
+                }
+                Navigator.pop(context);
+              },
+              child: Text('Rename'),
             ),
           ],
         );
