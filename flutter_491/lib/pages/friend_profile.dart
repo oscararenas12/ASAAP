@@ -20,20 +20,19 @@ class FriendProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2, // Two tabs: Profile and Message
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           title: Text('Friend Profile'),
           bottom: TabBar(
             tabs: [
               Tab(text: 'Profile'),
-              Tab(text: 'Profile Comments'), // New tab for messaging
+              Tab(text: 'Profile Comments'),
             ],
           ),
         ),
         body: TabBarView(
           children: [
-            // Profile tab content
             FutureBuilder<DocumentSnapshot>(
               future: FirebaseFirestore.instance.collection('users').doc(userId).get(),
               builder: (context, snapshot) {
@@ -74,33 +73,42 @@ class FriendProfilePage extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 20),
-                        Text(
-                          userName,
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 10),
                         Container(
-                          padding: EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: Colors.grey[200],
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color.fromARGB(255, 66, 63, 63).withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
                           ),
-                          child: Text(
-                            'Email: ${userData['email']}',
-                            style: TextStyle(fontSize: 16, color: Colors.black),
+                          padding: EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                userName,
+                                style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.w900),
+                              ),
+                              SizedBox(height: 10),
+                              _buildInfoRow('Email:', userData['email'] ?? ''),
+                              SizedBox(height: 10),
+                              _buildInfoRow('Bio:', bio),
+                            ],
                           ),
                         ),
-                        SizedBox(height: 10),
-                        Container(
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(10),
+
+                        SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: () => _removeFriend(context, userId),
+                           style: ElevatedButton.styleFrom(
+                            primary: Colors.red, // Background color
                           ),
-                          child: Text(
-                            'Bio: $bio',
-                            style: TextStyle(fontSize: 16, color: Colors.black),
-                          ),
+                          child: Text('Remove Friend', style: TextStyle(color: Colors.white)),
                         ),
                       ],
                     ),
@@ -108,12 +116,62 @@ class FriendProfilePage extends StatelessWidget {
                 );
               },
             ),
-            // Message tab content
-            MessageChat(userId: userId), // Pass userId to MessageChat
+            MessageChat(userId: userId),
           ],
         ),
       ),
     );
+  }
+
+Widget _buildInfoRow(String title, String content) {
+  return Container(
+    padding: EdgeInsets.all(10),
+    decoration: BoxDecoration(
+      color: Color.fromARGB(255, 222, 221, 221),
+      borderRadius: BorderRadius.circular(10),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          title,
+          style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 5),
+        Text(
+          content,
+          style: TextStyle(fontSize: 16, color: Colors.black),
+        ),
+      ],
+    ),
+  );
+}
+
+  void _removeFriend(BuildContext context, String friendId) async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      // Handle the case where the user is not authenticated
+      return;
+    }
+
+    try {
+      // Remove friend from the current user's friend list
+      await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).update({
+        'friends': FieldValue.arrayRemove([friendId]),
+      });
+      
+      // Remove current user from friend's friend list
+      await FirebaseFirestore.instance.collection('users').doc(friendId).update({
+        'friends': FieldValue.arrayRemove([currentUser.uid]),
+      });
+
+      // Navigate back to the friend list page
+      Navigator.pop(context);
+
+      // You can also delete chat messages between the users if needed
+    } catch (error) {
+      print('Error removing friend: $error');
+    }
   }
 }
 
