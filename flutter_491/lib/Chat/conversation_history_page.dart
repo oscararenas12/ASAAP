@@ -1,7 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_491/styles/app_colors.dart';
+
+import 'conversation_details_page.dart';
 
 class ConversationsPage extends StatefulWidget {
   final VoidCallback onClose;
@@ -13,7 +15,7 @@ class ConversationsPage extends StatefulWidget {
 }
 
 class _ConversationsPageState extends State<ConversationsPage> {
-  List<String> conversations = [];
+  List<Map<String, dynamic>> conversations = [];  // To store conversations with additional details like ID
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
@@ -26,13 +28,17 @@ class _ConversationsPageState extends State<ConversationsPage> {
     var user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       try {
-        // Corrected path to match Firestore rules
-        var snapshot = await _firestore.collection('users/${user.uid}/conversations')
-            .orderBy('__name__')
+        var snapshot = await FirebaseFirestore.instance
+            .collection('users/${user.uid}/conversations')
+            .orderBy('createdAt', descending: true)
             .get();
         var loadedConversations = snapshot.docs
-            .map((doc) => doc.data()['name'].toString())
+            .map((doc) => {
+          'id': doc.id, // Store the document ID
+          'name': doc.data()['name'].toString() // Store the conversation name
+        })
             .toList();
+
         setState(() {
           conversations = loadedConversations;
         });
@@ -58,11 +64,16 @@ class _ConversationsPageState extends State<ConversationsPage> {
       body: ListView.builder(
         itemCount: conversations.length,
         itemBuilder: (context, index) {
+          var conversation = conversations[index];
           return ListTile(
-            title: Text(conversations[index]),
+            title: Text(conversation['name']),
             onTap: () {
-              // Implement the onTap logic here
-              widget.onClose();
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => ConversationDetailsPage(
+                  conversationId: conversation['id'],
+                  conversationName: conversation['name'],
+                ),
+              ));
             },
           );
         },

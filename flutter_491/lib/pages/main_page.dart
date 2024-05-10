@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_491/Campus%20Map/map.dart';
 import 'package:flutter_491/Campus%20Map/map_polygon.dart';
-import 'package:flutter_491/pages/chat_page.dart';
+import 'package:flutter_491/Chat/chat_page.dart';
 import 'package:flutter_491/pages/home_page.dart';
 import 'package:flutter_491/pages/news_page.dart';
 import 'package:flutter_491/pages/profile_page.dart';
