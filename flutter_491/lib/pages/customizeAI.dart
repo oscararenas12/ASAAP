@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_491/styles/app_colors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomizeAIPage extends StatefulWidget {
   const CustomizeAIPage({Key? key}) : super(key: key);
@@ -9,29 +10,10 @@ class CustomizeAIPage extends StatefulWidget {
 }
 
 class _CustomizeAIPageState extends State<CustomizeAIPage> {
-  // Placeholder values for AI customization
-  String _aiName = 'AI Name';
+  String _aiName = 'Roexy'; // Default AI name
   String _aiVoice = 'Default Voice';
   int _humorLevel = 5;
-
-  // Placeholder image for AI appearance
   String _aiAppearanceImage = 'assets/images/AIpic.png';
-
-  // Reset AI customization to default values
-  void _resetToDefault() {
-    setState(() {
-      _aiName = 'AI Name';
-      _aiVoice = 'Default Voice';
-      _humorLevel = 5;
-      // Reset AI appearance image if needed
-    });
-  }
-
-  // Save changes to AI customization
-  void _saveChanges() {
-    // Implement logic to save changes
-    // You may want to save these values to shared preferences or a database
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +26,6 @@ class _CustomizeAIPageState extends State<CustomizeAIPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // AI Appearance Section
             Align(
               alignment: Alignment.center,
               child: Container(
@@ -79,7 +60,7 @@ class _CustomizeAIPageState extends State<CustomizeAIPage> {
                 });
               },
               decoration: InputDecoration(
-                hintText: 'Enter AI\'s Name',
+                hintText: _aiName, // Set the initial value to the AI's name
                 filled: true,
                 fillColor: AppColors.darkblue,
                 border: OutlineInputBorder(
@@ -94,20 +75,25 @@ class _CustomizeAIPageState extends State<CustomizeAIPage> {
               'AI\'s Voice',
               style: Theme.of(context).textTheme.headline6,
             ),
-            TextField(
+            DropdownButtonFormField<String>(
+              value: _aiVoice,
               onChanged: (value) {
                 setState(() {
-                  _aiVoice = value;
+                  _aiVoice = value!;
                 });
               },
-              decoration: InputDecoration(
-                hintText: 'Enter AI\'s Voice',
-                filled: true,
-                fillColor: AppColors.darkblue,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-              ),
+              items: <String>[
+                'Default Voice',
+                'Voice 1',
+                'Voice 2',
+                'Voice 3',
+                // Add more voice options as needed
+              ].map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
             ),
             SizedBox(height: 16),
 
@@ -147,5 +133,37 @@ class _CustomizeAIPageState extends State<CustomizeAIPage> {
         ),
       ),
     );
+  }
+
+  void _resetToDefault() {
+    setState(() {
+      _aiName = 'Roexy';
+      _aiVoice = 'Default Voice';
+      _humorLevel = 5;
+      // Reset AI appearance image if needed
+    });
+    _saveChanges(); // Save changes when resetting to default
+  }
+
+  void _saveChanges() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('aiName', _aiName);
+    prefs.setString('aiVoice', _aiVoice);
+    prefs.setInt('humorLevel', _humorLevel);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  void _loadSettings() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _aiName = prefs.getString('aiName') ?? 'Roexy';
+      _aiVoice = prefs.getString('aiVoice') ?? 'Default Voice';
+      _humorLevel = prefs.getInt('humorLevel') ?? 5;
+    });
   }
 }

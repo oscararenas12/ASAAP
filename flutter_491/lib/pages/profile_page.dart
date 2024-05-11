@@ -4,7 +4,9 @@ import 'package:flutter_491/components/user_avatar.dart';
 import 'package:flutter_491/config/app_routes.dart';
 import 'package:flutter_491/pages/friends_list_page.dart';
 import 'package:flutter_491/pages/main_page.dart';
+import 'package:flutter_491/pages/student_resources.dart';
 import 'package:flutter_491/pages/tutorial_manager.dart';
+import 'package:flutter_491/pages/user_feedback.dart';
 import 'package:flutter_491/styles/app_colors.dart';
 import 'package:flutter_491/styles/app_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -297,6 +299,50 @@ Widget build(BuildContext context) {
 ),
 
 
+
+            const Divider(
+              color: AppColors.darkblue,
+              thickness: 2,
+              height: 20,
+              indent: 30,
+              endIndent: 30,),
+
+            // Button to navigate to the Student Resource Page
+            TextButton(onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const StudentResourcePage(),
+                ),
+              );
+              print('Student Resources clicked');
+            },
+                style: TextButton.styleFrom(
+                  textStyle: AppText.header2,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Student Resources')),
+
+            const Divider(
+              color: AppColors.darkblue,
+              thickness: 2,
+              height: 20,
+              indent: 30,
+              endIndent: 30,),
+
+            // Button to navigate to the User Feedback Page
+            TextButton(onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => UserFeedbackPage(),
+                ),
+              );
+              print('User Feedback clicked');
+            },
+                style: TextButton.styleFrom(
+                  textStyle: AppText.header2,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('User Feedback')),
 
             const Divider(
               color: AppColors.darkblue,

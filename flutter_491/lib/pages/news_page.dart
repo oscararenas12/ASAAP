@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_491/components/post_item.dart';
 import 'package:flutter_491/components/toolbar.dart';
 import 'package:flutter_491/config/app_routes.dart';
-import 'package:flutter_491/pages/tutorial_manager.dart';
 import 'package:flutter_491/styles/app_colors.dart';
 import 'package:flutter_491/styles/app_text.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -27,24 +26,19 @@ class _NewsPageState extends State<NewsPage> {
   List<String> headlines = [];
   List<String> imageUrls = []; // List to store image URLs
   List<String> descriptions = []; // List to store article descriptions
-  List<String> majors = ['Technology', 'Biology', 'Mathematics', 'Physics']; // List of college majors
+  List<String> majors = [
+    'Technology',
+    'Biology',
+    'Mathematics',
+    'Physics'
+  ]; // List of college majors
   String? selectedMajor; // Selected major
-  
+
 
   @override
   void initState() {
     super.initState();
     fetchNews();
-
-     // Ensure the tutorial starts after everything is ready
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-            TutorialManager.showNewsfeedTutorial(context, onReady: () {
-                // Perform any additional checks if necessary
-                return true; // This would be your readiness condition
-            });
-        }
-    });
   }
 
   Future<void> fetchNews() async {
@@ -58,7 +52,8 @@ class _NewsPageState extends State<NewsPage> {
     print("Fetching news for URL: $url"); // Print the URL to the console
 
     final response = await http.get(Uri.parse(url));
-    print("Response: ${response.body}"); // Print the response body to the console
+    print(
+        "Response: ${response.body}"); // Print the response body to the console
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -72,9 +67,16 @@ class _NewsPageState extends State<NewsPage> {
         });
       } else {
         setState(() {
-          headlines = articles.map((article) => article['title'] as String).toList();
-          imageUrls = articles.map((article) => article['urlToImage'] as String? ?? 'https://via.placeholder.com/150').toList();
-          descriptions = articles.map((article) => article['description'] as String? ?? 'No description available').toList();
+          headlines =
+              articles.map((article) => article['title'] as String).toList();
+          imageUrls =
+              articles.map((article) => article['urlToImage'] as String? ??
+                  'https://via.placeholder.com/150')
+                  .toList();
+          descriptions =
+              articles.map((article) => article['description'] as String? ??
+                  'No description available')
+                  .toList();
         });
       }
     } else {
@@ -97,8 +99,8 @@ class _NewsPageState extends State<NewsPage> {
               onChanged: (String? newValue) {
                 setState(() {
                   selectedMajor = newValue;
+                  fetchNews(); // Fetch news with the new selected major
                 });
-                fetchNews(); // Fetch news with the new selected major
               },
               items: majors.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
@@ -119,20 +121,19 @@ class _NewsPageState extends State<NewsPage> {
       ),
       body: headlines.isNotEmpty
           ? ListView.separated(
+        itemCount: headlines.length,
         itemBuilder: (context, index) {
           return PostItem(
-            //key, bookmarkIconkey, shareIconKeyand optionsKey for tutorial purposes
-            key: ValueKey(index), // Unique key for PostItem
             heading: headlines[index],
             imageUrl: imageUrls[index],
             description: descriptions[index],
+            articleLink: imageUrls[index],
+            // Assuming URLs are stored in `imageUrls`
             bookmarkIconKey: index == 0 ? firstBookmarkIconKey : null,
             shareIconKey: index == 0 ? firstShareIconKey : null,
-            optionsMenuKey: index == 0 ? firstOptionsMenuKey : null, // Only for the first item
-
+            optionsMenuKey: index == 0 ? firstOptionsMenuKey : null,
           );
         },
-        itemCount: headlines.length,
         separatorBuilder: (BuildContext context, int index) {
           return SizedBox(
             height: 24,

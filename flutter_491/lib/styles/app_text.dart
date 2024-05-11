@@ -49,6 +49,14 @@ class AppText{
   ); 
 
 
+    static const eventtext  = TextStyle(
+    color: Color.fromARGB(255, 86, 86, 86),
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+
+  ); 
+
+
 
 
 }

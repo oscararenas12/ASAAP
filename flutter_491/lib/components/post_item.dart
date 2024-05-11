@@ -1,10 +1,7 @@
-import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_491/config/app_routes.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_491/styles/app_colors.dart';
 import 'package:flutter_491/styles/app_text.dart';
-
-//THIS PAGE IS FOR STYLING THE NEWSFEED
 
 enum NewsMenu {
   option,
@@ -15,11 +12,21 @@ class PostItem extends StatelessWidget {
   final String heading;
   final String imageUrl;
   final String description;
+  final String articleLink;  // URL to the article
   final GlobalKey? bookmarkIconKey;
   final GlobalKey? shareIconKey;
   final GlobalKey? optionsMenuKey;
 
-  const PostItem({super.key, required this.heading, required this.imageUrl, required this.description, this.bookmarkIconKey, this.shareIconKey, this.optionsMenuKey});
+  const PostItem({
+    super.key,
+    required this.heading,
+    required this.imageUrl,
+    required this.description,
+    required this.articleLink, // Pass the article link
+    this.bookmarkIconKey,
+    this.shareIconKey,
+    this.optionsMenuKey,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +36,6 @@ class PostItem extends StatelessWidget {
         children: [
           Row(
             children: [
-              // User icon
               Image.asset(
                 'assets/temp/User Icon.png',
                 height: 50,
@@ -67,47 +73,58 @@ class PostItem extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Icon(
+              IconButton(
+                icon: Icon(Icons.bookmark),
+                color: AppColors.darkblue,
+                onPressed: () {
+                  // Bookmark logic here
+                },
                 key: bookmarkIconKey,
-                Icons.bookmark,
-                size: 22,
-                color: Colors.white,
               ),
-              const SizedBox(
-                width: 12,
-              ),
-              Icon(
+              const SizedBox(width: 12),
+              IconButton(
+                icon: Icon(Icons.share),
+                color: AppColors.darkblue,
+                onPressed: () {
+                  // Share logic here
+                },
                 key: shareIconKey,
-                Icons.share,
-                size: 22,
-                color: Colors.white,
               ),
+              const SizedBox(width: 12),
+              IconButton(
+                icon: Icon(Icons.link),
+                color: AppColors.darkblue,
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(text: articleLink)).then((_) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Link copied to clipboard'))
+                    );
+                  });
+                },
+              ),
+              const SizedBox(width: 12),
               PopupMenuButton<NewsMenu>(
                 onSelected: (value) {
                   switch (value) {
                     case NewsMenu.option:
-                    //Navigator.of(context).pushNamed(AppRoutes.'edit_profile');
+                    // Add options logic here
                       break;
                     case NewsMenu.report:
-                      print('report');
+                    // Add report logic here
+                      print('Report clicked');
                       break;
-                    default:
                   }
                 },
                 key: optionsMenuKey,
-                icon: Icon(
-                  Icons.more_vert_rounded,
-                  color: Colors.white,
-                ),
                 itemBuilder: (context) {
                   return [
                     const PopupMenuItem(
                       value: NewsMenu.option,
-                      child: Text('options'),
+                      child: Text('Options'),
                     ),
                     const PopupMenuItem(
                       value: NewsMenu.report,
-                      child: Text('report'),
+                      child: Text('Report'),
                     ),
                   ];
                 },
