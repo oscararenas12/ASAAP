@@ -9,6 +9,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 
 import 'calendar_page.dart';
+import 'weather_services.dart'; // Ensure you have this service set up to fetch weather data
 
 final GlobalKey agendaKey = GlobalKey();
 final GlobalKey goalKey = GlobalKey();
@@ -20,8 +21,36 @@ enum HomeMenu {
   logout,
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  Map<String, dynamic>? weatherData;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadWeather();
+  }
+
+  Future<void> _loadWeather() async {
+    try {
+      WeatherService weatherService = WeatherService();
+      Map<String, dynamic> data = await weatherService.fetchWeather();
+      setState(() {
+        weatherData = data;
+      });
+    } catch (e) {
+      // If the weather data fails to load, use dummy data
+      setState(() {
+        weatherData = {'temp': '72°F', 'icon': Icons.wb_sunny};
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +63,20 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.darkblue,
         title: const Text('Welcome Shark', style: AppText.header1),
-
         actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            child: weatherData == null
+                ? Icon(Icons.wb_cloudy, color: Colors.white) // Placeholder icon when data is null
+                : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(weatherData!['icon'] ?? Icons.wb_sunny, color: Colors.white),
+                SizedBox(width: 5),
+                Text('${weatherData!['temp'] ?? '72°F'}', style: TextStyle(color: Colors.white)),
+              ],
+            ),
+          ),
           PopupMenuButton<HomeMenu>(
             onSelected: (value) {
               switch (value) {
@@ -43,45 +84,38 @@ class HomePage extends StatelessWidget {
                   Navigator.of(context).pushNamed(AppRoutes.edit_profile);
                   break;
                 case HomeMenu.logout:
-                  print('logout');
+                  print('Logout clicked');
                   break;
                 default:
               }
             },
             icon: const Icon(Icons.more_vert_rounded),
-            itemBuilder: (context) {
-              return [
-                const PopupMenuItem(
-                  value: HomeMenu.edit,
-                  child: Text('edit'),
-                ),
-                const PopupMenuItem(
-                  child: Text('logout'),
-                  value: HomeMenu.logout,
-                ),
-              ];
-            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: HomeMenu.edit,
+                child: Text('Edit Profile'),
+              ),
+              const PopupMenuItem(
+                value: HomeMenu.logout,
+                child: Text('Logout'),
+              ),
+            ],
           ),
         ],
       ),
       body: Column(
-        
         children: [
-          
-          // Rounded Image
           Padding(
             padding: const EdgeInsets.all(16),
             child: ClipOval(
               child: Image.asset(
                 'assets/temp/User Icon.png',
-                width: 100, // Adjust the width as needed
-                height: 100, // Adjust the height as needed
+                width: 100,
+                height: 100,
                 fit: BoxFit.cover,
               ),
             ),
           ),
-
-          // Weekly TableCalendar Widget
           TableCalendar(
             firstDay: firstDay,
             lastDay: lastDay,
@@ -102,8 +136,6 @@ class HomePage extends StatelessWidget {
               weekendStyle: TextStyle(color: AppColors.darkblue),
             ),
           ),
-
-          // Expanded Lower Part of the Screen with Padding
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -118,7 +150,6 @@ class HomePage extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    // Today's Date in Bold
                     Padding(
                       padding: const EdgeInsets.only(left: 16, top: 16, right: 16),
                       child: Text(
@@ -130,15 +161,11 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
-
-                    // Clickable Icons
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        // Agenda Icon
                         GestureDetector(
                           onTap: () {
-                            // Handle Agenda Icon Click
                             Navigator.of(context).push(MaterialPageRoute(builder: (context) => AgendaPage()));
                             print('Agenda icon clicked');
                           },
@@ -151,11 +178,8 @@ class HomePage extends StatelessWidget {
                             ],
                           ),
                         ),
-
-                        // Goal Icon
                         GestureDetector(
                           onTap: () {
-                            // Handle Goal Icon Click
                             Navigator.of(context).push(MaterialPageRoute(builder: (context) => GoalPage()));
                             print('Goal icon clicked');
                           },
@@ -170,17 +194,12 @@ class HomePage extends StatelessWidget {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 16),
-
-                    // Storage Icon and Calendar Icon in the same row
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        // Storage Icon
                         GestureDetector(
                           onTap: () {
-                            // Handle Storage Icon Click
                             Navigator.of(context).push(MaterialPageRoute(builder: (context) => StoragePage()));
                             print('Storage icon clicked');
                           },
@@ -193,8 +212,6 @@ class HomePage extends StatelessWidget {
                             ],
                           ),
                         ),
-
-                        // Calendar Icon
                         GestureDetector(
                           onTap: () {
                             print('Calendar icon clicked');
@@ -202,21 +219,21 @@ class HomePage extends StatelessWidget {
                               context: context,
                               builder: (BuildContext context) {
                                 return Dialog(
-                                  insetPadding: const EdgeInsets.all(10), // Add some padding to the Dialog
-                                  backgroundColor: Colors.transparent, // Ensures no white background for rounded corners
+                                  insetPadding: const EdgeInsets.all(10),
+                                  backgroundColor: Colors.transparent,
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(25), // Curved edges for the Dialog
+                                    borderRadius: BorderRadius.circular(25),
                                   ),
                                   child: AnimatedContainer(
                                     duration: const Duration(milliseconds: 500),
                                     curve: Curves.easeOut,
                                     decoration: BoxDecoration(
                                       color: Colors.white,
-                                      borderRadius: BorderRadius.circular(25), // Curved edges for the AnimatedContainer
+                                      borderRadius: BorderRadius.circular(25),
                                     ),
                                     width: MediaQuery.of(context).size.width * 0.85,
                                     height: MediaQuery.of(context).size.height * 0.9,
-                                    child: FullScreenCalendarPage(), // Your FullScreenCalendarPage widget
+                                    child: FullScreenCalendarPage(), // Implement your calendar page here
                                   ),
                                 );
                               },
@@ -243,44 +260,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
-// Placeholder for the CalendarWidget, replace it with your actual calendar implementation
-// class CalendarWidget extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     DateTime now = DateTime.now();
-//     DateTime firstDay = DateTime(now.year, now.month, 1);
-//     DateTime lastDay = DateTime(now.year, now.month + 1, 0);
-//
-//     return SingleChildScrollView(
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.center,
-//         children: [
-//           SizedBox(
-//             height: 500, // Adjust the height as needed
-//             child: TableCalendar(
-//               focusedDay: now,
-//               firstDay: firstDay,
-//               lastDay: lastDay,
-//               startingDayOfWeek: StartingDayOfWeek.monday,
-//               calendarFormat: CalendarFormat.month,
-//               headerStyle: HeaderStyle(
-//                 formatButtonVisible: false,
-//               ),
-//               calendarStyle: CalendarStyle(
-//                 todayDecoration: BoxDecoration(
-//                   color: Colors.blue,
-//                   shape: BoxShape.circle,
-//                 ),
-//                 selectedDecoration: BoxDecoration(
-//                   color: Colors.green,
-//                   shape: BoxShape.circle,
-//                 ),
-//               ),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
