@@ -26,14 +26,15 @@ class _ChatPageState extends State<ChatPage> {
     enableLog: true,
   );
 
-  ChatUser? _currentUser;  // Changed to nullable to manage uninitialized state
+  ChatUser? _currentUser; // Changed to nullable to manage uninitialized state
   final ChatUser _gptUser = ChatUser(id: '2', firstName: "AI");
   List<ChatMessage> _messages = [];
   final List<ChatUser> _typingUsers = [];
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool _isConversationsPageVisible = false;
   int conversationCount = 0;
-  String? currentConversationId;  // Add this line to hold the current conversation ID
+  String?
+      currentConversationId; // Add this line to hold the current conversation ID
 
   @override
   void initState() {
@@ -46,7 +47,10 @@ class _ChatPageState extends State<ChatPage> {
   void _initializeCurrentUser() async {
     User? user = _auth.currentUser;
     if (user != null) {
-      DocumentSnapshot userData = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      DocumentSnapshot userData = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
       setState(() {
         _currentUser = ChatUser(
           id: user.uid,
@@ -60,26 +64,30 @@ class _ChatPageState extends State<ChatPage> {
     await _clearChatHistory();
   }
 
-
   Future<void> _loadConversationCount() async {
-    var snapshot = await FirebaseFirestore.instance.collection('utils').doc('conversationCounter').get();
+    var snapshot = await FirebaseFirestore.instance
+        .collection('utils')
+        .doc('conversationCounter')
+        .get();
     setState(() {
       conversationCount = snapshot.data()?['count'] ?? 0;
     });
   }
 
   Future<void> _incrementConversationCount() async {
-    await FirebaseFirestore.instance.collection('utils').doc('conversationCounter').set(
-        {'count': FieldValue.increment(1)},
-        SetOptions(merge: true)
-    );
+    await FirebaseFirestore.instance
+        .collection('utils')
+        .doc('conversationCounter')
+        .set({'count': FieldValue.increment(1)}, SetOptions(merge: true));
   }
 
   Future<void> _loadChatHistory() async {
     final prefs = await SharedPreferences.getInstance();
     final messagesJson = prefs.getString('chat_history') ?? '[]';
     final messagesList = jsonDecode(messagesJson) as List;
-    final loadedMessages = messagesList.map((m) => ChatMessage.fromJson(m as Map<String, dynamic>)).toList();
+    final loadedMessages = messagesList
+        .map((m) => ChatMessage.fromJson(m as Map<String, dynamic>))
+        .toList();
 
     setState(() {
       _messages = loadedMessages.reversed.toList();
@@ -91,7 +99,6 @@ class _ChatPageState extends State<ChatPage> {
     final messagesJson = jsonEncode(_messages.map((m) => m.toJson()).toList());
     await prefs.setString('chat_history', messagesJson);
   }
-
 
   Future<void> _clearChatHistory() async {
     final prefs = await SharedPreferences.getInstance();
@@ -110,7 +117,9 @@ class _ChatPageState extends State<ChatPage> {
     await Future.delayed(const Duration(seconds: 1));
 
     List<Messages> _messagesHistory = _messages.reversed.map((m) {
-      return Messages(role: m.user == _currentUser ? Role.user : Role.assistant, content: m.text);
+      return Messages(
+          role: m.user == _currentUser ? Role.user : Role.assistant,
+          content: m.text);
     }).toList();
 
     final request = ChatCompleteText(
@@ -148,7 +157,8 @@ class _ChatPageState extends State<ChatPage> {
     // Check if a new conversation needs to be started
     if (currentConversationId == null) {
       String conversationName = 'Conversation ${conversationCount + 1}';
-      DocumentReference conversationDoc = await FirebaseFirestore.instance.collection('users/${user.uid}/conversations')
+      DocumentReference conversationDoc = await FirebaseFirestore.instance
+          .collection('users/${user.uid}/conversations')
           .add({
         'name': conversationName,
         'createdAt': message.createdAt.toIso8601String(),
@@ -159,7 +169,9 @@ class _ChatPageState extends State<ChatPage> {
     }
 
     // Save the message under the current conversation ID
-    await FirebaseFirestore.instance.collection('users/${user.uid}/conversations/$currentConversationId/messages')
+    await FirebaseFirestore.instance
+        .collection(
+            'users/${user.uid}/conversations/$currentConversationId/messages')
         .add({
       'text': message.text,
       'createdAt': message.createdAt.toIso8601String(),
@@ -170,16 +182,18 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   void dispose() {
-    currentConversationId = null;  // Reset conversation ID when chat page is closed
+    currentConversationId =
+        null; // Reset conversation ID when chat page is closed
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_currentUser == null) {  // Check if _currentUser is initialized
+    if (_currentUser == null) {
+      // Check if _currentUser is initialized
       return Scaffold(
         body: Center(
-          child: CircularProgressIndicator(),  // Show loading indicator
+          child: CircularProgressIndicator(), // Show loading indicator
         ),
       );
     }
@@ -196,7 +210,8 @@ class _ChatPageState extends State<ChatPage> {
                     icon: Icon(Icons.list),
                     onPressed: () {
                       setState(() {
-                        _isConversationsPageVisible = !_isConversationsPageVisible;
+                        _isConversationsPageVisible =
+                            !_isConversationsPageVisible;
                       });
                     },
                   ),
@@ -204,7 +219,7 @@ class _ChatPageState extends State<ChatPage> {
               ),
               Expanded(
                 child: DashChat(
-                  currentUser: _currentUser!,  // Now safely use _currentUser!
+                  currentUser: _currentUser!, // Now safely use _currentUser!
                   onSend: (ChatMessage m) {
                     _saveMessageToFirestore(m);
                     getChatResponse(m);
@@ -225,10 +240,14 @@ class _ChatPageState extends State<ChatPage> {
           AnimatedPositioned(
             duration: Duration(milliseconds: 300),
             curve: Curves.easeInOut,
-            left: _isConversationsPageVisible ? MediaQuery.of(context).size.width * 0.2 : MediaQuery.of(context).size.width,
+            left: _isConversationsPageVisible
+                ? MediaQuery.of(context).size.width * 0.2
+                : MediaQuery.of(context).size.width,
             top: 0,
             bottom: 0,
-            right: _isConversationsPageVisible ? -MediaQuery.of(context).size.width * 0.2 : 0,
+            right: _isConversationsPageVisible
+                ? -MediaQuery.of(context).size.width * 0.2
+                : 0,
             child: Material(
               elevation: 4.0,
               child: ConversationsPage(
