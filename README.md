@@ -60,13 +60,10 @@ The **AI Student Assistant App (ASAAPP)** is an AI-driven platform designed to a
 3. Ensure proper authentication methods (Google Sign-In, Email/Password) are set up within the Firebase console.
 
 ## Usage
-# Task Management
+### Task Management
 -  Navigate to the "Tasks" tab to create, edit, or delete your assignments and tasks.
 -  Set deadlines and receive reminders as the deadlines approach.
-# AI Study Assistance
+### AI Study Assistance
 -  Based on your schedule and upcoming tasks, the assistant will suggest study times and relevant materials.
-# Calendar
+### Calendar
 -  View all tasks and deadlines in the "Calendar" section, where you can manage your academic timeline visually.
-
-License
-This project is licensed under the MIT License - see the LICENSE file for details.
